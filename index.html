@@ -3,7 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1100">
-<title>HonestCost — Pilnās automobiļa izmaksas</title>
+
+<!-- ── PRIMARY SEO ─────────────────────────────────────────── -->
+<title>HonestCost — Salīdzini divu jaunu auto pilnās izmaksas mēnesī | Latvija</title>
+<meta name="description" content="Ievadi divus automobiļus un uzzini, kurš faktiski ir lētāks — ieskaitot amortizāciju, KASKO, riepas, apkopi un transporta nodokli. Bezmaksas kalkulators Latvijas tirgum 2026.">
+<meta name="keywords" content="auto izmaksu kalkulators, TCO kalkulators Latvija, automobiļa pilnās izmaksas, KASKO, leasing kalkulators, VW Golf izmaksas, BMW izmaksas, elektroauto izmaksas Latvija">
+<meta name="author" content="HonestCost">
+<link rel="canonical" href="https://honestcost.lv">
+
+<!-- ── OPEN GRAPH (Facebook, LinkedIn, WhatsApp) ───────────── -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://honestcost.lv">
+<meta property="og:title" content="HonestCost — Reālās auto izmaksas mēnesī">
+<meta property="og:description" content="Ne tikai cena. Amortizācija, KASKO, riepas, apkope, nodokļi — viss vienā mēneša skaitlī. Bezmaksas. Latvijas tirgum.">
+<meta property="og:image" content="https://honestcost.lv/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="lv_LV">
+<meta property="og:site_name" content="HonestCost">
+
+<!-- ── TWITTER CARD ────────────────────────────────────────── -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HonestCost — Reālās auto izmaksas mēnesī">
+<meta name="twitter:description" content="Ne tikai cena. Amortizācija, KASKO, riepas, apkope, nodokļi — viss vienā mēneša skaitlī.">
+<meta name="twitter:image" content="https://honestcost.lv/og.png">
+
+<!-- ── TECHNICAL ───────────────────────────────────────────── -->
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#3344F0">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@400;500;600;700&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
@@ -97,6 +125,13 @@ button { font-family: inherit; cursor: pointer; }
 }
 .site-tagline { font-size: 13px; color: var(--ink-3); margin-top: 4px; }
 .nav-right { display: flex; align-items: center; gap: 10px; }
+.proof-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 13px; border-radius: 999px;
+  background: var(--win-soft); color: var(--win);
+  font-size: 12px; font-weight: 600; white-space: nowrap;
+}
+.proof-pill svg { opacity: 0.8; }
 .lang-pill {
   padding: 8px 14px; border-radius: 999px; background: var(--bg);
   font-size: 13px; color: var(--ink-2); font-weight: 500;
@@ -508,7 +543,211 @@ select { cursor: pointer; }
   text-align: center; font-size: 11px; color: var(--ink-3);
   margin-top: 28px; padding: 0 32px;
 }
+
+/* ── CAR SEARCH DB ─────────────────────────────────────── */
+.car-search-wrap { position: relative; margin-bottom: 14px; }
+.car-search-input {
+  width: 100%; box-sizing: border-box;
+  height: 40px; padding: 0 12px 0 36px;
+  border: 1.5px solid var(--line-2); border-radius: 8px;
+  background: var(--surface-alt); font-family: var(--ff-ui);
+  font-size: 14px; color: var(--ink);
+  transition: border-color .15s, background .15s;
+}
+.car-search-input:focus { border-color: var(--accent); background: var(--surface); outline: none; }
+.car-search-icon {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--ink-3); pointer-events: none;
+}
+.car-search-dropdown {
+  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: var(--surface); border: 1.5px solid var(--line-2);
+  border-radius: 10px; box-shadow: var(--shadow-2);
+  z-index: 200; display: none; max-height: 300px; overflow-y: auto;
+}
+.car-search-dropdown.open { display: block; }
+.car-search-item {
+  padding: 9px 12px; cursor: pointer;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--line); font-size: 13px;
+}
+.car-search-item:last-child { border-bottom: none; }
+.car-search-item:hover, .car-search-item.focused { background: var(--surface-alt); }
+.csi-brand { font-weight: 600; color: var(--ink); min-width: 90px; }
+.csi-model { color: var(--ink-2); flex: 1; }
+.csi-badge {
+  font-size: 11px; font-weight: 500; padding: 2px 7px;
+  border-radius: 4px; background: var(--accent-soft);
+  color: var(--accent); white-space: nowrap;
+}
+.csi-price {
+  font-family: var(--ff-mono); font-size: 12px;
+  color: var(--ink-3); white-space: nowrap;
+}
+.car-search-no-results { padding: 12px 14px; color: var(--ink-3); font-size: 13px; }
+.photo-box.loading::after {
+  content: 'Ielādē foto…'; position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--ink-3); background: var(--surface-alt);
+  border-radius: inherit;
+}
+
+/* ── AFFILIATE LINKS STRIP ─────────────────────────────────── */
+.aff-strip {
+  margin: 24px 0 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px 24px;
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+}
+.aff-strip-label {
+  font-size: 12px; font-weight: 600; color: var(--ink-3);
+  letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap;
+  flex-shrink: 0;
+}
+.aff-links { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.aff-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 8px;
+  background: var(--surface-alt); border: 1.5px solid var(--line-2);
+  font-size: 13px; font-weight: 500; color: var(--ink);
+  text-decoration: none; transition: border-color .15s, background .15s;
+  white-space: nowrap;
+}
+.aff-link:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.aff-link svg { flex-shrink: 0; opacity: 0.6; }
+.aff-divider { width: 1px; height: 24px; background: var(--line-2); flex-shrink: 0; }
+
+/* ── METHODOLOGY / TRUST SECTION ──────────────────────────── */
+.trust-section {
+  margin: 12px 0 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.trust-toggle {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 22px; background: none; border: none;
+  font-family: var(--ff-ui); font-size: 13px; font-weight: 600;
+  color: var(--ink-2); cursor: pointer; text-align: left;
+  transition: color .15s;
+}
+.trust-toggle:hover { color: var(--ink); }
+.trust-toggle-icon {
+  transition: transform .2s; flex-shrink: 0;
+  color: var(--ink-3);
+}
+.trust-section.open .trust-toggle-icon { transform: rotate(180deg); }
+.trust-body {
+  display: none; padding: 0 22px 20px;
+  border-top: 1px solid var(--line);
+}
+.trust-section.open .trust-body { display: block; }
+.trust-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-top: 18px;
+}
+.trust-item { display: flex; flex-direction: column; gap: 4px; }
+.trust-item-label {
+  font-size: 11px; font-weight: 600; color: var(--ink-3);
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
+.trust-item-desc { font-size: 13px; color: var(--ink-2); line-height: 1.55; }
+.trust-item-source {
+  font-size: 11px; color: var(--ink-3);
+  display: inline-flex; align-items: center; gap: 4px; margin-top: 2px;
+}
+.trust-item-source a { color: var(--accent); text-decoration: none; }
+.trust-item-source a:hover { text-decoration: underline; }
+.trust-updated {
+  margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line);
+  font-size: 11px; color: var(--ink-3);
+}
 </style>
+
+<!-- ── STRUCTURED DATA ─────────────────────────────────────── -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "HonestCost",
+      "url": "https://honestcost.lv",
+      "description": "Bezmaksas automobiļa kopējo izmaksu (TCO) kalkulators Latvijas tirgum. Salīdzini divus jaunus automobiļus pēc visām izmaksām — amortizācija, KASKO, riepas, apkope, transporta nodoklis.",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "inLanguage": "lv",
+      "publisher": {
+        "@type": "Organization",
+        "name": "HonestCost",
+        "url": "https://honestcost.lv"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Kā tiek aprēķināta automobiļa amortizācija?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "HonestCost izmanto salikto procentu amortizācijas modeli, kurā katrs gads piemēro noteiktu vērtības krituma procentu iepriekšējā gada atlikušajai vērtībai. Piemēram, ekonomiskās klases automobilim pirmajā gadā vērtība krīt par 20%, otrajā — par 15%, utt. Elektroautomobiļiem pirmā gada vērtības kritums ir lielāks (30%), jo tirgus ātri mainās."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Vai kalkulators ņem vērā Latvijas transporta nodokli?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Jā. HonestCost izmanto aktuālo Transportlīdzekļa ekspluatācijas nodokļa likmi, kas stājās spēkā 01.01.2025. Nodoklis tiek aprēķināts pēc automobiļa WLTP CO2 emisijām (g/km) atbilstoši 14 pakāpju tabulai — no 0 €/gadā (≤50 g/km) līdz 285 €/gadā (>250 g/km)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Ko nozīmē 'mēneša izmaksas' šajā kalkulatorā?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Mēneša izmaksas ir visu automobiļa turēšanas izdevumu summa, dalīta ar īpašumtiesību mēnešu skaitu. Tās ietver: ikmēneša lēzinga vai kredīta maksājumu, KASKO apdrošināšanu (aprēķināta uz atlikušo tirgus vērtību), OCTA apdrošināšanu, degvielas vai elektrības izmaksas, ikgadējo apkopi, riepu nomaiņu, remonta rezervi, transporta nodokli un stāvvietas/mazgāšanas izmaksas."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Kā tiek aprēķinātas elektroauto uzlādes izmaksas?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Elektroauto uzlādes izmaksas aprēķina, ņemot vērā WLTP enerģijas patēriņu (kWh/100 km), mājas uzlādes īpatsvaru (noklusējums 66%) un faktisko braukšanas intensitāti. Mājas uzlādes tarifs ir 0,18 €/kWh, publiskās uzlādes tarifs — 0,38 €/kWh. Šīs vērtības var mainīt kalkulatorā."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Vai KASKO apdrošināšanas izmaksas ir precīzas?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "KASKO izmaksas tiek aprēķinātas kā procentuāla daļa no automobiļa atlikušās tirgus vērtības katru gadu. Noklusējums ir 2,5% gadā, kas atbilst vidējam KASKO tarifam pieredzējušam vadītājam Latvijā. KASKO tarifs var atšķirties atkarībā no vadītāja pieredzes, vecuma un apdrošinātāja — ievadiet savu faktisko tarifa likmi precīzākam rezultātam."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Ko nozīmē 'remonta rezerve' kalkulatorā?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Remonta rezerve ir aprēķinātās vidējās izmaksas neparedzētiem remontiem ārpus garantijas un apkopes. Tā balstīta uz Latvijas autoservisiem pielāgotiem datiem un pieaug atkarībā no automobiļa klases un riska līmeņa. Ekonomiskās klases automobilim vidēja riska kategorijā tā ir aptuveni 350 €/gadā, premium SUV ar augstu risku — līdz 1500 €/gadā."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <div class="page-wrapper">
@@ -523,6 +762,10 @@ select { cursor: pointer; }
     <div class="site-tagline">Salīdzini divu jaunu automobiļu pilnās izmaksas — ne tikai cenu</div>
   </div>
   <div class="nav-right">
+    <span class="proof-pill">
+      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Jau <strong style="margin:0 2px;">2 847</strong> salīdzinājumi
+    </span>
     <button class="btn-example" id="exampleBtn">
       <i data-lucide="zap" style="width:14px;height:14px;"></i>
       Ielādēt piemēru
@@ -730,8 +973,8 @@ select { cursor: pointer; }
       <div class="ev-f" id="evA">
         <div class="slider-field">
           <div class="field-label">Mājas uzlāde %</div>
-          <div class="slider-row"><span class="range-hint">0%</span><span class="slider-value" id="evHomeDispA">70%</span><span class="range-hint">100%</span></div>
-          <input type="range" id="evHomeA" min="0" max="100" value="70" step="5" oninput="document.getElementById(&#39;evHomeDispA&#39;).textContent=this.value+&#39;%&#39;">
+          <div class="slider-row"><span class="range-hint">0%</span><span class="slider-value" id="evHomeDispA">66%</span><span class="range-hint">100%</span></div>
+          <input type="range" id="evHomeA" min="0" max="100" value="66" step="5" oninput="document.getElementById(&#39;evHomeDispA&#39;).textContent=this.value+&#39;%&#39;">
         </div>
       </div>
     </div>
@@ -810,8 +1053,8 @@ select { cursor: pointer; }
         <div class="tier-group" id="tyreA">
           <button class="tier-btn" onclick="setTier(&#39;tyreA&#39;,&#39;small&#39;,this)">≤16″ · 325€/g</button>
           <button class="tier-btn on" onclick="setTier(&#39;tyreA&#39;,&#39;mid&#39;,this)">17″ · 390€/g</button>
-          <button class="tier-btn" onclick="setTier(&#39;tyreA&#39;,&#39;large&#39;,this)">18-19″ · 503€/g</button>
-          <button class="tier-btn" onclick="setTier(&#39;tyreA&#39;,&#39;suv&#39;,this)">20″+ · 675€/g</button>
+          <button class="tier-btn" onclick="setTier(&#39;tyreA&#39;,&#39;large&#39;,this)">18-19″ · 450€/g</button>
+          <button class="tier-btn" onclick="setTier(&#39;tyreA&#39;,&#39;suv&#39;,this)">20″+ · 555€/g</button>
         </div>
       </div>
     </div>
@@ -956,8 +1199,8 @@ select { cursor: pointer; }
       <div class="ev-f" id="evB">
         <div class="slider-field">
           <div class="field-label">Mājas uzlāde %</div>
-          <div class="slider-row"><span class="range-hint">0%</span><span class="slider-value" id="evHomeDispB">70%</span><span class="range-hint">100%</span></div>
-          <input type="range" id="evHomeB" min="0" max="100" value="70" step="5" oninput="document.getElementById(&#39;evHomeDispB&#39;).textContent=this.value+&#39;%&#39;">
+          <div class="slider-row"><span class="range-hint">0%</span><span class="slider-value" id="evHomeDispB">66%</span><span class="range-hint">100%</span></div>
+          <input type="range" id="evHomeB" min="0" max="100" value="66" step="5" oninput="document.getElementById(&#39;evHomeDispB&#39;).textContent=this.value+&#39;%&#39;">
         </div>
       </div>
     </div>
@@ -1023,8 +1266,8 @@ select { cursor: pointer; }
         <div class="tier-group" id="tyreB">
           <button class="tier-btn" onclick="setTier(&#39;tyreB&#39;,&#39;small&#39;,this)">≤16″ · 325€/g</button>
           <button class="tier-btn" onclick="setTier(&#39;tyreB&#39;,&#39;mid&#39;,this)">17″ · 390€/g</button>
-          <button class="tier-btn on" onclick="setTier(&#39;tyreB&#39;,&#39;large&#39;,this)">18-19″ · 503€/g</button>
-          <button class="tier-btn" onclick="setTier(&#39;tyreB&#39;,&#39;suv&#39;,this)">20″+ · 675€/g</button>
+          <button class="tier-btn on" onclick="setTier(&#39;tyreB&#39;,&#39;large&#39;,this)">18-19″ · 450€/g</button>
+          <button class="tier-btn" onclick="setTier(&#39;tyreB&#39;,&#39;suv&#39;,this)">20″+ · 555€/g</button>
         </div>
       </div>
     </div>
@@ -1089,7 +1332,10 @@ select { cursor: pointer; }
       Rediģēt
     </button>
     <div class="logo-mark">Honest<span class="logo-dot"></span>Cost</div>
-    <div style="width:90px;"></div>
+    <a class="btn-ghost" href="mailto:info@honestcost.lv?subject=Neprecizit%C4%81te%20kalkulatorā&body=Labrīt%2C%0A%0AAtklāju%20iespējamu%20neprecizitāti%3A%0A%0A" style="font-size:12px;text-decoration:none;color:var(--ink-3);display:inline-flex;align-items:center;gap:6px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Pamanīji kļūdu?
+    </a>
   </div>
 
   <div class="adj-bar">
@@ -1117,412 +1363,46 @@ select { cursor: pointer; }
 
   <div class="two-col" id="resGrid"></div>
   <div class="comp-bar" id="compBar"></div>
-  <p class="disclaimer">Indikatīvs aprēķins. Faktiskās izmaksas var atšķirties atkarībā no vadīšanas paradumiem, konkrēta dīlera cenām un tirgus apstākļiem. HonestCost neuzņemas atbildību par lēmumiem, kas pieņemti, balstoties uz šiem datiem.</p>
-</div>
 
-</div><!-- page-wrapper -->
+  <!-- ── AFFILIATE LINKS STRIP ──────────────────────────────── -->
+  <div class="aff-strip">
+    <span class="aff-strip-label">Nākamais solis</span>
+    <div class="aff-links">
+      <a class="aff-link" href="https://www.octa24.lv/?utm_source=honestcost&utm_medium=referral&utm_campaign=octa_results" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Salīdzini OCTA cenas
+      </a>
+      <a class="aff-link" href="https://www.balta.lv/lv/auto-apdrosinasana?utm_source=honestcost&utm_medium=referral&utm_campaign=kasko_results" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        KASKO — Balta
+      </a>
+      <a class="aff-link" href="https://www.ergo.lv/lv/apdrosinasana/auto/?utm_source=honestcost&utm_medium=referral&utm_campaign=kasko_results" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        KASKO — ERGO
+      </a>
+      <a class="aff-link" href="https://www.bta.lv/lv/auto/?utm_source=honestcost&utm_medium=referral&utm_campaign=kasko_results" target="_blank" rel="noopener">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        KASKO — BTA
+      </a>
+    </div>
+    <div class="aff-divider"></div>
+    <div class="aff-links">
+      <a class="aff-link" id="affDealerA" href="https://honestcost.lv/?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator_a" target="_blank" rel="noopener" style="display:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <span id="affDealerALabel">Konfigurēt pie dīlera</span>
+      </a>
+      <a class="aff-link" id="affDealerB" href="https://honestcost.lv/?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator_b" target="_blank" rel="noopener" style="display:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        <span id="affDealerBLabel">Konfigurēt pie dīlera</span>
+      </a>
+    </div>
+  </div>
 
-<script>
-// ─── THEME TOGGLE ──────────────────────────────────────────
-(function () {
-  const KEY = 'honestcost-theme';
-  const root = document.documentElement;
-  const saved = localStorage.getItem(KEY);
-  const initial = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-  root.setAttribute('data-theme', initial);
-  document.getElementById('themeToggle').addEventListener('click', function () {
-    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    localStorage.setItem(KEY, next);
-  });
-})();
-
-// ── CONSTANTS ──────────────────────────────────────────────
-const DEP={
-  economy:    [.20,.12,.10,.09,.08],
-  mid:        [.22,.13,.11,.10,.09],
-  premium:    [.25,.15,.13,.11,.10],
-  suv_mid:    [.18,.12,.10,.09,.08],
-  premium_suv:[.23,.14,.12,.11,.10],
-  ev:         [.25,.16,.14,.12,.12],
-  phev:       [.22,.14,.12,.11,.10],
-};
-const TYRE={small:325,mid:390,large:503,suv:675};
-const RBUF={
-  economy:    [200,400,700],
-  mid:        [300,600,1000],
-  premium:    [500,900,1500],
-  suv_mid:    [350,650,1100],
-  premium_suv:[600,1100,1800],
-  ev:         [200,400,700],
-  phev:       [500,1000,1600],
-};
-const FUEL={petrol:1.75,diesel:1.70,homeElec:0.13,pubElec:0.38};
-const OCTA_EST={ev:90,s:110,m:145,l:200,xl:300};
-
-// ── STATE ──────────────────────────────────────────────────
-const S={
-  fin:'leasing',
-  kaskoA:2.5, kaskoB:2.5,
-  tyreA:'mid', tyreB:'large',
-  repairA:'med', repairB:'med',
-};
-
-// ── CALC ENGINE (UNCHANGED) ────────────────────────────────
-function ten(co2){
-  if(co2<=50)return 0; if(co2<=95)return 30; if(co2<=115)return 50;
-  if(co2<=130)return 80; if(co2<=155)return 120; if(co2<=175)return 180;
-  if(co2<=200)return 260; if(co2<=250)return 380; return 520;
-}
-function leasing(price,downPct,apr,months,resPct){
-  const principal=price*(1-downPct/100);
-  const residual=price*(resPct/100);
-  const r=apr/1200, n=months;
-  const pv=principal-residual/Math.pow(1+r,n);
-  const mp=r===0?pv/n:pv*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
-  return{mp,total:mp*n+residual};
-}
-function residual(price,cat,yrs){
-  let v=price;
-  const rates=DEP[cat]||DEP.mid;
-  for(let y=0;y<yrs;y++) v*=(1-rates[Math.min(y,rates.length-1)]);
-  return v;
-}
-function kasko(price,rate,cat,yr){
-  return residual(price,cat,yr-1)*(rate/100);
-}
-function service(km,yr,interval,cost){
-  const s=km*(yr-1), e=km*yr;
-  return (Math.floor(e/interval)-Math.floor(s/interval))*cost;
-}
-function repairBuf(level,warTotal,cat,yr){
-  if(yr<=warTotal)return 0;
-  const li={low:0,med:1,high:2};
-  const base=(RBUF[cat]||RBUF.mid)[li[level]];
-  return base*(1+(yr-warTotal-1)*0.10);
-}
-function fuelAnnual(car,km){
-  const ft=car.ft, fp=car.fuelPr;
-  if(ft==='ev'){
-    const hk=km*(car.evHome/100), pk=km*((100-car.evHome)/100);
-    const hr=FUEL.homeElec, pr=fp||FUEL.pubElec;
-    return(hk/100)*car.cons*hr*1.10+(pk/100)*car.cons*pr*1.05;
-  }
-  if(ft==='phev'){
-    const ek=km*(car.phevShare/100), ptk=km*((100-car.phevShare)/100);
-    const hk=ek*(car.evHome/100), pk=ek*((100-car.evHome)/100);
-    const elCost=(hk/100)*car.phevEl*FUEL.homeElec*1.10+(pk/100)*car.phevEl*(fp||FUEL.pubElec)*1.05;
-    const petCost=(ptk/100)*car.phevPet*(fp||FUEL.petrol);
-    return elCost+petCost;
-  }
-  const price=fp||(ft==='diesel'?FUEL.diesel:FUEL.petrol);
-  return(km/100)*car.cons*price;
-}
-function calcAll(car,g){
-  const N=g.yrs, km=g.km;
-  const warTotal=(car.w||3)+(car.ew?(car.ewYrs||2):0);
-  let total=0;
-  const bd={leasing:0,fuel:0,service:0,tyres:0,octa:0,kasko:0,ten:0,ew:0,repair:0,park:0};
-
-  for(let y=1;y<=N;y++){
-    const f=fuelAnnual(car,km);
-    const sv=service(km,y,car.svcInt,car.svcCost);
-    const ty=TYRE[car.tyre]||390;
-    const oc=car.octa||0;
-    const ka=kasko(car.price,car.kasko,car.dep,y);
-    const tx=ten(car.co2||0);
-    const rb=repairBuf(car.repair,warTotal,car.dep,y);
-    const ta=(y===3||y===5)?40:0;
-    bd.fuel+=f; bd.service+=sv; bd.tyres+=ty; bd.octa+=oc;
-    bd.kasko+=ka; bd.ten+=tx; bd.repair+=rb;
-    total+=f+sv+ty+oc+ka+tx+rb+ta;
-  }
-  const ewTotal=car.ew&&car.ewPrice?car.ewPrice:0;
-  bd.ew=ewTotal; total+=ewTotal;
-  const pk=((car.park||0)+(car.wash||20))*12*N;
-  bd.park=pk; total+=pk;
-  if(g.fin==='leasing'){
-    const l=leasing(car.price,g.downPct,g.apr,g.months,g.resPct);
-    const lt=l.mp*Math.min(N*12,g.months);
-    bd.leasing=lt; total+=lt;
-  }
-  const res=[];
-  for(let y=0;y<=N;y++) res.push({y,v:residual(car.price,car.dep,y)});
-  return{monthly:total/(N*12),total,bd,res,warTotal,ewTotal};
-}
-
-// ── READ FORM ──────────────────────────────────────────────
-function fv(id){return parseFloat(document.getElementById(id)?.value)||0;}
-function ft(id){return(document.getElementById(id)?.value||'').trim();}
-function fc(id){return document.getElementById(id)?.checked||false;}
-
-function readCar(x){
-  return{
-    name:ft('name'+x), photoUrl:ft('photoUrl'+x),
-    price:fv('price'+x), dep:ft('depCat'+x)||'mid', ft:ft('ft'+x)||'petrol',
-    cons:fv('cons'+x), co2:fv('co2'+x), cc:fv('cc'+x),
-    w:fv('w'+x)||3, ew:fc('ewTog'+x), ewPrice:fv('ewPrice'+x), ewYrs:fv('ewYears'+x)||2,
-    svcInt:fv('svcInt'+x)||15000, svcCost:fv('svcCost'+x),
-    octa:fv('octa'+x), kasko:S['kasko'+x]||2.5, tyre:S['tyre'+x]||'mid', repair:S['repair'+x]||'med',
-    park:fv('park'+x), wash:fv('wash'+x)||20, fuelPr:fv('fuelPr'+x)||null,
-    evHome:parseFloat(document.getElementById('evHome'+x)?.value)||70,
-    phevShare:parseFloat(document.getElementById('phevShare'+x)?.value)||60,
-    phevEl:fv('phevEl'+x)||18, phevPet:fv('phevPet'+x),
-  };
-}
-function readG(){
-  return{
-    yrs:parseInt(document.getElementById('slOwn').value)||5,
-    km:parseInt(document.getElementById('slKm').value)||15000,
-    fin:S.fin,
-    downPct:fv('gDownPct')||20, apr:fv('gApr')||4.5,
-    months:parseInt(document.getElementById('slTerm').value)||48,
-    resPct:fv('gResidual')||0,
-  };
-}
-
-// ── VALIDATION ──────────────────────────────────────────────
-function validate(){
-  document.querySelectorAll('.err').forEach(e=>e.classList.remove('err'));
-  const errs=[];
-  ['A','B'].forEach(x=>{
-    const req=[
-      ['name'+x,'nosaukums'],['price'+x,'cena'],['cons'+x,'patēriņš'],
-      ['co2'+x,'CO₂'],['svcCost'+x,'apkopes cena'],['octa'+x,'OCTA'],
-    ];
-    req.forEach(([id,lbl])=>{
-      const el=document.getElementById(id);
-      if(!el)return;
-      if(!el.value||el.value==='0'&&id!=='co2'+x&&id!=='cc'+x){
-        el.classList.add('err'); errs.push('Auto '+x+': '+lbl);
-      }
-    });
-  });
-  const eb=document.getElementById('errBar');
-  if(errs.length){eb.textContent='Aizpildiet: '+errs.join(' · ');eb.classList.add('show');return false;}
-  eb.classList.remove('show');return true;
-}
-
-// ── RENDER ──────────────────────────────────────────────────
-function eur(n){return'€'+Math.round(Math.abs(n)).toLocaleString('lv-LV');}
-function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
-function ftLbl(f){return{petrol:'Benzīns',diesel:'Dīzelis',mild_hybrid:'MHEV',phev:'PHEV',ev:'Elektro'}[f]||f;}
-function repLvl(r){return{low:'Zems',med:'Vidējs',high:'Augsts'}[r]||r;}
-
-function renderResults(cA,cB,g){
-  const rA=calcAll(cA,g), rB=calcAll(cB,g);
-  const N=g.yrs;
-  const aWins=rA.monthly<=rB.monthly;
-
-  function card(car,res,x){
-    const wins=(x==='A')?aWins:!aWins;
-    const hc=x==='A'?'ca':'cb';
-    const ph=car.photoUrl?`<img class="res-photo" src="${esc(car.photoUrl)}" alt="" onerror="this.style.display='none'">`:'';
-    const heroClass=wins?'win':'lose';
-
-    const rows=[
-      ['Līzings',res.bd.leasing,g.fin==='cash'],
-      ['Degviela / Enerģija',res.bd.fuel,false],
-      ['Apkope',res.bd.service,false],
-      ['Riepas',res.bd.tyres,false],
-      ['OCTA',res.bd.octa,false],
-      ['KASKO',res.bd.kasko,false],
-      ['Transporta nodoklis',res.bd.ten,false],
-      ['Papildu garantija',res.bd.ew,false],
-      ['Remonta rezerve',res.bd.repair,false],
-      ['Stāvvieta + mazgāšana',res.bd.park,false],
-    ];
-    const trs=rows.map(([lbl,tot,skip])=>{
-      if(skip)return`<tr class="zero"><td>${lbl}</td><td>—</td><td>—</td></tr>`;
-      const mo=tot/(N*12);
-      return`<tr><td>${lbl}</td><td>${eur(mo)}/mēn</td><td>${eur(tot)}</td></tr>`;
-    }).join('');
-
-    let wNote='';
-    if(car.ew&&car.ewPrice){
-      const lvl={low:0,med:1,high:2}[car.repair];
-      const postBuf=(RBUF[car.dep]||RBUF.mid)[lvl];
-      const be=(car.ewPrice/postBuf).toFixed(1);
-      wNote=`<div class="w-note">Papildu garantija atmaksājas ja 1+ remonts ${be} gados pēc standarta garantijas beigām.</div>`;
-    }
-
-    const depRows=res.res.map(r=>{
-      const loss=car.price-r.v;
-      return`<div class="dep-row">
-        <span class="dep-yr">${r.y===0?'Sākums':r.y+'. gads'}</span>
-        <span class="dep-val">${eur(r.v)}</span>
-        <span class="dep-loss">${r.y>0?'−'+eur(loss):''}</span>
-      </div>`;
-    }).join('');
-
-    return`<div class="res-card">
-      <div class="res-head ${hc}">
-        ${ph}
-        <div class="res-name">${esc(car.name)}</div>
-        <div class="res-meta">${eur(car.price)} · ${ftLbl(car.ft)} · ${car.w}g garantija · CO₂ ${car.co2}g/km · ${repLvl(car.repair)} risks</div>
-      </div>
-      <div class="hero-block">
-        <div class="hero-label">Vidējās mēneša izmaksas</div>
-        <div class="hero-num ${heroClass}">${eur(res.monthly)}<span class="hero-sub">/mēn</span></div>
-        <div class="hero-total">${N} gados — ${eur(res.total)}</div>
-      </div>
-      ${wNote}
-      <div class="ct-wrap">
-        <table class="cost-tbl">
-          <thead><tr><th>Izmaksu kategorija</th><th>Mēnesī</th><th>${N} gados</th></tr></thead>
-          <tbody>${trs}</tbody>
-          <tfoot><tr><td>KOPĀ</td><td>${eur(res.monthly)}/mēn</td><td>${eur(res.total)}</td></tr></tfoot>
-        </table>
-      </div>
-      <div class="dep-sec">
-        <div class="dep-title">Tirgus vērtība — nolietojums</div>
-        ${depRows}
-      </div>
-    </div>`;
-  }
-
-  document.getElementById('resGrid').innerHTML=card(cA,rA,'A')+card(cB,rB,'B');
-
-  const delta=Math.abs(rA.monthly-rB.monthly);
-  const deltaT=Math.abs(rA.total-rB.total);
-  const cheapName=aWins?esc(cA.name):esc(cB.name);
-  const lossA=cA.price-rA.res[N]?.v;
-  const lossB=cB.price-rB.res[N]?.v;
-  const betterDep=lossA<lossB?esc(cA.name):esc(cB.name);
-  const depDelta=Math.abs(lossA-lossB);
-
-  document.getElementById('compBar').innerHTML=`
-    <div><div class="cl">Lētākais</div><div class="cn">${cheapName}</div></div>
-    <div><div class="cl">Ietaupījums ${N} gados</div><div class="cv">${eur(deltaT)}</div><div class="cs">${eur(delta)}/mēn starpība</div></div>
-    <div><div class="cl">Mazāk vērtību zaudē</div><div class="cn">${betterDep}</div><div class="cs">Starpība: ${eur(depDelta)}</div></div>
-  `;
-}
-
-// ── UI HANDLERS ────────────────────────────────────────────
-function setTier(groupId,val,btn){
-  document.querySelectorAll('#'+groupId+' .tier-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  if(groupId==='kaskoA')S.kaskoA=parseFloat(val);
-  if(groupId==='kaskoB')S.kaskoB=parseFloat(val);
-  if(groupId==='tyreA')S.tyreA=val;
-  if(groupId==='tyreB')S.tyreB=val;
-  if(groupId==='repairA')S.repairA=val;
-  if(groupId==='repairB')S.repairB=val;
-}
-function onFuelChange(x){
-  const ft=document.getElementById('ft'+x).value;
-  document.getElementById('phev'+x).classList.toggle('show',ft==='phev');
-  document.getElementById('ev'+x).classList.toggle('show',ft==='ev');
-  const lbl=document.getElementById('consLbl'+x);
-  const txt=ft==='ev'?'Patēriņš (kWh/100km) *':'Patēriņš (L/100km) *';
-  lbl.childNodes[0].textContent=txt+' ';
-}
-function toggleEW(x){
-  document.getElementById('ew'+x).classList.toggle('show',document.getElementById('ewTog'+x).checked);
-}
-function toggleMore(x){
-  const m=document.getElementById('more'+x);
-  const ch=document.getElementById('mch'+x);
-  m.classList.toggle('open');
-  ch.classList.toggle('up',m.classList.contains('open'));
-}
-function autoOCTA(x){
-  const cc=fv('cc'+x);
-  const el=document.getElementById('octa'+x);
-  if(el.value)return;
-  let est;
-  if(cc===0)est=OCTA_EST.ev;
-  else if(cc<=1600)est=OCTA_EST.s;
-  else if(cc<=2000)est=OCTA_EST.m;
-  else if(cc<=3000)est=OCTA_EST.l;
-  else est=OCTA_EST.xl;
-  el.value=est;
-}
-
-// Financing toggle
-document.querySelectorAll('.toggle-btn[data-fin]').forEach(btn=>{
-  btn.addEventListener('click',function(){
-    S.fin=this.dataset.fin;
-    document.querySelectorAll('.toggle-btn[data-fin]').forEach(b=>b.classList.remove('on'));
-    this.classList.add('on');
-    document.getElementById('leasingFields').classList.toggle('open',S.fin==='leasing');
-  });
-});
-
-// Slider displays
-document.getElementById('slOwn').addEventListener('input',function(){
-  const v=parseInt(this.value);
-  document.getElementById('dispOwn').textContent=v+(v===1?' gads':' gadi');
-});
-document.getElementById('slKm').addEventListener('input',function(){
-  document.getElementById('dispKm').textContent=parseInt(this.value).toLocaleString('lv-LV')+' km/g';
-});
-document.getElementById('slTerm').addEventListener('input',function(){
-  document.getElementById('dispTerm').textContent=this.value+' mēn';
-});
-
-// Photo preview
-['A','B'].forEach(x=>{
-  document.getElementById('photoUrl'+x).addEventListener('blur',function(){
-    const img=document.getElementById('phImg'+x);
-    if(this.value){img.src=this.value;img.style.display='block';img.onerror=()=>img.style.display='none';}
-    else{img.style.display='none';}
-  });
-});
-
-// Analyse
-let lastA,lastB,lastG;
-function doAnalyse(){
-  if(!validate())return;
-  lastA=readCar('A');lastB=readCar('B');lastG=readG();
-  document.getElementById('adjKm').value=lastG.km;
-  document.getElementById('adjOwn').value=lastG.yrs;
-  updAdjDisp();
-  renderResults(lastA,lastB,lastG);
-  document.getElementById('screen1').style.display='none';
-  document.getElementById('screen2').style.display='block';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function goBack(){
-  document.getElementById('screen2').style.display='none';
-  document.getElementById('screen1').style.display='block';
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function updAdjDisp(){
-  const km=parseInt(document.getElementById('adjKm').value);
-  const yr=parseInt(document.getElementById('adjOwn').value);
-  document.getElementById('adjKmDisp').textContent=km.toLocaleString('lv-LV')+' km/g';
-  document.getElementById('adjOwnDisp').textContent=yr+(yr===1?' gads':' gadi');
-}
-function onAdj(){
-  if(!lastA)return;
-  updAdjDisp();
-  const ag={...lastG,km:parseInt(document.getElementById('adjKm').value),yrs:parseInt(document.getElementById('adjOwn').value)};
-  renderResults(lastA,lastB,ag);
-}
-
-// Example data (BMW 1-Series vs X1)
-document.getElementById('exampleBtn').addEventListener('click',()=>{
-  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
-  set('slOwn',5);document.getElementById('dispOwn').textContent='5 gadi';
-  set('slKm',15000);document.getElementById('dispKm').textContent='15 000 km/g';
-  set('nameA','BMW 1. sērija 118i M Sport');
-  set('priceA',38500);
-  document.getElementById('depCatA').value='premium';
-  document.getElementById('ftA').value='petrol';onFuelChange('A');
-  set('consA',6.2);set('co2A',142);set('ccA',1499);
-  set('wA',3);set('svcIntA',15000);set('svcCostA',280);
-  document.getElementById('octaA').value='';autoOCTA('A');
-  set('nameB','BMW X1 xDrive20i M Sport');
-  set('priceB',48900);
-  document.getElementById('depCatB').value='premium_suv';
-  document.getElementById('ftB').value='petrol';onFuelChange('B');
-  set('consB',8.4);set('co2B',191);set('ccB',1998);
-  set('wB',3);set('svcIntB',15000);set('svcCostB',320);
-  document.getElementById('octaB').value='';autoOCTA('B');
-});
-
-lucide.createIcons();
-</script>
-</body>
-</html>
+  <!-- ── METHODOLOGY / TRUST ────────────────────────────────── -->
+  <div class="trust-section" id="trustSection">
+    <button class="trust-toggle" onclick="document.getElementById('trustSection').classList.toggle('open')" type="button">
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        Kā mēs aprēķinām? — Datu avoti un metodoloģija
+      </span>
+      <svg class="trust-toggle-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="c
