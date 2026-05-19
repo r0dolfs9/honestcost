@@ -1,0 +1,1528 @@
+﻿<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1100">
+<title>HonestCost — Pilnās automobiļa izmaksas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@400;500;600;700&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+:root {
+  --ink: #16181D;
+  --ink-2: #4A4E58;
+  --ink-3: #878B95;
+  --line: #ECEAE3;
+  --line-2: #E1DED4;
+  --bg: #F4F2EC;
+  --surface: #FFFFFF;
+  --surface-alt: #FAF8F2;
+  --accent: #3344F0;
+  --accent-dark: #2734C7;
+  --accent-soft: #EBEDFF;
+  --car-a: #3344F0;
+  --car-b: #9A6CFF;
+  --car-a-bg: rgba(51,68,240,0.07);
+  --car-b-bg: rgba(154,108,255,0.07);
+  --amber: #F5A623;
+  --win: #11A05F;
+  --win-soft: #E5F6EE;
+  --warn: #D24545;
+  --warn-soft: #FBEAEA;
+  --red: #DC2626;
+  --shadow-1: 0 1px 2px rgba(20,22,28,.04), 0 8px 28px -8px rgba(20,22,28,.10);
+  --shadow-2: 0 2px 4px rgba(20,22,28,.05), 0 24px 56px -16px rgba(20,22,28,.16);
+  --ff-display: 'Barlow Condensed', 'Inter Tight', sans-serif;
+  --ff-ui: 'Inter Tight', 'Inter', system-ui, -apple-system, sans-serif;
+  --ff-mono: 'DM Mono', ui-monospace, monospace;
+}
+
+[data-theme="dark"] {
+  --ink: #ECEAE3;
+  --ink-2: #B3B6BD;
+  --ink-3: #7A7E88;
+  --line: #262830;
+  --line-2: #32353E;
+  --bg: #0E0F13;
+  --surface: #181A20;
+  --surface-alt: #14161B;
+  --accent: #6B85FF;
+  --accent-dark: #8FA3FF;
+  --accent-soft: rgba(107,133,255,0.14);
+  --car-a: #6B85FF;
+  --car-b: #B58BFF;
+  --car-a-bg: rgba(107,133,255,0.12);
+  --car-b-bg: rgba(181,139,255,0.12);
+  --amber: #F5B947;
+  --win: #5DE5A1;
+  --win-soft: rgba(93,229,161,0.14);
+  --warn: #FF7575;
+  --warn-soft: rgba(255,117,117,0.14);
+  --red: #FF7575;
+  --shadow-1: 0 0 0 1px rgba(255,255,255,0.04), 0 12px 32px -12px rgba(0,0,0,.5);
+  --shadow-2: 0 0 0 1px rgba(255,255,255,0.06), 0 24px 56px -16px rgba(0,0,0,.65);
+}
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--bg); color: var(--ink); }
+body {
+  min-width: 1100px;
+  font-family: var(--ff-ui);
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.2s, color 0.2s;
+}
+::selection { background: var(--accent); color: #fff; }
+button { font-family: inherit; cursor: pointer; }
+
+.page-wrapper { max-width: 1280px; margin: 0 auto; padding: 24px 32px 80px; }
+
+/* ─── NAV ─── */
+.site-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; background: var(--surface); border-radius: 20px;
+  box-shadow: var(--shadow-1); margin-bottom: 32px;
+}
+.logo-mark {
+  display: inline-flex; align-items: baseline;
+  font-family: var(--ff-display); font-size: 24px; font-weight: 600;
+  letter-spacing: -0.02em; color: var(--ink); line-height: 1;
+}
+.logo-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--amber);
+  display: inline-block; margin: 0 2px 5px; align-self: center;
+}
+.site-tagline { font-size: 13px; color: var(--ink-3); margin-top: 4px; }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.lang-pill {
+  padding: 8px 14px; border-radius: 999px; background: var(--bg);
+  font-size: 13px; color: var(--ink-2); font-weight: 500;
+}
+.theme-toggle {
+  width: 38px; height: 38px; border-radius: 999px;
+  background: var(--bg); border: 1px solid var(--line);
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0; transition: background 0.15s, transform 0.2s;
+}
+.theme-toggle:hover { background: var(--line); transform: rotate(15deg); }
+.theme-toggle svg { width: 16px; height: 16px; stroke: var(--ink-2); fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.theme-toggle .sun { display: none; }
+[data-theme="dark"] .theme-toggle .sun { display: block; }
+[data-theme="dark"] .theme-toggle .moon { display: none; }
+.btn-example {
+  padding: 9px 16px; border-radius: 999px; background: var(--bg);
+  border: 1px solid var(--line); color: var(--ink-2); font-size: 13px; font-weight: 500;
+  display: inline-flex; align-items: center; gap: 7px; transition: background 0.15s, color 0.15s;
+}
+.btn-example:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+/* ─── HERO ─── */
+.hero { text-align: center; margin: 48px auto 0; padding: 0 20px; max-width: 960px; }
+.hero .kicker {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;
+  border-radius: 999px; background: var(--surface); box-shadow: var(--shadow-1);
+  font-size: 12px; color: var(--ink-2);
+}
+.hero .kicker .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--win); }
+.hero h1 {
+  font-family: var(--ff-ui); font-weight: 600;
+  font-size: 64px; line-height: 1.02; letter-spacing: -0.035em;
+  margin: 22px auto 0; max-width: 880px;
+}
+.hero h1 .muted { color: var(--ink-3); }
+.hero p.lede { margin: 18px auto 0; font-size: 17px; color: var(--ink-2); max-width: 580px; }
+
+/* ─── SETTINGS PILL ─── */
+.global-bar {
+  margin: 32px auto 0; max-width: 880px;
+  background: var(--surface); border-radius: 24px; padding: 6px;
+  box-shadow: var(--shadow-1);
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px;
+}
+.setting {
+  padding: 14px 18px; border-radius: 20px;
+  display: flex; align-items: flex-start; gap: 14px; cursor: default;
+  transition: background 0.15s;
+}
+.setting .ic {
+  width: 36px; height: 36px; border-radius: 12px; background: var(--bg);
+  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.setting .ic svg { width: 16px; height: 16px; stroke: var(--ink-2); fill: none; stroke-width: 1.5; }
+.setting .body { flex: 1; min-width: 0; }
+.g-section-label {
+  font-family: var(--ff-mono); font-size: 10px; font-weight: 500;
+  color: var(--ink-3); letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.slider-field { display: flex; flex-direction: column; gap: 4px; }
+.slider-row { display: flex; justify-content: space-between; align-items: center; }
+.slider-value {
+  font-family: var(--ff-mono); font-size: 13px; font-weight: 500;
+  color: var(--ink);
+}
+.range-hint { font-size: 11px; color: var(--ink-3); font-family: var(--ff-mono); }
+
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 4px; background: var(--line);
+  border-radius: 2px; outline: none; cursor: pointer; margin-top: 6px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 18px;
+  background: var(--accent); border-radius: 50%; cursor: pointer;
+  box-shadow: 0 1px 4px rgba(51,68,240,.4); transition: transform .1s;
+}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+input[type="range"]::-moz-range-thumb {
+  width: 18px; height: 18px; border: none;
+  background: var(--accent); border-radius: 50%; cursor: pointer;
+}
+
+/* Financing segmented toggle */
+.toggle-group {
+  display: flex; background: var(--bg); border-radius: 999px;
+  padding: 3px; gap: 2px;
+}
+.toggle-btn {
+  padding: 7px 14px; border: none; background: transparent;
+  border-radius: 999px; font-family: var(--ff-ui); font-size: 12px;
+  font-weight: 500; color: var(--ink-3); transition: all .15s;
+}
+.toggle-btn.on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(20,22,28,.06); }
+
+.leasing-fields {
+  display: none; gap: 12px; margin-top: 14px; flex-wrap: wrap;
+  padding: 14px; background: var(--bg); border-radius: 14px;
+  grid-column: 1 / -1;
+}
+.global-bar .leasing-fields.open { display: flex; }
+.leasing-fields .slider-field { min-width: 160px; flex: 1; }
+
+/* ─── INPUTS ─── */
+.field-group { display: flex; flex-direction: column; gap: 5px; }
+.field-label {
+  font-family: var(--ff-mono); font-size: 10px; font-weight: 500;
+  color: var(--ink-3); letter-spacing: 0.12em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 5px;
+}
+input[type="text"], input[type="number"], input[type="url"], select {
+  height: 40px; padding: 0 14px;
+  border: 1px solid var(--line); border-radius: 12px;
+  background: var(--bg); font-family: var(--ff-ui); font-size: 14px;
+  color: var(--ink); transition: all .15s; outline: none; width: 100%;
+}
+input:focus, select:focus {
+  border-color: var(--accent); background: var(--surface);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+input.err, select.err { border-color: var(--red); background: var(--warn-soft); }
+input::placeholder { color: var(--ink-3); }
+select { cursor: pointer; }
+
+/* TOOLTIP */
+.tip { position: relative; display: inline-flex; align-items: center; }
+.tip-icon {
+  width: 14px; height: 14px; background: var(--line); border-radius: 50%;
+  font-size: 9px; font-weight: 600; color: var(--ink-2);
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: help; flex-shrink: 0; border: none; outline: none;
+}
+.tip-icon:focus { box-shadow: 0 0 0 2px var(--accent); }
+.tip-box {
+  visibility: hidden; opacity: 0;
+  width: 240px; background: var(--ink); color: var(--bg);
+  font-size: 12px; font-family: var(--ff-ui); line-height: 1.5;
+  padding: 12px 14px; border-radius: 12px;
+  position: absolute; bottom: calc(100% + 8px); left: -6px;
+  z-index: 300; pointer-events: none; transition: opacity .15s;
+  box-shadow: var(--shadow-2);
+}
+.tip:hover .tip-box, .tip-icon:focus + .tip-box { visibility: visible; opacity: 1; }
+
+/* ─── TWO-COL ─── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+/* ─── CAR CARDS ─── */
+.car-col {
+  background: var(--surface); border-radius: 28px; overflow: hidden;
+  box-shadow: var(--shadow-1); transition: transform 0.15s, box-shadow 0.15s;
+}
+.car-col:hover { box-shadow: var(--shadow-2); }
+.col-header {
+  padding: 20px 28px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.col-header-left { display: flex; align-items: center; gap: 12px; }
+.car-letter {
+  width: 28px; height: 28px; border-radius: 50%;
+  color: #fff; font-family: var(--ff-ui); font-weight: 600; font-size: 13px;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.col-header.ca .car-letter { background: var(--car-a); }
+.col-header.cb .car-letter { background: var(--car-b); }
+.col-header .lbl {
+  font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3);
+}
+.col-header svg { stroke: var(--ink-3); }
+.col-body { padding: 8px 28px 28px; display: flex; flex-direction: column; gap: 24px; }
+
+/* SECTION WITHIN CAR */
+.sec { display: flex; flex-direction: column; gap: 12px; }
+.sec-title {
+  font-family: var(--ff-mono); font-size: 10px; font-weight: 500;
+  color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.14em;
+  padding-bottom: 8px; border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: 6px;
+}
+.field-row { display: flex; gap: 12px; }
+.field-row .field-group { flex: 1; min-width: 0; }
+
+/* PHOTO */
+.photo-box {
+  height: 120px; background: var(--bg);
+  border: 1px solid var(--line); border-radius: 18px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; color: var(--ink-3); font-size: 11px;
+  overflow: hidden; position: relative;
+}
+.car-col[data-side="A"] .photo-box { background: var(--car-a-bg); }
+.car-col[data-side="B"] .photo-box { background: var(--car-b-bg); }
+.photo-box img {
+  width: 100%; height: 100%; object-fit: cover;
+  position: absolute; inset: 0; display: none;
+}
+
+/* TIER BUTTONS */
+.tier-group { display: flex; gap: 6px; flex-wrap: wrap; }
+.tier-btn {
+  padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface); font-family: var(--ff-ui);
+  font-size: 12px; font-weight: 500; color: var(--ink-2);
+  transition: all .12s; white-space: nowrap;
+}
+.tier-btn:hover { border-color: var(--accent); color: var(--accent); }
+.tier-btn.on { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+
+/* MORE OPTIONS */
+.more-btn {
+  background: none; border: none; padding: 8px 0;
+  font-family: var(--ff-mono); font-size: 11px; font-weight: 500;
+  color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 6px;
+}
+.more-btn:hover { color: var(--accent-dark); }
+.more-content { display: none; flex-direction: column; gap: 12px; padding-top: 4px; }
+.more-content.open { display: flex; }
+.chevron { transition: transform .2s; }
+.chevron.up { transform: rotate(180deg); }
+
+/* CONDITIONAL */
+.phev-f, .ev-f, .ext-w-f { display: none; }
+.phev-f.show, .ev-f.show, .ext-w-f.show { display: flex; flex-direction: column; gap: 10px; }
+
+/* EXT WARRANTY TOGGLE */
+.check-row { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; color: var(--ink-2); }
+.check-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--accent); }
+
+/* ─── ANALYSE ─── */
+.analyse-wrap {
+  margin-top: 40px; display: flex; flex-direction: column;
+  align-items: center; gap: 14px;
+}
+.err-bar {
+  display: none; padding: 12px 18px; background: var(--warn-soft);
+  border: 1px solid var(--warn); border-radius: 12px;
+  color: var(--warn); font-size: 13px; max-width: 520px; text-align: center;
+}
+.err-bar.show { display: block; }
+.btn-primary {
+  background: var(--ink); color: var(--surface); border: none;
+  padding: 18px 40px; font-family: var(--ff-ui); font-size: 15px; font-weight: 500;
+  border-radius: 999px; box-shadow: var(--shadow-2);
+  display: inline-flex; align-items: center; gap: 12px;
+  transition: transform 0.15s;
+}
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-primary:active { transform: translateY(0) scale(0.97); }
+.analyse-wrap .sub { font-size: 12px; color: var(--ink-3); }
+
+.btn-ghost {
+  height: 40px; padding: 0 18px;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 999px; font-family: var(--ff-ui);
+  font-size: 13px; font-weight: 500; color: var(--ink);
+  display: flex; align-items: center; gap: 7px; transition: all .15s;
+}
+.btn-ghost:hover { background: var(--bg); border-color: var(--ink-3); }
+
+/* ─── SCREEN 2 ─── */
+#screen2 { display: none; }
+.res-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; background: var(--surface);
+  border-radius: 20px; box-shadow: var(--shadow-1); margin-bottom: 28px;
+}
+.res-header .logo-mark { font-size: 22px; }
+
+.adj-bar {
+  margin: 0 auto 28px; max-width: 760px;
+  background: var(--surface); border-radius: 24px; padding: 8px;
+  box-shadow: var(--shadow-1);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+}
+.adj-bar .setting { padding: 14px 18px; }
+
+/* RESULT CARD (rendered by JS — keep classnames) */
+.res-card {
+  background: var(--surface); border-radius: 28px; overflow: hidden;
+  box-shadow: var(--shadow-1); transition: transform 0.15s, box-shadow 0.15s;
+}
+.res-card:hover { box-shadow: var(--shadow-2); }
+.res-head { padding: 24px 28px 18px; position: relative; }
+.res-head.ca { background: var(--car-a-bg); }
+.res-head.cb { background: var(--car-b-bg); }
+.res-head::after {
+  content: ''; position: absolute; left: 28px; right: 28px; bottom: 0;
+  height: 1px; background: var(--line);
+}
+.res-photo {
+  width: 100%; height: 140px; object-fit: cover;
+  display: block; margin-bottom: 14px; border-radius: 14px;
+}
+.res-name { font-family: var(--ff-ui); font-weight: 600; font-size: 22px; letter-spacing: -0.02em; color: var(--ink); }
+.res-meta { font-size: 12px; color: var(--ink-2); margin-top: 6px; }
+
+/* HERO */
+.hero-block {
+  padding: 24px 28px 22px; text-align: center;
+  border-bottom: 1px solid var(--line);
+}
+.hero-label {
+  font-family: var(--ff-mono); font-size: 10px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--ink-3); margin-bottom: 8px;
+}
+.hero-num {
+  font-family: var(--ff-display); font-weight: 600; font-size: 72px;
+  letter-spacing: -0.035em; line-height: 0.95; color: var(--ink);
+}
+.hero-num.win { color: var(--win); }
+.hero-num.lose { color: var(--ink); }
+.hero-sub { font-family: var(--ff-ui); font-size: 17px; color: var(--ink-3); font-weight: 400; margin-left: 4px; }
+.hero-total { font-size: 13px; color: var(--ink-2); margin-top: 10px; }
+.hero-total::before { content: 'Kopā '; }
+
+/* COST TABLE */
+.ct-wrap { padding: 18px 28px 22px; }
+.cost-tbl { width: 100%; border-collapse: collapse; }
+.cost-tbl th {
+  font-family: var(--ff-mono); font-size: 10px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3);
+  padding: 0 8px 10px; text-align: left;
+}
+.cost-tbl th:not(:first-child) { text-align: right; }
+.cost-tbl td {
+  padding: 9px 8px; font-size: 13px; color: var(--ink-2);
+  border-top: 1px solid var(--line);
+}
+.cost-tbl tbody tr:first-child td { border-top: none; }
+.cost-tbl td:not(:first-child) {
+  font-family: var(--ff-mono); font-weight: 500; font-size: 12px;
+  text-align: right; color: var(--ink);
+}
+.cost-tbl tr.zero td { opacity: 0.35; }
+.cost-tbl tfoot td {
+  font-family: var(--ff-mono); font-weight: 600; font-size: 13px;
+  border-top: 2px solid var(--ink); padding-top: 12px; color: var(--ink);
+}
+.cost-tbl tfoot td:first-child { font-family: var(--ff-ui); font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* DEP */
+.dep-sec {
+  padding: 18px 28px 24px;
+  background: var(--surface-alt);
+  border-top: 1px solid var(--line);
+}
+.dep-title {
+  font-family: var(--ff-mono); font-size: 10px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--ink-3); margin-bottom: 12px;
+}
+.dep-row {
+  display: grid; grid-template-columns: 1fr auto auto;
+  gap: 12px; align-items: center;
+  padding: 6px 0; font-size: 12px;
+  border-bottom: 1px solid var(--line);
+}
+.dep-row:last-child { border: none; }
+.dep-yr { color: var(--ink-2); }
+.dep-val { font-family: var(--ff-mono); font-weight: 500; color: var(--ink); }
+.dep-loss { font-family: var(--ff-mono); color: var(--warn); font-size: 11px; }
+
+/* WARRANTY NOTE */
+.w-note {
+  margin: 0 28px; padding: 12px 14px;
+  background: rgba(245,166,35,0.08);
+  border: 1px solid rgba(245,166,35,0.3);
+  border-radius: 12px; font-size: 11px; color: var(--ink-2); line-height: 1.5;
+}
+
+/* COMPARISON / VERDICT BAR */
+.comp-bar {
+  background: linear-gradient(150deg, #1A1D24 0%, #25272D 60%, #2E2F35 100%);
+  color: #F4F2EC; padding: 36px 44px; border-radius: 36px;
+  margin-top: 24px; box-shadow: var(--shadow-2);
+  display: grid; grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 40px; align-items: center;
+  position: relative; overflow: hidden;
+}
+.comp-bar::before {
+  content: ''; position: absolute; top: -120px; right: -80px;
+  width: 380px; height: 380px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,166,35,0.22) 0%, transparent 70%);
+  filter: blur(10px); pointer-events: none;
+}
+.comp-bar > div { position: relative; }
+.comp-bar .cl {
+  font-family: var(--ff-mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: #9B9DA6; margin-bottom: 8px;
+}
+.comp-bar .cv {
+  font-family: var(--ff-display); font-size: 56px; font-weight: 600;
+  color: var(--amber); line-height: 0.95; letter-spacing: -0.035em;
+}
+.comp-bar .cs { font-size: 12px; color: #B3B6BD; margin-top: 6px; }
+.comp-bar .cn {
+  font-family: var(--ff-display); font-size: 36px; font-weight: 600;
+  color: #F8FAFC; letter-spacing: -0.025em; line-height: 1.05;
+}
+
+.disclaimer {
+  text-align: center; font-size: 11px; color: var(--ink-3);
+  margin-top: 28px; padding: 0 32px;
+}
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+<!-- ======== SCREEN 1 ======== -->
+<div id="screen1">
+
+<!-- NAV -->
+<header class="site-header">
+  <div style="display:flex;flex-direction:column;gap:2px;">
+    <div class="logo-mark">Honest<span class="logo-dot"></span>Cost</div>
+    <div class="site-tagline">Salīdzini divu jaunu automobiļu pilnās izmaksas — ne tikai cenu</div>
+  </div>
+  <div class="nav-right">
+    <button class="btn-example" id="exampleBtn">
+      <i data-lucide="zap" style="width:14px;height:14px;"></i>
+      Ielādēt piemēru
+    </button>
+    <span class="lang-pill">LV</span>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Mainīt tēmu">
+      <svg class="moon" viewbox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="sun" viewbox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4l1.4-1.4M17 7l1.4-1.4"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="kicker"><span class="dot"></span>Bezmaksas · Bez reģistrācijas · Latvijas tirgum 2026</div>
+  <h1>Reālā mēneša cena — <span class="muted">nevis bukleta.</span></h1>
+  <p class="lede">Ievadi divus auto. Mēs apvienojam amortizāciju, KASKO, riepas, apkopi un nodokli vienā skaitlī.</p>
+</section>
+
+<!-- GLOBAL SETTINGS -->
+<div class="global-bar">
+  <div class="setting">
+    <span class="ic"><i data-lucide="calendar"></i></span>
+    <div class="body">
+      <div class="g-section-label">Periods</div>
+      <div class="slider-field">
+        <div class="slider-row">
+          <span class="range-hint">1g</span>
+          <span class="slider-value" id="dispOwn">5 gadi</span>
+          <span class="range-hint">10g</span>
+        </div>
+        <input type="range" id="slOwn" min="1" max="10" value="5" step="1">
+      </div>
+    </div>
+  </div>
+
+  <div class="setting">
+    <span class="ic"><i data-lucide="gauge"></i></span>
+    <div class="body">
+      <div class="g-section-label">Gada nobraukums</div>
+      <div class="slider-field">
+        <div class="slider-row">
+          <span class="range-hint">5k</span>
+          <span class="slider-value" id="dispKm">15 000 km/g</span>
+          <span class="range-hint">75k</span>
+        </div>
+        <input type="range" id="slKm" min="5000" max="75000" value="15000" step="1000">
+      </div>
+    </div>
+  </div>
+
+  <div class="setting">
+    <span class="ic"><i data-lucide="coins"></i></span>
+    <div class="body">
+      <div class="g-section-label">Finansēšana</div>
+      <div class="toggle-group">
+        <button class="toggle-btn on" data-fin="leasing">Līzings</button>
+        <button class="toggle-btn" data-fin="cash">Skaidra</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="leasing-fields open" id="leasingFields">
+    <div class="field-group" style="min-width:110px;flex:1;">
+      <div class="field-label">Pirmā iemaksa %
+        <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Procentuālā daļa no cenas, ko maksājat uzreiz.</span></span>
+      </div>
+      <input type="number" id="gDownPct" value="20" min="0" max="50">
+    </div>
+    <div class="field-group" style="min-width:100px;flex:1;">
+      <div class="field-label">APR %
+        <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Gada procentu likme. Latvijā tipiskā 3–6%.</span></span>
+      </div>
+      <input type="number" id="gApr" value="4.5" min="1" max="20" step="0.1">
+    </div>
+    <div class="slider-field" style="min-width:170px;flex:1.5;">
+      <div class="field-label">Termiņš
+        <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Līguma ilgums. Biežāk 48 vai 60 mēneši.</span></span>
+      </div>
+      <div class="slider-row">
+        <span class="range-hint">12m</span>
+        <span class="slider-value" id="dispTerm">48 mēn</span>
+        <span class="range-hint">84m</span>
+      </div>
+      <input type="range" id="slTerm" min="12" max="84" value="48" step="6">
+    </div>
+    <div class="field-group" style="min-width:100px;flex:1;">
+      <div class="field-label">Atlikušā %
+        <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Balona maksājums beigās. Latvijā 0–20%.</span></span>
+      </div>
+      <input type="number" id="gResidual" value="0" min="0" max="40">
+    </div>
+  </div>
+</div>
+
+<!-- TWO CARS -->
+<div class="two-col" style="margin-top:28px;">
+
+<!-- ===== CAR A ===== -->
+<div class="car-col" data-side="A">
+  <div class="col-header ca">
+    <div class="col-header-left">
+      <span class="car-letter">A</span>
+      <div>
+        <div class="lbl">Automobilis A</div>
+      </div>
+    </div>
+    <i data-lucide="car" style="width:18px;height:18px;"></i>
+  </div>
+  <div class="col-body">
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="tag" style="width:11px;height:11px;"></i> Identifikācija</div>
+      <div class="photo-box" id="phBoxA">
+        <i data-lucide="image" style="width:22px;height:22px;"></i>
+        <span>Foto priekšskatījums</span>
+        <img id="phImgA" alt="">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Auto nosaukums *</div>
+        <input type="text" id="nameA" placeholder="piem. BMW 1. sērija 118i M Sport">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Foto URL</div>
+        <input type="url" id="photoUrlA" placeholder="https://...">
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="euro" style="width:11px;height:11px;"></i> Pirkums</div>
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label">Cena (€) *
+            <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Pilna cena ar opcijām, bez finansēšanas.</span></span>
+          </div>
+          <input type="number" id="priceA" placeholder="38500" min="5000" max="500000">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Nolietojums *
+            <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Cik ātri auto zaudē vērtību. Premium zīmoli zaudē vairāk, hibrīdi mazāk.</span></span>
+          </div>
+          <select id="depCatA">
+            <option value="economy">Ekonom klase</option>
+            <option value="mid" selected="">Vidējā klase</option>
+            <option value="premium">Premium</option>
+            <option value="suv_mid">SUV vidējā</option>
+            <option value="premium_suv">Premium SUV</option>
+            <option value="ev">Elektriskais</option>
+            <option value="phev">PHEV hibrīds</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="fuel" style="width:11px;height:11px;"></i> Dzinējs</div>
+      <div class="field-group">
+        <div class="field-label">Degvielas tips *</div>
+        <select id="ftA" onchange="onFuelChange(&#39;A&#39;)">
+          <option value="petrol" selected="">Benzīns</option>
+          <option value="diesel">Dīzelis</option>
+          <option value="mild_hybrid">Viegls hibrīds (MHEV)</option>
+          <option value="phev">Spraudņa hibrīds (PHEV)</option>
+          <option value="ev">Pilnīgi elektriskais (BEV)</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label" id="consLblA">Patēriņš (L/100km) *
+            <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">WLTP vidējais patēriņš.</span></span>
+          </div>
+          <input type="number" id="consA" placeholder="6.2" min="0.5" max="30" step="0.1">
+        </div>
+        <div class="field-group">
+          <div class="field-label">CO₂ (g/km) *
+            <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Atrodams auto dokumentos. Nosaka transportlīdzekļa nodokli.</span></span>
+          </div>
+          <input type="number" id="co2A" placeholder="142" min="0" max="400">
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">Tilpums (cc) *
+          <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">OCTA aprēķinam. EV — ievadiet 0.</span></span>
+        </div>
+        <input type="number" id="ccA" placeholder="1499" min="0" max="8000" oninput="autoOCTA(&#39;A&#39;)">
+      </div>
+
+      <div class="phev-f" id="phevA">
+        <div class="field-row">
+          <div class="field-group">
+            <div class="field-label">El. patēriņš (kWh/100km)</div>
+            <input type="number" id="phevElA" placeholder="18" min="5" max="50" step="0.1">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Benz. patēriņš (L/100km)</div>
+            <input type="number" id="phevPetA" placeholder="6.0" min="1" max="20" step="0.1">
+          </div>
+        </div>
+        <div class="slider-field">
+          <div class="field-label">El. braukšanas daļa %</div>
+          <div class="slider-row"><span class="range-hint">0%</span><span class="slider-value" id="phevShareDispA">60%</span><span class="range-hint">100%</span></div>
+          <input type="range" id="phevShareA" min="0" max="100" value="60" step="5" oninput="document.getElementById(&#39;phevShareDispA&#39;).textContent=this.value+&#39;%&#39;">
+        </div>
+      </div>
+      <div class="ev-f" id="evA">
+        <div class="slider-field">
+          <div class="field-label">Mājas uzlāde %</div>
+          <div class="slider-row"><span class="range-hint">0%</span><span class="slider-value" id="evHomeDispA">70%</span><span class="range-hint">100%</span></div>
+          <input type="range" id="evHomeA" min="0" max="100" value="70" step="5" oninput="document.getElementById(&#39;evHomeDispA&#39;).textContent=this.value+&#39;%&#39;">
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="badge-check" style="width:11px;height:11px;"></i> Garantija</div>
+      <div class="field-group">
+        <div class="field-label">Ražotāja (gadi) *
+          <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Šajā periodā remonta rezerve = €0.</span></span>
+        </div>
+        <input type="number" id="wA" value="3" min="1" max="7">
+      </div>
+      <label class="check-row">
+        <input type="checkbox" id="ewTogA" onchange="toggleEW(&#39;A&#39;)">
+        <span>Papildu garantija</span>
+        <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Maksas papildu garantija — pagarina segumu pēc standarta perioda.</span></span>
+      </label>
+      <div class="ext-w-f" id="ewA">
+        <div class="field-row">
+          <div class="field-group">
+            <div class="field-label">Cena (€)</div>
+            <input type="number" id="ewPriceA" placeholder="1200" min="0" max="10000">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Papildu gadi</div>
+            <input type="number" id="ewYearsA" value="2" min="1" max="5">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="wrench" style="width:11px;height:11px;"></i> Apkope</div>
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label">Intervāls (km) *
+            <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Parasti 15 000–20 000 km.</span></span>
+          </div>
+          <input type="number" id="svcIntA" value="15000" min="5000" max="60000" step="1000">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Cena (€/reizi) *
+            <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Pilnvarota dīlera cena: eļļa, filtri, pārbaude.</span></span>
+          </div>
+          <input type="number" id="svcCostA" placeholder="280" min="50" max="3000">
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="shield" style="width:11px;height:11px;"></i> Apdrošināšana</div>
+      <div class="field-group">
+        <div class="field-label">OCTA (€/gadā) *
+          <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Aizpildās automātiski pēc tilpuma — precizējiet.</span></span>
+        </div>
+        <input type="number" id="octaA" placeholder="Auto" min="50" max="2000">
+      </div>
+      <div class="field-group">
+        <div class="field-label">KASKO līmenis
+          <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Aprēķina kā % no pašreizējās vērtības — katru gadu samazinās.</span></span>
+        </div>
+        <div class="tier-group" id="kaskoA">
+          <button class="tier-btn" onclick="setTier(&#39;kaskoA&#39;,&#39;1.8&#39;,this)">Pamata 1.8%</button>
+          <button class="tier-btn on" onclick="setTier(&#39;kaskoA&#39;,&#39;2.5&#39;,this)">Standarta 2.5%</button>
+          <button class="tier-btn" onclick="setTier(&#39;kaskoA&#39;,&#39;3.5&#39;,this)">Pilnā 3.5%</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="circle" style="width:11px;height:11px;"></i> Riepas</div>
+      <div class="field-group">
+        <div class="field-label">Kategorija *
+          <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Gada riepu izmaksas (komplekts + maiņa).</span></span>
+        </div>
+        <div class="tier-group" id="tyreA">
+          <button class="tier-btn" onclick="setTier(&#39;tyreA&#39;,&#39;small&#39;,this)">≤16″ · 325€/g</button>
+          <button class="tier-btn on" onclick="setTier(&#39;tyreA&#39;,&#39;mid&#39;,this)">17″ · 390€/g</button>
+          <button class="tier-btn" onclick="setTier(&#39;tyreA&#39;,&#39;large&#39;,this)">18-19″ · 503€/g</button>
+          <button class="tier-btn" onclick="setTier(&#39;tyreA&#39;,&#39;suv&#39;,this)">20″+ · 675€/g</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="alert-triangle" style="width:11px;height:11px;"></i> Remonta rezerve</div>
+      <div class="field-group">
+        <div class="field-label">Riska līmenis *
+          <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Budžets neparedzētiem remontiem PĒC garantijas.</span></span>
+        </div>
+        <div class="tier-group" id="repairA">
+          <button class="tier-btn" onclick="setTier(&#39;repairA&#39;,&#39;low&#39;,this)">Zems</button>
+          <button class="tier-btn on" onclick="setTier(&#39;repairA&#39;,&#39;med&#39;,this)">Vidējs</button>
+          <button class="tier-btn" onclick="setTier(&#39;repairA&#39;,&#39;high&#39;,this)">Augsts</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <button class="more-btn" onclick="toggleMore(&#39;A&#39;)">
+        <i data-lucide="chevron-down" id="mchA" class="chevron" style="width:13px;height:13px;"></i>
+        Papildu izmaksas
+      </button>
+      <div class="more-content" id="moreA">
+        <div class="field-row">
+          <div class="field-group">
+            <div class="field-label">Stāvvieta (€/mēn)</div>
+            <input type="number" id="parkA" value="0" min="0" max="500">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Mazgāšana (€/mēn)</div>
+            <input type="number" id="washA" value="20" min="0" max="200">
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Degvielas cena (€/L vai €/kWh)
+            <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Tukšs → Latvijas vidējais (benzīns €1.75, dīzelis €1.70, el. €0.13).</span></span>
+          </div>
+          <input type="number" id="fuelPrA" placeholder="Auto" min="0.05" max="5" step="0.01">
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== CAR B ===== -->
+<div class="car-col" data-side="B">
+  <div class="col-header cb">
+    <div class="col-header-left">
+      <span class="car-letter">B</span>
+      <div>
+        <div class="lbl">Automobilis B</div>
+      </div>
+    </div>
+    <i data-lucide="car" style="width:18px;height:18px;"></i>
+  </div>
+  <div class="col-body">
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="tag" style="width:11px;height:11px;"></i> Identifikācija</div>
+      <div class="photo-box" id="phBoxB">
+        <i data-lucide="image" style="width:22px;height:22px;"></i>
+        <span>Foto priekšskatījums</span>
+        <img id="phImgB" alt="">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Auto nosaukums *</div>
+        <input type="text" id="nameB" placeholder="piem. BMW X1 xDrive20i M Sport">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Foto URL</div>
+        <input type="url" id="photoUrlB" placeholder="https://...">
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="euro" style="width:11px;height:11px;"></i> Pirkums</div>
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label">Cena (€) *</div>
+          <input type="number" id="priceB" placeholder="48900" min="5000" max="500000">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Nolietojums *</div>
+          <select id="depCatB">
+            <option value="economy">Ekonom klase</option>
+            <option value="mid">Vidējā klase</option>
+            <option value="premium">Premium</option>
+            <option value="suv_mid">SUV vidējā</option>
+            <option value="premium_suv" selected="">Premium SUV</option>
+            <option value="ev">Elektriskais</option>
+            <option value="phev">PHEV hibrīds</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="fuel" style="width:11px;height:11px;"></i> Dzinējs</div>
+      <div class="field-group">
+        <div class="field-label">Degvielas tips *</div>
+        <select id="ftB" onchange="onFuelChange(&#39;B&#39;)">
+          <option value="petrol" selected="">Benzīns</option>
+          <option value="diesel">Dīzelis</option>
+          <option value="mild_hybrid">Viegls hibrīds (MHEV)</option>
+          <option value="phev">Spraudņa hibrīds (PHEV)</option>
+          <option value="ev">Pilnīgi elektriskais (BEV)</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label" id="consLblB">Patēriņš (L/100km) *</div>
+          <input type="number" id="consB" placeholder="8.4" min="0.5" max="30" step="0.1">
+        </div>
+        <div class="field-group">
+          <div class="field-label">CO₂ (g/km) *</div>
+          <input type="number" id="co2B" placeholder="191" min="0" max="400">
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">Tilpums (cc) *</div>
+        <input type="number" id="ccB" placeholder="1998" min="0" max="8000" oninput="autoOCTA(&#39;B&#39;)">
+      </div>
+      <div class="phev-f" id="phevB">
+        <div class="field-row">
+          <div class="field-group">
+            <div class="field-label">El. patēriņš (kWh/100km)</div>
+            <input type="number" id="phevElB" placeholder="18" min="5" max="50" step="0.1">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Benz. patēriņš (L/100km)</div>
+            <input type="number" id="phevPetB" placeholder="6.0" min="1" max="20" step="0.1">
+          </div>
+        </div>
+        <div class="slider-field">
+          <div class="field-label">El. braukšanas daļa %</div>
+          <div class="slider-row"><span class="range-hint">0%</span><span class="slider-value" id="phevShareDispB">60%</span><span class="range-hint">100%</span></div>
+          <input type="range" id="phevShareB" min="0" max="100" value="60" step="5" oninput="document.getElementById(&#39;phevShareDispB&#39;).textContent=this.value+&#39;%&#39;">
+        </div>
+      </div>
+      <div class="ev-f" id="evB">
+        <div class="slider-field">
+          <div class="field-label">Mājas uzlāde %</div>
+          <div class="slider-row"><span class="range-hint">0%</span><span class="slider-value" id="evHomeDispB">70%</span><span class="range-hint">100%</span></div>
+          <input type="range" id="evHomeB" min="0" max="100" value="70" step="5" oninput="document.getElementById(&#39;evHomeDispB&#39;).textContent=this.value+&#39;%&#39;">
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="badge-check" style="width:11px;height:11px;"></i> Garantija</div>
+      <div class="field-group">
+        <div class="field-label">Ražotāja (gadi) *</div>
+        <input type="number" id="wB" value="3" min="1" max="7">
+      </div>
+      <label class="check-row">
+        <input type="checkbox" id="ewTogB" onchange="toggleEW(&#39;B&#39;)">
+        <span>Papildu garantija</span>
+      </label>
+      <div class="ext-w-f" id="ewB">
+        <div class="field-row">
+          <div class="field-group">
+            <div class="field-label">Cena (€)</div>
+            <input type="number" id="ewPriceB" placeholder="1200" min="0" max="10000">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Papildu gadi</div>
+            <input type="number" id="ewYearsB" value="2" min="1" max="5">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="wrench" style="width:11px;height:11px;"></i> Apkope</div>
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label">Intervāls (km) *</div>
+          <input type="number" id="svcIntB" value="15000" min="5000" max="60000" step="1000">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Cena (€/reizi) *</div>
+          <input type="number" id="svcCostB" placeholder="320" min="50" max="3000">
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="shield" style="width:11px;height:11px;"></i> Apdrošināšana</div>
+      <div class="field-group">
+        <div class="field-label">OCTA (€/gadā) *</div>
+        <input type="number" id="octaB" placeholder="Auto" min="50" max="2000">
+      </div>
+      <div class="field-group">
+        <div class="field-label">KASKO līmenis</div>
+        <div class="tier-group" id="kaskoB">
+          <button class="tier-btn" onclick="setTier(&#39;kaskoB&#39;,&#39;1.8&#39;,this)">Pamata 1.8%</button>
+          <button class="tier-btn on" onclick="setTier(&#39;kaskoB&#39;,&#39;2.5&#39;,this)">Standarta 2.5%</button>
+          <button class="tier-btn" onclick="setTier(&#39;kaskoB&#39;,&#39;3.5&#39;,this)">Pilnā 3.5%</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="circle" style="width:11px;height:11px;"></i> Riepas</div>
+      <div class="field-group">
+        <div class="field-label">Kategorija *</div>
+        <div class="tier-group" id="tyreB">
+          <button class="tier-btn" onclick="setTier(&#39;tyreB&#39;,&#39;small&#39;,this)">≤16″ · 325€/g</button>
+          <button class="tier-btn" onclick="setTier(&#39;tyreB&#39;,&#39;mid&#39;,this)">17″ · 390€/g</button>
+          <button class="tier-btn on" onclick="setTier(&#39;tyreB&#39;,&#39;large&#39;,this)">18-19″ · 503€/g</button>
+          <button class="tier-btn" onclick="setTier(&#39;tyreB&#39;,&#39;suv&#39;,this)">20″+ · 675€/g</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-title"><i data-lucide="alert-triangle" style="width:11px;height:11px;"></i> Remonta rezerve</div>
+      <div class="field-group">
+        <div class="field-label">Riska līmenis *</div>
+        <div class="tier-group" id="repairB">
+          <button class="tier-btn" onclick="setTier(&#39;repairB&#39;,&#39;low&#39;,this)">Zems</button>
+          <button class="tier-btn on" onclick="setTier(&#39;repairB&#39;,&#39;med&#39;,this)">Vidējs</button>
+          <button class="tier-btn" onclick="setTier(&#39;repairB&#39;,&#39;high&#39;,this)">Augsts</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <button class="more-btn" onclick="toggleMore(&#39;B&#39;)">
+        <i data-lucide="chevron-down" id="mchB" class="chevron" style="width:13px;height:13px;"></i>
+        Papildu izmaksas
+      </button>
+      <div class="more-content" id="moreB">
+        <div class="field-row">
+          <div class="field-group">
+            <div class="field-label">Stāvvieta (€/mēn)</div>
+            <input type="number" id="parkB" value="0" min="0" max="500">
+          </div>
+          <div class="field-group">
+            <div class="field-label">Mazgāšana (€/mēn)</div>
+            <input type="number" id="washB" value="20" min="0" max="200">
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Degvielas cena (€/L vai €/kWh)</div>
+          <input type="number" id="fuelPrB" placeholder="Auto" min="0.05" max="5" step="0.01">
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- end two-col -->
+
+<div class="analyse-wrap">
+  <div class="err-bar" id="errBar"></div>
+  <button class="btn-primary" onclick="doAnalyse()">
+    <i data-lucide="bar-chart-2" style="width:18px;height:18px;"></i>
+    Analizēt izmaksas
+    <i data-lucide="arrow-right" style="width:16px;height:16px;"></i>
+  </button>
+  <div class="sub">Aizpildiet visus obligātos (*) laukus</div>
+</div>
+
+</div><!-- end screen1 -->
+
+<!-- ======== SCREEN 2 ======== -->
+<div id="screen2">
+  <div class="res-header">
+    <button class="btn-ghost" onclick="goBack()">
+      <i data-lucide="arrow-left" style="width:14px;height:14px;"></i>
+      Rediģēt
+    </button>
+    <div class="logo-mark">Honest<span class="logo-dot"></span>Cost</div>
+    <div style="width:90px;"></div>
+  </div>
+
+  <div class="adj-bar">
+    <div class="setting">
+      <span class="ic"><i data-lucide="gauge"></i></span>
+      <div class="body">
+        <div class="g-section-label">Gada nobraukums</div>
+        <div class="slider-field">
+          <div class="slider-row"><span class="range-hint">5k</span><span class="slider-value" id="adjKmDisp">15 000 km/g</span><span class="range-hint">75k</span></div>
+          <input type="range" id="adjKm" min="5000" max="75000" value="15000" step="1000" oninput="onAdj()">
+        </div>
+      </div>
+    </div>
+    <div class="setting">
+      <span class="ic"><i data-lucide="calendar"></i></span>
+      <div class="body">
+        <div class="g-section-label">Periods</div>
+        <div class="slider-field">
+          <div class="slider-row"><span class="range-hint">1g</span><span class="slider-value" id="adjOwnDisp">5 gadi</span><span class="range-hint">10g</span></div>
+          <input type="range" id="adjOwn" min="1" max="10" value="5" step="1" oninput="onAdj()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col" id="resGrid"></div>
+  <div class="comp-bar" id="compBar"></div>
+  <p class="disclaimer">Indikatīvs aprēķins. Faktiskās izmaksas var atšķirties atkarībā no vadīšanas paradumiem, konkrēta dīlera cenām un tirgus apstākļiem. HonestCost neuzņemas atbildību par lēmumiem, kas pieņemti, balstoties uz šiem datiem.</p>
+</div>
+
+</div><!-- page-wrapper -->
+
+<script>
+// ─── THEME TOGGLE ──────────────────────────────────────────
+(function () {
+  const KEY = 'honestcost-theme';
+  const root = document.documentElement;
+  const saved = localStorage.getItem(KEY);
+  const initial = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  root.setAttribute('data-theme', initial);
+  document.getElementById('themeToggle').addEventListener('click', function () {
+    const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    localStorage.setItem(KEY, next);
+  });
+})();
+
+// ── CONSTANTS ──────────────────────────────────────────────
+const DEP={
+  economy:    [.20,.12,.10,.09,.08],
+  mid:        [.22,.13,.11,.10,.09],
+  premium:    [.25,.15,.13,.11,.10],
+  suv_mid:    [.18,.12,.10,.09,.08],
+  premium_suv:[.23,.14,.12,.11,.10],
+  ev:         [.25,.16,.14,.12,.12],
+  phev:       [.22,.14,.12,.11,.10],
+};
+const TYRE={small:325,mid:390,large:503,suv:675};
+const RBUF={
+  economy:    [200,400,700],
+  mid:        [300,600,1000],
+  premium:    [500,900,1500],
+  suv_mid:    [350,650,1100],
+  premium_suv:[600,1100,1800],
+  ev:         [200,400,700],
+  phev:       [500,1000,1600],
+};
+const FUEL={petrol:1.75,diesel:1.70,homeElec:0.13,pubElec:0.38};
+const OCTA_EST={ev:90,s:110,m:145,l:200,xl:300};
+
+// ── STATE ──────────────────────────────────────────────────
+const S={
+  fin:'leasing',
+  kaskoA:2.5, kaskoB:2.5,
+  tyreA:'mid', tyreB:'large',
+  repairA:'med', repairB:'med',
+};
+
+// ── CALC ENGINE (UNCHANGED) ────────────────────────────────
+function ten(co2){
+  if(co2<=50)return 0; if(co2<=95)return 30; if(co2<=115)return 50;
+  if(co2<=130)return 80; if(co2<=155)return 120; if(co2<=175)return 180;
+  if(co2<=200)return 260; if(co2<=250)return 380; return 520;
+}
+function leasing(price,downPct,apr,months,resPct){
+  const principal=price*(1-downPct/100);
+  const residual=price*(resPct/100);
+  const r=apr/1200, n=months;
+  const pv=principal-residual/Math.pow(1+r,n);
+  const mp=r===0?pv/n:pv*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
+  return{mp,total:mp*n+residual};
+}
+function residual(price,cat,yrs){
+  let v=price;
+  const rates=DEP[cat]||DEP.mid;
+  for(let y=0;y<yrs;y++) v*=(1-rates[Math.min(y,rates.length-1)]);
+  return v;
+}
+function kasko(price,rate,cat,yr){
+  return residual(price,cat,yr-1)*(rate/100);
+}
+function service(km,yr,interval,cost){
+  const s=km*(yr-1), e=km*yr;
+  return (Math.floor(e/interval)-Math.floor(s/interval))*cost;
+}
+function repairBuf(level,warTotal,cat,yr){
+  if(yr<=warTotal)return 0;
+  const li={low:0,med:1,high:2};
+  const base=(RBUF[cat]||RBUF.mid)[li[level]];
+  return base*(1+(yr-warTotal-1)*0.10);
+}
+function fuelAnnual(car,km){
+  const ft=car.ft, fp=car.fuelPr;
+  if(ft==='ev'){
+    const hk=km*(car.evHome/100), pk=km*((100-car.evHome)/100);
+    const hr=FUEL.homeElec, pr=fp||FUEL.pubElec;
+    return(hk/100)*car.cons*hr*1.10+(pk/100)*car.cons*pr*1.05;
+  }
+  if(ft==='phev'){
+    const ek=km*(car.phevShare/100), ptk=km*((100-car.phevShare)/100);
+    const hk=ek*(car.evHome/100), pk=ek*((100-car.evHome)/100);
+    const elCost=(hk/100)*car.phevEl*FUEL.homeElec*1.10+(pk/100)*car.phevEl*(fp||FUEL.pubElec)*1.05;
+    const petCost=(ptk/100)*car.phevPet*(fp||FUEL.petrol);
+    return elCost+petCost;
+  }
+  const price=fp||(ft==='diesel'?FUEL.diesel:FUEL.petrol);
+  return(km/100)*car.cons*price;
+}
+function calcAll(car,g){
+  const N=g.yrs, km=g.km;
+  const warTotal=(car.w||3)+(car.ew?(car.ewYrs||2):0);
+  let total=0;
+  const bd={leasing:0,fuel:0,service:0,tyres:0,octa:0,kasko:0,ten:0,ew:0,repair:0,park:0};
+
+  for(let y=1;y<=N;y++){
+    const f=fuelAnnual(car,km);
+    const sv=service(km,y,car.svcInt,car.svcCost);
+    const ty=TYRE[car.tyre]||390;
+    const oc=car.octa||0;
+    const ka=kasko(car.price,car.kasko,car.dep,y);
+    const tx=ten(car.co2||0);
+    const rb=repairBuf(car.repair,warTotal,car.dep,y);
+    const ta=(y===3||y===5)?40:0;
+    bd.fuel+=f; bd.service+=sv; bd.tyres+=ty; bd.octa+=oc;
+    bd.kasko+=ka; bd.ten+=tx; bd.repair+=rb;
+    total+=f+sv+ty+oc+ka+tx+rb+ta;
+  }
+  const ewTotal=car.ew&&car.ewPrice?car.ewPrice:0;
+  bd.ew=ewTotal; total+=ewTotal;
+  const pk=((car.park||0)+(car.wash||20))*12*N;
+  bd.park=pk; total+=pk;
+  if(g.fin==='leasing'){
+    const l=leasing(car.price,g.downPct,g.apr,g.months,g.resPct);
+    const lt=l.mp*Math.min(N*12,g.months);
+    bd.leasing=lt; total+=lt;
+  }
+  const res=[];
+  for(let y=0;y<=N;y++) res.push({y,v:residual(car.price,car.dep,y)});
+  return{monthly:total/(N*12),total,bd,res,warTotal,ewTotal};
+}
+
+// ── READ FORM ──────────────────────────────────────────────
+function fv(id){return parseFloat(document.getElementById(id)?.value)||0;}
+function ft(id){return(document.getElementById(id)?.value||'').trim();}
+function fc(id){return document.getElementById(id)?.checked||false;}
+
+function readCar(x){
+  return{
+    name:ft('name'+x), photoUrl:ft('photoUrl'+x),
+    price:fv('price'+x), dep:ft('depCat'+x)||'mid', ft:ft('ft'+x)||'petrol',
+    cons:fv('cons'+x), co2:fv('co2'+x), cc:fv('cc'+x),
+    w:fv('w'+x)||3, ew:fc('ewTog'+x), ewPrice:fv('ewPrice'+x), ewYrs:fv('ewYears'+x)||2,
+    svcInt:fv('svcInt'+x)||15000, svcCost:fv('svcCost'+x),
+    octa:fv('octa'+x), kasko:S['kasko'+x]||2.5, tyre:S['tyre'+x]||'mid', repair:S['repair'+x]||'med',
+    park:fv('park'+x), wash:fv('wash'+x)||20, fuelPr:fv('fuelPr'+x)||null,
+    evHome:parseFloat(document.getElementById('evHome'+x)?.value)||70,
+    phevShare:parseFloat(document.getElementById('phevShare'+x)?.value)||60,
+    phevEl:fv('phevEl'+x)||18, phevPet:fv('phevPet'+x),
+  };
+}
+function readG(){
+  return{
+    yrs:parseInt(document.getElementById('slOwn').value)||5,
+    km:parseInt(document.getElementById('slKm').value)||15000,
+    fin:S.fin,
+    downPct:fv('gDownPct')||20, apr:fv('gApr')||4.5,
+    months:parseInt(document.getElementById('slTerm').value)||48,
+    resPct:fv('gResidual')||0,
+  };
+}
+
+// ── VALIDATION ──────────────────────────────────────────────
+function validate(){
+  document.querySelectorAll('.err').forEach(e=>e.classList.remove('err'));
+  const errs=[];
+  ['A','B'].forEach(x=>{
+    const req=[
+      ['name'+x,'nosaukums'],['price'+x,'cena'],['cons'+x,'patēriņš'],
+      ['co2'+x,'CO₂'],['svcCost'+x,'apkopes cena'],['octa'+x,'OCTA'],
+    ];
+    req.forEach(([id,lbl])=>{
+      const el=document.getElementById(id);
+      if(!el)return;
+      if(!el.value||el.value==='0'&&id!=='co2'+x&&id!=='cc'+x){
+        el.classList.add('err'); errs.push('Auto '+x+': '+lbl);
+      }
+    });
+  });
+  const eb=document.getElementById('errBar');
+  if(errs.length){eb.textContent='Aizpildiet: '+errs.join(' · ');eb.classList.add('show');return false;}
+  eb.classList.remove('show');return true;
+}
+
+// ── RENDER ──────────────────────────────────────────────────
+function eur(n){return'€'+Math.round(Math.abs(n)).toLocaleString('lv-LV');}
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+function ftLbl(f){return{petrol:'Benzīns',diesel:'Dīzelis',mild_hybrid:'MHEV',phev:'PHEV',ev:'Elektro'}[f]||f;}
+function repLvl(r){return{low:'Zems',med:'Vidējs',high:'Augsts'}[r]||r;}
+
+function renderResults(cA,cB,g){
+  const rA=calcAll(cA,g), rB=calcAll(cB,g);
+  const N=g.yrs;
+  const aWins=rA.monthly<=rB.monthly;
+
+  function card(car,res,x){
+    const wins=(x==='A')?aWins:!aWins;
+    const hc=x==='A'?'ca':'cb';
+    const ph=car.photoUrl?`<img class="res-photo" src="${esc(car.photoUrl)}" alt="" onerror="this.style.display='none'">`:'';
+    const heroClass=wins?'win':'lose';
+
+    const rows=[
+      ['Līzings',res.bd.leasing,g.fin==='cash'],
+      ['Degviela / Enerģija',res.bd.fuel,false],
+      ['Apkope',res.bd.service,false],
+      ['Riepas',res.bd.tyres,false],
+      ['OCTA',res.bd.octa,false],
+      ['KASKO',res.bd.kasko,false],
+      ['Transporta nodoklis',res.bd.ten,false],
+      ['Papildu garantija',res.bd.ew,false],
+      ['Remonta rezerve',res.bd.repair,false],
+      ['Stāvvieta + mazgāšana',res.bd.park,false],
+    ];
+    const trs=rows.map(([lbl,tot,skip])=>{
+      if(skip)return`<tr class="zero"><td>${lbl}</td><td>—</td><td>—</td></tr>`;
+      const mo=tot/(N*12);
+      return`<tr><td>${lbl}</td><td>${eur(mo)}/mēn</td><td>${eur(tot)}</td></tr>`;
+    }).join('');
+
+    let wNote='';
+    if(car.ew&&car.ewPrice){
+      const lvl={low:0,med:1,high:2}[car.repair];
+      const postBuf=(RBUF[car.dep]||RBUF.mid)[lvl];
+      const be=(car.ewPrice/postBuf).toFixed(1);
+      wNote=`<div class="w-note">Papildu garantija atmaksājas ja 1+ remonts ${be} gados pēc standarta garantijas beigām.</div>`;
+    }
+
+    const depRows=res.res.map(r=>{
+      const loss=car.price-r.v;
+      return`<div class="dep-row">
+        <span class="dep-yr">${r.y===0?'Sākums':r.y+'. gads'}</span>
+        <span class="dep-val">${eur(r.v)}</span>
+        <span class="dep-loss">${r.y>0?'−'+eur(loss):''}</span>
+      </div>`;
+    }).join('');
+
+    return`<div class="res-card">
+      <div class="res-head ${hc}">
+        ${ph}
+        <div class="res-name">${esc(car.name)}</div>
+        <div class="res-meta">${eur(car.price)} · ${ftLbl(car.ft)} · ${car.w}g garantija · CO₂ ${car.co2}g/km · ${repLvl(car.repair)} risks</div>
+      </div>
+      <div class="hero-block">
+        <div class="hero-label">Vidējās mēneša izmaksas</div>
+        <div class="hero-num ${heroClass}">${eur(res.monthly)}<span class="hero-sub">/mēn</span></div>
+        <div class="hero-total">${N} gados — ${eur(res.total)}</div>
+      </div>
+      ${wNote}
+      <div class="ct-wrap">
+        <table class="cost-tbl">
+          <thead><tr><th>Izmaksu kategorija</th><th>Mēnesī</th><th>${N} gados</th></tr></thead>
+          <tbody>${trs}</tbody>
+          <tfoot><tr><td>KOPĀ</td><td>${eur(res.monthly)}/mēn</td><td>${eur(res.total)}</td></tr></tfoot>
+        </table>
+      </div>
+      <div class="dep-sec">
+        <div class="dep-title">Tirgus vērtība — nolietojums</div>
+        ${depRows}
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('resGrid').innerHTML=card(cA,rA,'A')+card(cB,rB,'B');
+
+  const delta=Math.abs(rA.monthly-rB.monthly);
+  const deltaT=Math.abs(rA.total-rB.total);
+  const cheapName=aWins?esc(cA.name):esc(cB.name);
+  const lossA=cA.price-rA.res[N]?.v;
+  const lossB=cB.price-rB.res[N]?.v;
+  const betterDep=lossA<lossB?esc(cA.name):esc(cB.name);
+  const depDelta=Math.abs(lossA-lossB);
+
+  document.getElementById('compBar').innerHTML=`
+    <div><div class="cl">Lētākais</div><div class="cn">${cheapName}</div></div>
+    <div><div class="cl">Ietaupījums ${N} gados</div><div class="cv">${eur(deltaT)}</div><div class="cs">${eur(delta)}/mēn starpība</div></div>
+    <div><div class="cl">Mazāk vērtību zaudē</div><div class="cn">${betterDep}</div><div class="cs">Starpība: ${eur(depDelta)}</div></div>
+  `;
+}
+
+// ── UI HANDLERS ────────────────────────────────────────────
+function setTier(groupId,val,btn){
+  document.querySelectorAll('#'+groupId+' .tier-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  if(groupId==='kaskoA')S.kaskoA=parseFloat(val);
+  if(groupId==='kaskoB')S.kaskoB=parseFloat(val);
+  if(groupId==='tyreA')S.tyreA=val;
+  if(groupId==='tyreB')S.tyreB=val;
+  if(groupId==='repairA')S.repairA=val;
+  if(groupId==='repairB')S.repairB=val;
+}
+function onFuelChange(x){
+  const ft=document.getElementById('ft'+x).value;
+  document.getElementById('phev'+x).classList.toggle('show',ft==='phev');
+  document.getElementById('ev'+x).classList.toggle('show',ft==='ev');
+  const lbl=document.getElementById('consLbl'+x);
+  const txt=ft==='ev'?'Patēriņš (kWh/100km) *':'Patēriņš (L/100km) *';
+  lbl.childNodes[0].textContent=txt+' ';
+}
+function toggleEW(x){
+  document.getElementById('ew'+x).classList.toggle('show',document.getElementById('ewTog'+x).checked);
+}
+function toggleMore(x){
+  const m=document.getElementById('more'+x);
+  const ch=document.getElementById('mch'+x);
+  m.classList.toggle('open');
+  ch.classList.toggle('up',m.classList.contains('open'));
+}
+function autoOCTA(x){
+  const cc=fv('cc'+x);
+  const el=document.getElementById('octa'+x);
+  if(el.value)return;
+  let est;
+  if(cc===0)est=OCTA_EST.ev;
+  else if(cc<=1600)est=OCTA_EST.s;
+  else if(cc<=2000)est=OCTA_EST.m;
+  else if(cc<=3000)est=OCTA_EST.l;
+  else est=OCTA_EST.xl;
+  el.value=est;
+}
+
+// Financing toggle
+document.querySelectorAll('.toggle-btn[data-fin]').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    S.fin=this.dataset.fin;
+    document.querySelectorAll('.toggle-btn[data-fin]').forEach(b=>b.classList.remove('on'));
+    this.classList.add('on');
+    document.getElementById('leasingFields').classList.toggle('open',S.fin==='leasing');
+  });
+});
+
+// Slider displays
+document.getElementById('slOwn').addEventListener('input',function(){
+  const v=parseInt(this.value);
+  document.getElementById('dispOwn').textContent=v+(v===1?' gads':' gadi');
+});
+document.getElementById('slKm').addEventListener('input',function(){
+  document.getElementById('dispKm').textContent=parseInt(this.value).toLocaleString('lv-LV')+' km/g';
+});
+document.getElementById('slTerm').addEventListener('input',function(){
+  document.getElementById('dispTerm').textContent=this.value+' mēn';
+});
+
+// Photo preview
+['A','B'].forEach(x=>{
+  document.getElementById('photoUrl'+x).addEventListener('blur',function(){
+    const img=document.getElementById('phImg'+x);
+    if(this.value){img.src=this.value;img.style.display='block';img.onerror=()=>img.style.display='none';}
+    else{img.style.display='none';}
+  });
+});
+
+// Analyse
+let lastA,lastB,lastG;
+function doAnalyse(){
+  if(!validate())return;
+  lastA=readCar('A');lastB=readCar('B');lastG=readG();
+  document.getElementById('adjKm').value=lastG.km;
+  document.getElementById('adjOwn').value=lastG.yrs;
+  updAdjDisp();
+  renderResults(lastA,lastB,lastG);
+  document.getElementById('screen1').style.display='none';
+  document.getElementById('screen2').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function goBack(){
+  document.getElementById('screen2').style.display='none';
+  document.getElementById('screen1').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function updAdjDisp(){
+  const km=parseInt(document.getElementById('adjKm').value);
+  const yr=parseInt(document.getElementById('adjOwn').value);
+  document.getElementById('adjKmDisp').textContent=km.toLocaleString('lv-LV')+' km/g';
+  document.getElementById('adjOwnDisp').textContent=yr+(yr===1?' gads':' gadi');
+}
+function onAdj(){
+  if(!lastA)return;
+  updAdjDisp();
+  const ag={...lastG,km:parseInt(document.getElementById('adjKm').value),yrs:parseInt(document.getElementById('adjOwn').value)};
+  renderResults(lastA,lastB,ag);
+}
+
+// Example data (BMW 1-Series vs X1)
+document.getElementById('exampleBtn').addEventListener('click',()=>{
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
+  set('slOwn',5);document.getElementById('dispOwn').textContent='5 gadi';
+  set('slKm',15000);document.getElementById('dispKm').textContent='15 000 km/g';
+  set('nameA','BMW 1. sērija 118i M Sport');
+  set('priceA',38500);
+  document.getElementById('depCatA').value='premium';
+  document.getElementById('ftA').value='petrol';onFuelChange('A');
+  set('consA',6.2);set('co2A',142);set('ccA',1499);
+  set('wA',3);set('svcIntA',15000);set('svcCostA',280);
+  document.getElementById('octaA').value='';autoOCTA('A');
+  set('nameB','BMW X1 xDrive20i M Sport');
+  set('priceB',48900);
+  document.getElementById('depCatB').value='premium_suv';
+  document.getElementById('ftB').value='petrol';onFuelChange('B');
+  set('consB',8.4);set('co2B',191);set('ccB',1998);
+  set('wB',3);set('svcIntB',15000);set('svcCostB',320);
+  document.getElementById('octaB').value='';autoOCTA('B');
+});
+
+lucide.createIcons();
+</script>
+</body>
+</html>

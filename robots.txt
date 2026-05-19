@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://honestcost.lv/sitemap.xml
