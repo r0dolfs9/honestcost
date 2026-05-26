@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HonestCost — Integration Snippets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#16181D; --ink-2:#4A4E58; --ink-3:#878B95;
+  --line:#ECEAE3; --line-2:#E1DED4;
+  --bg:#F4F2EC; --surface:#FFFFFF; --surface-alt:#FAF8F2;
+  --accent:#3344F0; --accent-soft:#EBEDFF;
+  --amber:#F5A623; --amber-soft:#FCEEDB;
+  --win:#11A05F; --win-soft:#E5F6EE;
+  --warn:#D24545;
+  --shadow-1:0 1px 2px rgba(20,22,28,.04),0 8px 28px -8px rgba(20,22,28,.10);
+  --ff-display:'Barlow Condensed',sans-serif;
+  --ff-ui:'Inter Tight',system-ui,sans-serif;
+  --ff-mono:'DM Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff-ui);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+::selection{background:var(--accent);color:#fff;}
+.page{max-width:1080px;margin:0 auto;padding:48px 28px 100px;}
+.back{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-bottom:32px;}
+.back::before{content:'←';}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:6px 12px;border-radius:999px;margin-bottom:18px;}
+.kicker .dot{width:6px;height:6px;background:var(--accent);border-radius:50%;}
+h1{font-family:var(--ff-display);font-size:64px;font-weight:600;line-height:0.96;letter-spacing:-0.02em;margin-bottom:14px;text-wrap:balance;}
+.lede{font-size:18px;color:var(--ink-2);max-width:60ch;margin-bottom:36px;text-wrap:pretty;}
+h2{font-family:var(--ff-display);font-size:34px;font-weight:600;margin:64px 0 8px;letter-spacing:-0.01em;}
+h2 .num{font-family:var(--ff-mono);font-size:12px;font-weight:400;letter-spacing:0.14em;color:var(--ink-3);display:block;margin-bottom:8px;text-transform:uppercase;}
+h3{font-family:var(--ff-ui);font-size:18px;font-weight:600;margin:22px 0 8px;}
+p{margin-bottom:12px;max-width:68ch;color:var(--ink-2);font-size:14.5px;}
+p strong{color:var(--ink);font-weight:600;}
+code{font-family:var(--ff-mono);font-size:12.5px;background:var(--surface-alt);padding:2px 6px;border-radius:4px;}
+.callout{border-left:3px solid var(--accent);padding:12px 18px;background:var(--accent-soft);border-radius:0 12px 12px 0;margin:16px 0;font-size:13.5px;color:var(--ink);}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft);}
+.callout.warn{border-color:var(--warn);background:#FBEAEA;}
+.callout h4{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink);margin-bottom:6px;}
+
+/* snippet block */
+.snippet{background:var(--surface);border-radius:18px;box-shadow:var(--shadow-1);margin:18px 0 24px;overflow:hidden;}
+.snippet-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--line);background:var(--surface-alt);}
+.snippet-label{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-2);}
+.snippet-meta{font-family:var(--ff-mono);font-size:11px;color:var(--ink-3);letter-spacing:0.04em;}
+.snippet-meta .where{color:var(--accent);}
+.copy-btn{background:var(--ink);color:#fff;border:none;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:7px 12px;border-radius:999px;cursor:pointer;opacity:0.85;}
+.copy-btn:hover{opacity:1;}
+pre{background:#16181D;color:#ECEAE3;padding:20px 22px;font-family:var(--ff-mono);font-size:12.5px;line-height:1.65;overflow-x:auto;margin:0;}
+pre .cmt{color:#878B95;font-style:italic;}
+pre .str{color:#F5A623;}
+pre .kw{color:#6B85FF;}
+pre .tag{color:#FF7A93;}
+pre .attr{color:#9A6CFF;}
+pre .num{color:#5DE5A1;}
+
+.preview-wrap{padding:24px 28px;background:linear-gradient(180deg,var(--surface) 0%,var(--surface-alt) 100%);}
+.preview-label{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:12px;}
+
+/* ─── live previews of the inserted UI ─── */
+.preview-aff{background:#fff;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);}
+.aff-row{display:flex;align-items:center;justify-content:space-between;gap:14px;}
+.aff-label{font-size:13px;color:var(--ink-2);}
+.aff-label strong{color:var(--ink);}
+.aff-cta{display:inline-flex;align-items:center;gap:6px;font-family:var(--ff-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent);text-decoration:none;padding:6px 12px;border:1px solid var(--accent-soft);border-radius:999px;background:rgba(51,68,240,.04);}
+.aff-cta::after{content:'→';}
+.aff-row + .aff-row{border-top:1px solid var(--line);padding-top:10px;}
+
+.preview-email{background:#fff;border-radius:14px;padding:18px 20px;border:1px solid var(--line);}
+.preview-email h5{font-family:var(--ff-display);font-size:17px;font-weight:600;margin-bottom:4px;}
+.preview-email p{margin-bottom:10px;font-size:13px;color:var(--ink-3);max-width:none;}
+.preview-email form{display:flex;gap:8px;}
+.preview-email input{flex:1;border:1px solid var(--line-2);border-radius:10px;padding:9px 12px;font-family:var(--ff-ui);font-size:13px;color:var(--ink);background:#fff;}
+.preview-email button{background:var(--ink);color:#fff;border:none;padding:9px 16px;border-radius:10px;font-family:var(--ff-ui);font-weight:500;font-size:13px;cursor:pointer;}
+
+.preview-trust{background:#fff;border-radius:14px;border:1px solid var(--line);}
+.trust-head{padding:14px 18px;display:flex;justify-content:space-between;cursor:pointer;}
+.trust-head h5{font-family:var(--ff-display);font-size:18px;font-weight:600;}
+.trust-head .chev{font-family:var(--ff-mono);color:var(--ink-3);}
+.trust-body{padding:0 18px 18px;font-size:13px;color:var(--ink-2);}
+.trust-body ul{padding-left:18px;margin-top:6px;}
+.trust-body li{margin-bottom:4px;}
+.trust-body .src{font-family:var(--ff-mono);font-size:11px;color:var(--ink-3);}
+
+footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--line-2);font-family:var(--ff-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-3);display:flex;justify-content:space-between;}
+</style>
+</head>
+<body>
+<div class="page">
+<a class="back" href="Playbook.html">Playbook</a>
+
+<div class="kicker"><span class="dot"></span> Drop-in code for <code>index.html</code></div>
+<h1>Integration snippets.</h1>
+<p class="lede">Four code blocks, copy-paste-ready, each with the exact insertion point in your current <code>index.html</code> and a tiny preview of the rendered UI. Variable names match the live file (<code>renderResults</code>, <code>lastA</code>, <code>lastG</code>).</p>
+
+<div class="callout warn">
+<h4>One non-negotiable rule</h4>
+Every snippet here belongs <strong>inside or below</strong> the result screen — never on the input form, never above the fold. The moment the tool nudges a user before showing them numbers, trust is gone and so is the dealer pitch.
+</div>
+
+<!-- ──────────────────────────────────────────────── -->
+<h2 id="affiliate"><span class="num">01 / monetization · live week 1</span>Affiliate links</h2>
+
+<p>Three slots inside each result card. OCTA-comparator, KASKO multi-quote, and the official model configurator. Each tagged with a Plausible event so we can measure the click-rate of each surface independently.</p>
+
+<h3>Where to paste</h3>
+<p>Inside <code>renderResults()</code>, immediately after the <code>&lt;/table&gt;</code> close of <code>.cost-tbl</code> and before <code>&lt;div class="dep-sec"&gt;</code>. One block per result card.</p>
+
+<div class="snippet">
+  <div class="snippet-head">
+    <span class="snippet-label">snippet/affiliate-block.html</span>
+    <div style="display:flex;gap:14px;align-items:center;">
+      <span class="snippet-meta">paste into <span class="where">renderResults()</span> · after cost-tbl</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+  </div>
+<pre id="code-aff"><span class="cmt">&lt;!-- Affiliate strip — inside each .res-card, after .cost-tbl --&gt;</span>
+&lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"aff-strip"</span>&gt;
+  &lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"aff-row"</span>&gt;
+    &lt;<span class="tag">span</span> <span class="attr">class</span>=<span class="str">"aff-lbl"</span>&gt;Reālā OCTA cena dažās minūtēs&lt;/<span class="tag">span</span>&gt;
+    &lt;<span class="tag">a</span> <span class="attr">class</span>=<span class="str">"aff-cta"</span>
+       <span class="attr">href</span>=<span class="str">"https://octa24.lv/?utm_source=honestcost&amp;utm_medium=results&amp;utm_campaign=octa_lookup"</span>
+       <span class="attr">target</span>=<span class="str">"_blank"</span> <span class="attr">rel</span>=<span class="str">"noopener sponsored"</span>
+       <span class="attr">onclick</span>=<span class="str">"plausible('affiliate_click',{props:{dest:'octa24'}})"</span>&gt;
+       Salīdzini OCTA →
+    &lt;/<span class="tag">a</span>&gt;
+  &lt;/<span class="tag">div</span>&gt;
+  &lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"aff-row"</span>&gt;
+    &lt;<span class="tag">span</span> <span class="attr">class</span>=<span class="str">"aff-lbl"</span>&gt;KASKO no 3 apdrošinātājiem&lt;/<span class="tag">span</span>&gt;
+    &lt;<span class="tag">a</span> <span class="attr">class</span>=<span class="str">"aff-cta"</span>
+       <span class="attr">href</span>=<span class="str">"https://www.balta.lv/?utm_source=honestcost&amp;utm_medium=results&amp;utm_campaign=kasko"</span>
+       <span class="attr">target</span>=<span class="str">"_blank"</span> <span class="attr">rel</span>=<span class="str">"noopener sponsored"</span>
+       <span class="attr">onclick</span>=<span class="str">"plausible('affiliate_click',{props:{dest:'kasko_quote'}})"</span>&gt;
+       Saņem piedāvājumu →
+    &lt;/<span class="tag">a</span>&gt;
+  &lt;/<span class="tag">div</span>&gt;
+  &lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"aff-row"</span>&gt;
+    &lt;<span class="tag">span</span> <span class="attr">class</span>=<span class="str">"aff-lbl"</span>&gt;Konfigurē šo modeli pie dīlera&lt;/<span class="tag">span</span>&gt;
+    &lt;<span class="tag">a</span> <span class="attr">class</span>=<span class="str">"aff-cta"</span>
+       <span class="attr">href</span>=<span class="str">"${configuratorURL(car)}"</span>
+       <span class="attr">target</span>=<span class="str">"_blank"</span> <span class="attr">rel</span>=<span class="str">"noopener"</span>
+       <span class="attr">onclick</span>=<span class="str">"plausible('affiliate_click',{props:{dest:'configurator',car:car.id}})"</span>&gt;
+       Atvērt konfigurātoru →
+    &lt;/<span class="tag">a</span>&gt;
+  &lt;/<span class="tag">div</span>&gt;
+&lt;/<span class="tag">div</span>&gt;
+
+<span class="cmt">/* CSS — append to your existing style block */</span>
+.aff-strip { margin: <span class="num">16</span>px <span class="num">28</span>px <span class="num">0</span>; padding: <span class="num">14</span>px <span class="num">18</span>px; background: var(--surface-alt);
+             border-radius: <span class="num">14</span>px; display: flex; flex-direction: column; gap: <span class="num">10</span>px; }
+.aff-row   { display: flex; justify-content: space-between; align-items: center; gap: <span class="num">14</span>px; }
+.aff-row + .aff-row { border-top: <span class="num">1</span>px solid var(--line); padding-top: <span class="num">10</span>px; }
+.aff-lbl   { font-size: <span class="num">12</span>px; color: var(--ink-2); }
+.aff-cta   { font-family: var(--ff-mono); font-size: <span class="num">11</span>px; letter-spacing: <span class="num">0.06</span>em;
+             text-transform: uppercase; color: var(--accent); text-decoration: none;
+             padding: <span class="num">6</span>px <span class="num">12</span>px; border: <span class="num">1</span>px solid var(--accent-soft);
+             border-radius: <span class="num">999</span>px; background: rgba(<span class="num">51</span>,<span class="num">68</span>,<span class="num">240</span>,.<span class="num">04</span>); white-space: nowrap; }
+.aff-cta:hover { background: var(--accent-soft); }
+
+<span class="cmt">// JS helper — add near the top of your &lt;script&gt; block</span>
+<span class="kw">const</span> CONFIGURATOR_URL = {
+  bmw_118i:     <span class="str">'https://www.bmw.lv/lv/all-models/1-series/hatch/2024/bmw-1-series-overview.html'</span>,
+  bmw_x1:       <span class="str">'https://www.bmw.lv/lv/all-models/x/x1/2024/bmw-x1-overview.html'</span>,
+  vw_golf:      <span class="str">'https://www.volkswagen.lv/lv/modeli/golf.html'</span>,
+  skoda_octavia:<span class="str">'https://www.skoda-auto.lv/modeli/octavia'</span>,
+  tesla_m3:     <span class="str">'https://www.tesla.com/lv_lv/model3/design'</span>,
+  toyota_yaris: <span class="str">'https://www.toyota.lv/jaunie-automobili/yaris-hybrid'</span>,
+  <span class="cmt">// …extend per car in CAR_DB</span>
+};
+<span class="kw">function</span> configuratorURL(car){
+  <span class="kw">return</span> CONFIGURATOR_URL[car.id] || <span class="str">'https://google.com/search?q='</span> + encodeURIComponent(car.name + <span class="str">' lv konfigurator'</span>);
+}</pre>
+  <div class="preview-wrap">
+    <div class="preview-label">Rendered preview</div>
+    <div class="preview-aff" style="max-width:520px;">
+      <div class="aff-row"><span class="aff-label">Reālā OCTA cena dažās minūtēs</span><a class="aff-cta" href="#">Salīdzini OCTA</a></div>
+      <div class="aff-row"><span class="aff-label">KASKO no 3 apdrošinātājiem</span><a class="aff-cta" href="#">Saņem piedāvājumu</a></div>
+      <div class="aff-row"><span class="aff-label">Konfigurē <strong>BMW 118i</strong> pie dīlera</span><a class="aff-cta" href="#">Atvērt konfigurātoru</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="callout amber">
+<h4>About the affiliate program reality check</h4>
+Not every Latvian insurer / portal runs a public affiliate scheme. Before assuming revenue: email <code>partnerships@octa24.lv</code> and your top-3 KASKO providers to ask. If they don't have a program, the UTM-tagged links still drive value as <em>warm referrals you can monetize later</em> by quoting the volume to them.
+</div>
+
+<!-- ──────────────────────────────────────────────── -->
+<h2 id="email"><span class="num">02 / list-building · live week 1</span>Email capture (EmailJS)</h2>
+
+<p>One unobtrusive block at the bottom of the result screen. Sends the user their comparison URL + a text summary. You receive an email yourself with each capture — that's your CRM until volume justifies a real one.</p>
+
+<h3>Setup, once</h3>
+<ol style="padding-left:22px;color:var(--ink-2);font-size:14.5px;max-width:65ch;">
+  <li>Create an EmailJS account (free tier = 200 emails/month).</li>
+  <li>Connect a Gmail / outlook service. Note the <code>service_id</code>.</li>
+  <li>Create a template with variables <code>{{to_email}}</code>, <code>{{summary}}</code>, <code>{{share_url}}</code>. Note the <code>template_id</code>.</li>
+  <li>Copy your <code>public_key</code> from the account settings.</li>
+  <li>Paste below — replace the three placeholders.</li>
+</ol>
+
+<div class="snippet">
+  <div class="snippet-head">
+    <span class="snippet-label">snippet/email-capture.html</span>
+    <div style="display:flex;gap:14px;align-items:center;">
+      <span class="snippet-meta">paste at end of <span class="where">screen2</span> · before closing div</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+  </div>
+<pre id="code-email"><span class="cmt">&lt;!-- Email capture block — bottom of screen2, after both .res-card --&gt;</span>
+&lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"email-cap"</span>&gt;
+  &lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"email-cap-text"</span>&gt;
+    &lt;<span class="tag">h4</span>&gt;Saglabā šo salīdzinājumu&lt;/<span class="tag">h4</span>&gt;
+    &lt;<span class="tag">p</span>&gt;Atsūtām saiti uz e-pastu, lai vari atvērt kad ērti — vai pārsūtīt partnerim.&lt;/<span class="tag">p</span>&gt;
+  &lt;/<span class="tag">div</span>&gt;
+  &lt;<span class="tag">form</span> <span class="attr">id</span>=<span class="str">"emailCapForm"</span> <span class="attr">onsubmit</span>=<span class="str">"sendCap(event)"</span>&gt;
+    &lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="str">"email"</span> <span class="attr">id</span>=<span class="str">"capEmail"</span> <span class="attr">placeholder</span>=<span class="str">"jusu@epasts.lv"</span> <span class="attr">required</span>&gt;
+    &lt;<span class="tag">button</span> <span class="attr">type</span>=<span class="str">"submit"</span>&gt;Sūtīt&lt;/<span class="tag">button</span>&gt;
+  &lt;/<span class="tag">form</span>&gt;
+  &lt;<span class="tag">p</span> <span class="attr">class</span>=<span class="str">"email-cap-status"</span> <span class="attr">id</span>=<span class="str">"emailCapStatus"</span>&gt;&lt;/<span class="tag">p</span>&gt;
+&lt;/<span class="tag">div</span>&gt;
+
+<span class="cmt">&lt;!-- EmailJS SDK — add once, in &lt;head&gt; --&gt;</span>
+&lt;<span class="tag">script</span> <span class="attr">src</span>=<span class="str">"https://cdn.emailjs.com/dist/email.min.js"</span>&gt;&lt;/<span class="tag">script</span>&gt;
+&lt;<span class="tag">script</span>&gt; emailjs.init(<span class="str">"YOUR_PUBLIC_KEY"</span>); &lt;/<span class="tag">script</span>&gt;
+
+<span class="cmt">// Handler — append to your script block</span>
+<span class="kw">function</span> sendCap(e){
+  e.preventDefault();
+  <span class="kw">const</span> status = document.getElementById(<span class="str">'emailCapStatus'</span>);
+  <span class="kw">const</span> email  = document.getElementById(<span class="str">'capEmail'</span>).value;
+  <span class="kw">const</span> share  = location.origin + location.pathname + location.hash;
+  <span class="kw">const</span> summary = <span class="str">`${lastA.name} pret ${lastB.name}, ${lastG.yrs} g., ${lastG.km} km/g.`</span>;
+  status.textContent = <span class="str">'Sūta…'</span>;
+  emailjs.send(<span class="str">'YOUR_SERVICE_ID'</span>,<span class="str">'YOUR_TEMPLATE_ID'</span>,{
+    to_email: email, share_url: share, summary: summary,
+  }).then(()=&gt;{
+    status.textContent = <span class="str">'✓ Saite ir tavā e-pastā.'</span>;
+    plausible(<span class="str">'email_captured'</span>);
+    document.getElementById(<span class="str">'emailCapForm'</span>).reset();
+  }).catch(()=&gt;{ status.textContent = <span class="str">'Kaut kas nogāja greizi. Pamēģini vēlreiz.'</span>; });
+}
+
+<span class="cmt">/* CSS */</span>
+.email-cap { margin: <span class="num">40</span>px auto <span class="num">28</span>px; max-width: <span class="num">560</span>px; background: var(--surface);
+             border: <span class="num">1</span>px solid var(--line); border-radius: <span class="num">20</span>px; padding: <span class="num">22</span>px <span class="num">26</span>px;
+             box-shadow: var(--shadow-1); }
+.email-cap h4 { font-family: var(--ff-display); font-size: <span class="num">22</span>px; font-weight: <span class="num">600</span>;
+                margin-bottom: <span class="num">4</span>px; }
+.email-cap p  { font-size: <span class="num">13</span>px; color: var(--ink-3); margin-bottom: <span class="num">14</span>px; }
+.email-cap form { display: flex; gap: <span class="num">8</span>px; }
+.email-cap input { flex:<span class="num">1</span>; border:<span class="num">1</span>px solid var(--line-2); border-radius:<span class="num">10</span>px;
+                   padding:<span class="num">10</span>px <span class="num">14</span>px; font-family:var(--ff-ui); font-size:<span class="num">14</span>px; }
+.email-cap button { background: var(--ink); color: <span class="str">#fff</span>; border: none; padding: <span class="num">10</span>px <span class="num">18</span>px;
+                    border-radius: <span class="num">10</span>px; font-weight: <span class="num">500</span>; cursor: pointer; }
+.email-cap-status { font-size: <span class="num">12</span>px; color: var(--win); margin-top: <span class="num">8</span>px; min-height: <span class="num">14</span>px; }</pre>
+  <div class="preview-wrap">
+    <div class="preview-label">Rendered preview</div>
+    <div class="preview-email" style="max-width:520px;">
+      <h5>Saglabā šo salīdzinājumu</h5>
+      <p>Atsūtām saiti uz e-pastu, lai vari atvērt kad ērti — vai pārsūtīt partnerim.</p>
+      <form onsubmit="event.preventDefault();this.querySelector('p,span').textContent='✓ Saite tavā e-pastā.'">
+        <input type="email" placeholder="jusu@epasts.lv">
+        <button type="submit">Sūtīt</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────── -->
+<h2 id="trust"><span class="num">03 / dealer prerequisite · live week 1</span>"Kā mēs aprēķinām" trust section</h2>
+
+<p>Expandable, sits below all result cards. Lists every formula in plain Latvian + the data source. This is the single thing a dealer's marketing manager scrolls to before agreeing to embed your tool. Spend the four hours.</p>
+
+<div class="snippet">
+  <div class="snippet-head">
+    <span class="snippet-label">snippet/trust-section.html</span>
+    <div style="display:flex;gap:14px;align-items:center;">
+      <span class="snippet-meta">paste at bottom of <span class="where">screen2</span></span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+  </div>
+<pre id="code-trust"><span class="cmt">&lt;!-- Trust section — bottom of screen2 --&gt;</span>
+&lt;<span class="tag">details</span> <span class="attr">class</span>=<span class="str">"trust"</span> <span class="attr">ontoggle</span>=<span class="str">"this.open &amp;&amp; plausible('trust_opened')"</span>&gt;
+  &lt;<span class="tag">summary</span>&gt;
+    &lt;<span class="tag">span</span>&gt;Kā mēs aprēķinām šos skaitļus&lt;/<span class="tag">span</span>&gt;
+    &lt;<span class="tag">span</span> <span class="attr">class</span>=<span class="str">"chev"</span>&gt;[+]&lt;/<span class="tag">span</span>&gt;
+  &lt;/<span class="tag">summary</span>&gt;
+
+  &lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"trust-grid"</span>&gt;
+
+    &lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"trust-item"</span>&gt;
+      &lt;<span class="tag">h5</span>&gt;Līzinga maksājums&lt;/<span class="tag">h5</span>&gt;
+      &lt;<span class="tag">p</span>&gt;Standarta PMT formula. Pamatā = pirkuma cena − pirmā iemaksa.
+        Atlikušais atskaitīts ar gada likmi pēc termiņa.&lt;/<span class="tag">p</span>&gt;
+      &lt;<span class="tag">span</span> <span class="attr">class</span>=<span class="str">"src"</span>&gt;Avots: Swedbank līzinga kalkulators · 2026-Q1&lt;/<span class="tag">span</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+
+    &lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"trust-item"</span>&gt;
+      &lt;<span class="tag">h5</span>&gt;KASKO&lt;/<span class="tag">h5</span>&gt;
+      &lt;<span class="tag">p</span>&gt;Aprēķināts uz auto <em>atlikušo tirgus vērtību</em> katrā gadā, ne uz pirkuma cenu.
+        Tāpēc KASKO 5. gadā ir mazāks nekā 1. gadā.&lt;/<span class="tag">p</span>&gt;
+      &lt;<span class="tag">span</span> <span class="attr">class</span>=<span class="str">"src"</span>&gt;Avots: BALTA, ERGO, BTA tirgus likmes · 2026-Q1&lt;/<span class="tag">span</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+
+    &lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"trust-item"</span>&gt;
+      &lt;<span class="tag">h5</span>&gt;OCTA&lt;/<span class="tag">h5</span>&gt;
+      &lt;<span class="tag">p</span>&gt;Vērtēts pēc dzinēja jaudas (kW), ne pēc tilpuma (cm³). Aplēse ir
+        <em>pieredzējušam Rīgas vadītājam (5+ gadi bez avārijām)</em>. Jauniem vadītājiem —
+        ievērojami augstāka.&lt;/<span class="tag">p</span>&gt;
+      &lt;<span class="tag">span</span> <span class="attr">class</span>=<span class="str">"src"</span>&gt;Avots: octa24.lv, LTAB tarifi · 2026&lt;/<span class="tag">span</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+
+    &lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"trust-item"</span>&gt;
+      &lt;<span class="tag">h5</span>&gt;Amortizācija (tirgus vērtība)&lt;/<span class="tag">h5</span>&gt;
+      &lt;<span class="tag">p</span>&gt;5 segmenti ar atšķirīgām likmēm: economy, mid, premium, SUV, EV, PHEV.
+        Likmes salīdzinātas ar reālo Latvijas tirgus datu — ss.lv pārdošanas cenas
+        pēdējiem 24 mēnešiem.&lt;/<span class="tag">p</span>&gt;
+      &lt;<span class="tag">span</span> <span class="attr">class</span>=<span class="str">"src"</span>&gt;Avots: ss.lv tirgus dati + Autovista LV · 2026&lt;/<span class="tag">span</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+
+    &lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"trust-item"</span>&gt;
+      &lt;<span class="tag">h5</span>&gt;Apkope&lt;/<span class="tag">h5</span>&gt;
+      &lt;<span class="tag">p</span>&gt;Intervālu apkopes pēc nobraukuma (15 000 / 30 000 km), bet ar minimumu
+        1 reize 2 gados. Cenas no oficiālo dīleru cenrāžiem.&lt;/<span class="tag">p</span>&gt;
+      &lt;<span class="tag">span</span> <span class="attr">class</span>=<span class="str">"src"</span>&gt;Avots: Möller Auto VW, Inchcape BMW, Toyota WESS cenrāži · 2026-Q1&lt;/<span class="tag">span</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+
+    &lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"trust-item"</span>&gt;
+      &lt;<span class="tag">h5</span>&gt;Remonta buferis (RBUF)&lt;/<span class="tag">h5</span>&gt;
+      &lt;<span class="tag">p</span>&gt;Pēc garantijas beigām — nevis "ja kas notiks", bet plānotā vidējā remonta likme.
+        Latvijas darba cenas ir <em>par ~20% zemākas</em> nekā UK/DE avotos, tāpēc atlaidām bāzi.
+        Pieaug par 10% katru gadu pēc garantijas.&lt;/<span class="tag">p</span>&gt;
+      &lt;<span class="tag">span</span> <span class="attr">class</span>=<span class="str">"src"</span>&gt;Avots: WhatCar / ADAC TCO datu bāzes ar LV korekcijām · 2026&lt;/<span class="tag">span</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+
+    &lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"trust-item"</span>&gt;
+      &lt;<span class="tag">h5</span>&gt;Riepas&lt;/<span class="tag">h5</span>&gt;
+      &lt;<span class="tag">p</span>&gt;Plakana likme pēc auto kategorijas (mazs / vidējs / liels / SUV). Iekļauj
+        gan vasaras, gan ziemas komplektu, montāžu un nodošanu.&lt;/<span class="tag">p</span>&gt;
+      &lt;<span class="tag">span</span> <span class="attr">class</span>=<span class="str">"src"</span>&gt;Avots: Continental, Michelin LV cenas · 2026&lt;/<span class="tag">span</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+
+    &lt;<span class="tag">div</span> <span class="attr">class</span>=<span class="str">"trust-item"</span>&gt;
+      &lt;<span class="tag">h5</span>&gt;TEN — Transporta līdzekļa ekspluatācijas nodoklis&lt;/<span class="tag">h5</span>&gt;
+      &lt;<span class="tag">p</span>&gt;14 brackets pēc WLTP CO2. EV = €0. Tabula no 01.01.2025 likuma.&lt;/<span class="tag">p</span>&gt;
+      &lt;<span class="tag">span</span> <span class="attr">class</span>=<span class="str">"src"</span>&gt;Avots: likumi.lv · TLEN · 2025-01-01&lt;/<span class="tag">span</span>&gt;
+    &lt;/<span class="tag">div</span>&gt;
+
+  &lt;/<span class="tag">div</span>&gt;
+
+  &lt;<span class="tag">p</span> <span class="attr">class</span>=<span class="str">"trust-foot"</span>&gt;
+    Skaitļi ir orientējoši un periodiski atjaunoti. Pēdējais atjauninājums:
+    &lt;<span class="tag">strong</span>&gt;2026-05-25&lt;/<span class="tag">strong</span>&gt;.
+    Atrodi neprecizitāti? Raksti: &lt;<span class="tag">a</span> <span class="attr">href</span>=<span class="str">"mailto:hello@honestcost.lv"</span>&gt;hello@honestcost.lv&lt;/<span class="tag">a</span>&gt;.
+  &lt;/<span class="tag">p</span>&gt;
+&lt;/<span class="tag">details</span>&gt;
+
+<span class="cmt">/* CSS */</span>
+.trust { max-width: <span class="num">1040</span>px; margin: <span class="num">36</span>px auto <span class="num">48</span>px; background: var(--surface);
+         border: <span class="num">1</span>px solid var(--line); border-radius: <span class="num">20</span>px; padding: <span class="num">0</span>; }
+.trust summary { padding: <span class="num">20</span>px <span class="num">28</span>px; cursor: pointer; display: flex;
+                 justify-content: space-between; list-style: none;
+                 font-family: var(--ff-display); font-size: <span class="num">22</span>px; font-weight: <span class="num">600</span>; }
+.trust summary::-webkit-details-marker { display: none; }
+.trust[open] summary .chev { color: var(--accent); }
+.trust-grid { display: grid; grid-template-columns: repeat(<span class="num">2</span>, <span class="num">1</span>fr); gap: <span class="num">22</span>px;
+              padding: <span class="num">0</span> <span class="num">28</span>px <span class="num">24</span>px; }
+.trust-item h5 { font-family: var(--ff-ui); font-size: <span class="num">15</span>px; font-weight: <span class="num">600</span>;
+                 margin-bottom: <span class="num">6</span>px; }
+.trust-item p  { font-size: <span class="num">13</span>px; color: var(--ink-2); line-height: <span class="num">1.6</span>; margin-bottom: <span class="num">6</span>px; }
+.trust-item .src { font-family: var(--ff-mono); font-size: <span class="num">10.5</span>px; letter-spacing: <span class="num">0.06</span>em;
+                   color: var(--ink-3); text-transform: uppercase; }
+.trust-foot { padding: <span class="num">0</span> <span class="num">28</span>px <span class="num">26</span>px; font-size: <span class="num">12</span>px; color: var(--ink-3);
+              border-top: <span class="num">1</span>px solid var(--line); padding-top: <span class="num">16</span>px; margin-top: <span class="num">10</span>px; }
+@media (max-width: <span class="num">768</span>px){ .trust-grid { grid-template-columns: <span class="num">1</span>fr; } }</pre>
+  <div class="preview-wrap">
+    <div class="preview-label">Rendered preview · collapsed</div>
+    <div class="preview-trust" style="max-width:520px;">
+      <div class="trust-head"><h5>Kā mēs aprēķinām šos skaitļus</h5><span class="chev">[+]</span></div>
+    </div>
+    <div class="preview-label" style="margin-top:18px">Rendered preview · expanded (excerpt)</div>
+    <div class="preview-trust" style="max-width:520px;">
+      <div class="trust-head"><h5>Kā mēs aprēķinām šos skaitļus</h5><span class="chev" style="color:var(--accent)">[–]</span></div>
+      <div class="trust-body">
+        <strong style="color:var(--ink);font-size:14px;">KASKO</strong>
+        <p style="font-size:13px;color:var(--ink-2);max-width:none;margin:4px 0 4px;">Aprēķināts uz auto atlikušo tirgus vērtību katrā gadā, ne uz pirkuma cenu.</p>
+        <span class="src">Avots: BALTA, ERGO, BTA tirgus likmes · 2026-Q1</span>
+        <hr style="border:0;border-top:1px solid var(--line);margin:14px 0;">
+        <strong style="color:var(--ink);font-size:14px;">TEN nodoklis</strong>
+        <p style="font-size:13px;color:var(--ink-2);max-width:none;margin:4px 0 4px;">14 brackets pēc WLTP CO2. EV = €0. Tabula no 01.01.2025 likuma.</p>
+        <span class="src">Avots: likumi.lv · 2025-01-01</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────── -->
+<h2 id="events"><span class="num">04 / instrumentation · live day 1</span>Plausible custom events</h2>
+
+<p>Plausible's free tier supports custom events without extra cost. Drop these into the right handlers, then create matching "Goals" in your Plausible dashboard to turn them into conversion funnels.</p>
+
+<div class="snippet">
+  <div class="snippet-head">
+    <span class="snippet-label">snippet/events.js</span>
+    <div style="display:flex;gap:14px;align-items:center;">
+      <span class="snippet-meta">scatter through your existing handlers</span>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+  </div>
+<pre id="code-events"><span class="cmt">// Add this once near the top of your script — fallback if Plausible is blocked</span>
+<span class="kw">window</span>.plausible = <span class="kw">window</span>.plausible || <span class="kw">function</span>(){ (<span class="kw">window</span>.plausible.q = <span class="kw">window</span>.plausible.q || []).push(arguments) };
+
+<span class="cmt">// ─── 1 · inside doAnalyse(), after results render ───</span>
+plausible(<span class="str">'analysis_run'</span>, { props: {
+  car_a:   carA.id || carA.name,
+  car_b:   carB.id || carB.name,
+  horizon: g.yrs,
+  km:      g.km,
+  winner:  rA.totalMo &lt; rB.totalMo ? <span class="str">'A'</span> : <span class="str">'B'</span>,
+  savings: <span class="kw">Math</span>.round(<span class="kw">Math</span>.abs(rA.total - rB.total))
+}});
+
+<span class="cmt">// ─── 2 · inside example button click handlers ───</span>
+plausible(<span class="str">'example_loaded'</span>, { props: { preset: <span class="str">'bmw_118i_x1'</span> } });
+
+<span class="cmt">// ─── 3 · inside the "Kopēt saiti" button handler ───</span>
+plausible(<span class="str">'share_link_copied'</span>);
+
+<span class="cmt">// ─── 4 · inside CAR_DB search input ───</span>
+<span class="kw">let</span> _searchTimer;
+document.getElementById(<span class="str">'carSearchA'</span>).addEventListener(<span class="str">'input'</span>, (e) =&gt; {
+  clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(() =&gt; {
+    <span class="kw">if</span> (e.target.value.length &gt;= <span class="num">3</span>)
+      plausible(<span class="str">'car_db_search'</span>, { props: { query: e.target.value.toLowerCase() } });
+  }, <span class="num">800</span>);
+});
+
+<span class="cmt">// ─── 5 · inside ownership horizon buttons (3g / 5g / 7g / 10g) ───</span>
+plausible(<span class="str">'horizon_changed'</span>, { props: { years: y } });
+
+<span class="cmt">// ─── 6 · scroll-depth on results (one-time per session) ───</span>
+<span class="kw">let</span> _depthFired = <span class="kw">false</span>;
+<span class="kw">window</span>.addEventListener(<span class="str">'scroll'</span>, () =&gt; {
+  <span class="kw">if</span> (_depthFired) <span class="kw">return</span>;
+  <span class="kw">const</span> doc = document.documentElement;
+  <span class="kw">if</span> ((doc.scrollTop + <span class="kw">window</span>.innerHeight) / doc.scrollHeight &gt; <span class="num">0.85</span>) {
+    plausible(<span class="str">'scrolled_full_result'</span>);
+    _depthFired = <span class="kw">true</span>;
+  }
+});</pre>
+</div>
+
+<h3>Goals to configure in Plausible dashboard</h3>
+<p>For each custom event below, create a matching Goal in <em>Plausible → Site Settings → Goals → Add Goal → Custom Event</em>:</p>
+
+<ul style="padding-left:22px;color:var(--ink-2);font-size:14px;max-width:65ch;">
+  <li><code>analysis_run</code> — the core funnel-conversion event</li>
+  <li><code>share_link_copied</code> — virality proxy</li>
+  <li><code>affiliate_click</code> — revenue intent</li>
+  <li><code>email_captured</code> — list growth</li>
+  <li><code>scrolled_full_result</code> — depth-of-engagement</li>
+  <li><code>trust_opened</code> — dealer-trust proxy</li>
+</ul>
+
+<div class="callout">
+<h4>What "good" looks like</h4>
+By week 2 you should see ≥ 100 <code>analysis_run</code> events with ≥ 30 unique users. By week 4 the ratio <code>share_link_copied</code> / <code>analysis_run</code> should be &gt; 8% — that's the proxy for whether HonestCost spreads on its own.
+</div>
+
+<footer>
+  <span>HonestCost · Integration Snippets · v1.0 · 2026-05-25</span>
+  <a class="back" href="Playbook.html" style="margin:0;">Back to Playbook</a>
+</footer>
+
+</div>
+<script>
+function copyCode(btn){
+  const pre = btn.closest('.snippet').querySelector('pre');
+  // Strip the syntax-highlight spans, keep only text
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(()=>btn.textContent = orig, 1500);
+  });
+}
+</script>
+</body>
+</html>

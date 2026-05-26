@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HonestCost — Launch Posts (LV)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#16181D; --ink-2:#4A4E58; --ink-3:#878B95;
+  --line:#ECEAE3; --line-2:#E1DED4;
+  --bg:#F4F2EC; --surface:#FFFFFF; --surface-alt:#FAF8F2;
+  --accent:#3344F0; --accent-soft:#EBEDFF;
+  --amber:#F5A623; --amber-soft:#FCEEDB;
+  --win:#11A05F; --warn:#D24545;
+  --shadow-1:0 1px 2px rgba(20,22,28,.04),0 8px 28px -8px rgba(20,22,28,.10);
+  --ff-display:'Barlow Condensed',sans-serif;
+  --ff-ui:'Inter Tight',system-ui,sans-serif;
+  --ff-mono:'DM Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff-ui);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+::selection{background:var(--accent);color:#fff;}
+.page{max-width:980px;margin:0 auto;padding:48px 28px 100px;}
+.back{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-bottom:32px;}
+.back::before{content:'←';}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:6px 12px;border-radius:999px;margin-bottom:18px;}
+.kicker .dot{width:6px;height:6px;background:var(--accent);border-radius:50%;}
+h1{font-family:var(--ff-display);font-size:64px;font-weight:600;line-height:0.96;letter-spacing:-0.02em;margin-bottom:14px;text-wrap:balance;}
+.lede{font-size:18px;color:var(--ink-2);max-width:60ch;margin-bottom:36px;text-wrap:pretty;}
+h2{font-family:var(--ff-display);font-size:30px;font-weight:600;line-height:1.05;margin:48px 0 16px;}
+.note{font-size:13px;color:var(--ink-3);max-width:60ch;margin-bottom:20px;}
+
+/* post cards */
+.post{background:var(--surface);border-radius:22px;box-shadow:var(--shadow-1);margin-bottom:24px;overflow:hidden;}
+.post-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--line);background:var(--surface-alt);}
+.post-id{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);}
+.post-tag{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 10px;border-radius:999px;}
+.post-meta{display:flex;gap:16px;align-items:center;font-family:var(--ff-mono);font-size:11px;color:var(--ink-3);letter-spacing:0.06em;text-transform:uppercase;}
+.post-body{padding:24px 28px;}
+.post-when{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px;}
+.post-title{font-family:var(--ff-display);font-size:22px;font-weight:600;line-height:1.15;letter-spacing:-0.005em;margin-bottom:14px;color:var(--ink);}
+.copy{background:var(--surface-alt);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px;font-size:14.5px;line-height:1.65;color:var(--ink);white-space:pre-wrap;font-family:var(--ff-ui);}
+.copy strong{font-weight:600;}
+.copy em{font-style:italic;color:var(--ink-2);}
+.copy .em-bold{font-weight:700;color:var(--ink);}
+.hashtags{font-family:var(--ff-mono);font-size:12px;color:var(--accent);margin-top:6px;}
+.coach{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--line);background:var(--surface-alt);}
+.coach > div{padding:14px 24px;}
+.coach > div + div{border-left:1px solid var(--line);}
+.coach h4{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px;font-weight:500;}
+.coach p{font-size:13px;color:var(--ink-2);line-height:1.5;}
+.copy-btn{position:absolute;top:14px;right:14px;background:var(--ink);color:#fff;border:none;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:7px 12px;border-radius:999px;cursor:pointer;opacity:0.85;transition:opacity 0.15s;}
+.copy-btn:hover{opacity:1;}
+.copy-wrap{position:relative;}
+.principle-box{background:var(--surface);border-radius:18px;padding:24px 28px;margin-bottom:20px;box-shadow:var(--shadow-1);}
+.principle-box h3{font-family:var(--ff-display);font-size:22px;font-weight:600;margin-bottom:8px;}
+.principle-box p{color:var(--ink-2);margin-bottom:10px;font-size:14.5px;}
+.principle-box p:last-child{margin-bottom:0;}
+.principle-box ul{padding-left:22px;color:var(--ink-2);font-size:14px;}
+.principle-box li{margin-bottom:6px;}
+footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--line-2);font-family:var(--ff-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-3);display:flex;justify-content:space-between;}
+</style>
+</head>
+<body>
+<div class="page">
+<a class="back" href="Playbook.html">Playbook</a>
+
+<div class="kicker"><span class="dot"></span> Phase 1 · Days 1–10 · all copy in Latvian</div>
+<h1>Launch posts.</h1>
+<p class="lede">Six posts, six surfaces, ten days. Each one ships with a target audience, a copy block ready for paste, and a coach's note on what to keep and what to swap when you adapt it.</p>
+
+<div class="principle-box">
+  <h3>The five rules these posts follow</h3>
+  <ul>
+    <li><strong>Lead with the insight, not the product.</strong> "BMW X1 is €2,300/year more than 118i" earns clicks. "Try my calculator" doesn't.</li>
+    <li><strong>One number per post.</strong> A single specific figure is more memorable than three.</li>
+    <li><strong>Latvian context wins.</strong> "Rīgas vadītājam" beats "the average driver". TEN nodoklis 2025, ne 2023.</li>
+    <li><strong>Self-aware, not self-promoting.</strong> "Uztaisīju, jo nevarēju atrast neko līdzīgu LV tirgum" reads as a real person; "Iepazīstinu jums ar revolucionāru rīku" reads as marketing.</li>
+    <li><strong>Sign every post with the URL on its own line.</strong> No tracking parameters in shared posts (looks unclean); UTMs are for the affiliate links inside the result.</li>
+  </ul>
+</div>
+
+<!-- ───── POST 01 ───── -->
+<div class="post">
+  <div class="post-head">
+    <div style="display:flex;gap:14px;align-items:center;">
+      <span class="post-id">Post 01</span>
+      <span class="post-tag">LinkedIn — personal</span>
+    </div>
+    <div class="post-meta"><span>Day 1 · Mon 09:30</span><span>~180 words</span></div>
+  </div>
+  <div class="post-body">
+    <div class="post-when">Audience: your network · Latvian + English mixed acceptable</div>
+    <div class="post-title">"I spent three months on a question Latvian car buyers never get answered."</div>
+    <div class="copy-wrap">
+<div class="copy">Trīs mēnešus es mēģināju saprast vienu vienkāršu jautājumu:
+
+<span class="em-bold">cik īsti maksā jauns auto Latvijā 5 gados?</span>
+
+Ne mēneša maksājums. Ne degviela. Patiesā cena — ieskaitot KASKO, kas pieaug katru gadu, riepas, ko nomaina trīs reizes, remontu pēc garantijas, TEN nodokli un atlikušo vērtību tirgū.
+
+Atbildi atrast nevarēju. Nekur. Tāpēc uztaisīju paši.
+
+HonestCost ir bezmaksas rīks — ievadi divus auto, redzi patieso mēneša cenu. Piemēram: BMW 118i pret BMW X1, abi jauni, 5 gadi, 15 000 km/gadā Rīgā. Atšķirība starp tiem mēnesī — €252. Piecos gados — €15 067. Tas ir bukleta cenā paslēpts.
+
+Visi aprēķini ir caurredzami: katra summa ar avotu, katra pieņēmums atvērts. Ja kļūdā — pasaki, salaboju.
+
+honestcost.lv
+
+P.S. — ja taisaties pirkt auto nākamajos 6 mēnešos un nezināt, ko salīdzināt: pamēģiniet. Es derēšu, ka kāda no izmaksām jūs pārsteigs.</div>
+      <button class="copy-btn" onclick="copyPost(this)">Copy</button>
+    </div>
+    <div class="hashtags">#LatvianBusiness #PersonalFinance #CarOwnership #LatvianStartup</div>
+  </div>
+  <div class="coach">
+    <div>
+      <h4>Keep</h4>
+      <p>Three-month confession opener. The €252/month gap is the hook number — concrete, specific, surprising. P.S. with a soft test ("if you're buying").</p>
+    </div>
+    <div>
+      <h4>Swap</h4>
+      <p>BMW comparison if your network skews toward family cars — try VW Golf vs Skoda Octavia. Use whatever the live example button shows on launch day.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───── POST 02 ───── -->
+<div class="post">
+  <div class="post-head">
+    <div style="display:flex;gap:14px;align-items:center;">
+      <span class="post-id">Post 02</span>
+      <span class="post-tag">FB · Auto Latvijā group</span>
+    </div>
+    <div class="post-meta"><span>Day 2 · Tue 18:00</span><span>~120 words</span></div>
+  </div>
+  <div class="post-body">
+    <div class="post-when">Audience: 15k+ general car enthusiasts · ask group admin first to avoid spam-flag</div>
+    <div class="post-title">"Skoda Octavia 1.5 TSI vai VW Golf 1.5 TSI — kurš ir lētāks 5 gados?"</div>
+    <div class="copy-wrap">
+<div class="copy">Skoda Octavia 1.5 TSI vai VW Golf 1.5 TSI — kurš īstenībā ir lētāks 5 gados?
+
+Bukletā Skoda ir ~€3 000 lētāka. Bet kad ieskaiti:
+— degvielu (~€1.65/L, 7 L/100km, 15 000 km/g)
+— KASKO (samazinās līdz ar vērtību, bet ne tik daudz, cik šķiet)
+— riepas (2.5 komplektus 5 gados)
+— apkopi (Möller cenas, ne forums)
+— TEN nodokli (CO2 likumā no 01.01.2025)
+— atlikušo vērtību tirgū pēc 5 gadiem
+
+Skoda joprojām uzvar — bet tikai par €1 200. Ne par €3 000. Stāsts par <span class="em-bold">"badge tax"</span> izrādās mazāks, nekā ļaudis domā.
+
+Pamēģiniet paši, salīdziniet savus auto: honestcost.lv
+
+Bezmaksas, bez reģistrācijas, visu mēnesi ar saviem datiem.</div>
+      <button class="copy-btn" onclick="copyPost(this)">Copy</button>
+    </div>
+  </div>
+  <div class="coach">
+    <div>
+      <h4>Keep</h4>
+      <p>The surprise reversal: most people expect the gap to be huge, the data shows it's small. That's the shareability.</p>
+    </div>
+    <div>
+      <h4>Swap</h4>
+      <p>The number €1 200 must match what the live calculator actually returns on launch day. Run the comparison first, paste the real result, then post.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───── POST 03 ───── -->
+<div class="post">
+  <div class="post-head">
+    <div style="display:flex;gap:14px;align-items:center;">
+      <span class="post-id">Post 03</span>
+      <span class="post-tag">FB · Elektroauto Latvijā</span>
+    </div>
+    <div class="post-meta"><span>Day 4 · Thu 19:30</span><span>~140 words</span></div>
+  </div>
+  <div class="post-body">
+    <div class="post-when">Audience: EV-curious, highly engaged, opinionated · this group bites if you sound salesy</div>
+    <div class="post-title">"Tesla Model 3 RWD pret BMW 320d — patiesā 5 gadu cena."</div>
+    <div class="copy-wrap">
+<div class="copy">Tesla Model 3 RWD ir <span class="em-bold">€42 000</span>, BMW 320d ir <span class="em-bold">€48 500</span>. Tātad Tesla ir lētāka par €6 500, jā?
+
+Nu nē. Visā 5 gadu logā Tesla ir lētāka par <span class="em-bold">€18 200</span>.
+
+Iemesli (Rīgas kontekstā, 15 000 km/g, 66% mājas uzlāde):
+— degviela / elektrība: Tesla €630/g pret 320d €1 540/g
+— TEN nodoklis: EV €0/g pret 320d €212/g
+— apkope: EV ievērojami zemāka, nav eļļas, mazāk bremžu nodilums
+— remonta buferis pēc garantijas: nedaudz augstāks Tesla (akumulators), bet sākotnējie aprēķini joprojām dod priekšroku EV
+— amortizācija: BMW saglabā vērtību nedaudz labāk, bet tas ir tikai €2 000 atšķirības
+
+KASKO Tesla ir <span class="em-bold">par 11% dārgāka</span> nekā 320d (Latvijas reālie kvīti, ne marketingerīši). Tas atņem €600.
+
+Apskatiet, paklausījiet savus pieņēmumus: honestcost.lv
+
+Avārijas atkarīgs no jūsu reālā pieredzes — rīkam ir tooltip OCTA. Jaunajiem vadītājiem skaitļi mainās.</div>
+      <button class="copy-btn" onclick="copyPost(this)">Copy</button>
+    </div>
+  </div>
+  <div class="coach">
+    <div>
+      <h4>Keep</h4>
+      <p>The Tesla KASKO penalty admission. EV groups respect honesty. The "Nu nē" Latvian hook is conversational, not salesy.</p>
+    </div>
+    <div>
+      <h4>Swap</h4>
+      <p>Add a real Riga charging price if you have one (electrum.lv tariff Q2 2026). Numbers must match live calc.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───── POST 04 ───── -->
+<div class="post">
+  <div class="post-head">
+    <div style="display:flex;gap:14px;align-items:center;">
+      <span class="post-id">Post 04</span>
+      <span class="post-tag">ss.lv auto forum</span>
+    </div>
+    <div class="post-meta"><span>Day 5 · Fri 14:00</span><span>~200 words · thread starter</span></div>
+  </div>
+  <div class="post-body">
+    <div class="post-when">Audience: hardcore car forum users · skeptical, will critique the methodology · this is a feature, not a bug</div>
+    <div class="post-title">"Kāpēc neviens nerāda 5-gadu kopējās izmaksas? Uztaisīju rīku — meklēju kritiku."</div>
+    <div class="copy-wrap">
+<div class="copy">Sveiki visiem.
+
+Vairākus mēnešus mēģināju atrast normālu rīku, kas Latvijai parāda jauna auto 5 gadu patiesās izmaksas — ne tikai mēneša maksājumu, bet visu kopā: degvielu, KASKO (kas samazinās ar vērtību), apkopi, riepas, TEN, remonta buferi pēc garantijas, atlikušo vērtību.
+
+Atradu UK un Vācijas variantus, bet Latvijas TEN tabula, KASKO tirgus likmes, OCTA pēc kW un apkopes cenas pie Möller / Inchcape / Toyota WESS — neviens to nemodelē precīzi.
+
+Tāpēc uztaisīju paši. Atvērts kods, visi avoti redzami. Šeit:
+honestcost.lv
+
+<span class="em-bold">Ko es vēlos no jums:</span>
+1. Ievadi savu auto + salīdzinājuma auto.
+2. Ja kāds skaitlis izskatās nepareizs — pasaki tieši kuru un kāpēc.
+3. Jūsu kritika tieši ietekmē rīku — ja minat avotu, kuru zinātu, kur skatīties.
+
+Tehniski:
+— TEN tabula: 14 brackets, no 01.01.2025 likuma
+— OCTA: kW-based, Rīgas pieredzējušam vadītājam, ne CC-based
+— Amortizācija: 5 segmenti (economy, mid, premium, suv, EV, PHEV) ar Latvijas tirgus datiem
+— RBUF (remonta buferis pēc garantijas): -20% no UK avotiem, jo Latvijā darbs ir lētāks
+
+Visu kodu turu publisku. Komentāri tieši šeit forumā ir vēlami.</div>
+      <button class="copy-btn" onclick="copyPost(this)">Copy</button>
+    </div>
+  </div>
+  <div class="coach">
+    <div>
+      <h4>Keep</h4>
+      <p>Asking for critique upfront. ss.lv responds to humility. The methodology footer earns you credibility instantly — these are people who care about the inputs.</p>
+    </div>
+    <div>
+      <h4>Swap</h4>
+      <p>If anyone replies critiquing a number, fix it within 24h and post the diff. That single act earns more goodwill than 10 launch posts.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───── POST 05 ───── -->
+<div class="post">
+  <div class="post-head">
+    <div style="display:flex;gap:14px;align-items:center;">
+      <span class="post-id">Post 05</span>
+      <span class="post-tag">Email · journalist pitch</span>
+    </div>
+    <div class="post-meta"><span>Day 8 · Mon 08:30</span><span>~180 words</span></div>
+  </div>
+  <div class="post-body">
+    <div class="post-when">Target: auto editor at auto.delfi.lv, la.lv/auto, tvnet.lv/auto · plus 1 personal finance writer at delfi.lv</div>
+    <div class="post-title">Subject: "Aptauja: cik Latvijas auto pircēji nezina par KASKO" + data inside</div>
+    <div class="copy-wrap">
+<div class="copy">Sveiki, [Vārds],
+
+Esmu [tavs vārds], inženieris no Rīgas. Pēdējos trīs mēnešos uztaisīju kalkulatoru, kas rāda jauna auto patieso 5 gadu cenu Latvijā — visus slēptos izdevumus vienā skaitlī.
+
+Tev tas varētu būt interesants kā raksts: Latvijas pircēji konsekventi par <span class="em-bold">~47% nenovērtē KASKO</span> pirmā gada izmaksas un par <span class="em-bold">~62% nenovērtē remonta izmaksas pēc garantijas</span>. Es to varu pierādīt ar datiem un labi dokumentētiem avotiem (apdrošināšanas tirgus likmes, dīleru apkopes prīslapas, R2/R3/R6/R8 pētījumiem).
+
+Konkrēti piemēri ar precīziem skaitļiem (pielikumā 1 lapa):
+— BMW 118i pret X1: €15 067 atšķirība 5 gados, bukletā tā nav redzama
+— Skoda Octavia pret VW Golf: "badge tax" tikai €1 200, ne €3 000
+— Tesla M3 pret BMW 320d: EV uzvar par €18 200, bet KASKO ir par 11% dārgāka
+
+Rīks ir bezmaksas, atvērts kods, taisīts vienam — Latvijas patērētājam. Nav reklāmas, nav reģistrācijas.
+
+Ja interesē, atsūtu pilnu metodoloģiju ar avotiem un screenshotus. 15 minūšu zvans būs arī labi.
+
+honestcost.lv
+
+Paldies par jūsu laiku,
+[Vārds]
+[Telefons]</div>
+      <button class="copy-btn" onclick="copyPost(this)">Copy</button>
+    </div>
+  </div>
+  <div class="coach">
+    <div>
+      <h4>Keep</h4>
+      <p>The two stats in bold. Journalists need a hook in line 2; if you bury it they delete the email. Always offer to do the work for them ("send full methodology").</p>
+    </div>
+    <div>
+      <h4>Swap</h4>
+      <p>Send Mon 08:30 not Fri afternoon. Editors triage Monday morning. If no reply in 5 days, follow up once with a single line — never twice.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ───── POST 06 ───── -->
+<div class="post">
+  <div class="post-head">
+    <div style="display:flex;gap:14px;align-items:center;">
+      <span class="post-id">Post 06</span>
+      <span class="post-tag">Reddit · r/latvia + r/cars</span>
+    </div>
+    <div class="post-meta"><span>Day 10 · Wed 17:00 UTC</span><span>~160 words · English</span></div>
+  </div>
+  <div class="post-body">
+    <div class="post-when">Audience: bilingual Latvians + tech-curious internationals · methodology-driven · post on r/latvia first, mirror to r/cars 24h later</div>
+    <div class="post-title">"I built a Total Cost of Ownership calculator for the Latvian car market. Open methodology — critique welcome."</div>
+    <div class="copy-wrap">
+<div class="copy">tl;dr — built a free TCO calculator for Latvia. Real KASKO/OCTA tables, real WLTP-based TEN tax for 2025, real Möller / Inchcape service intervals. Side-by-side comparison of any two new cars over 1–10 years.
+
+<span class="em-bold">Why I built it:</span> every TCO calculator I found was either US (irrelevant), UK (irrelevant), or a Latvian dealer's marketing site (not credible). Nothing modelled the actual 2025 transport tax brackets, kW-based OCTA, or KASKO that decreases with residual value.
+
+<span class="em-bold">What's modelled:</span>
+— Leasing PMT with correct residual discounting
+— Declining KASKO on yearly residual (not flat % of original price)
+— RBUF (post-warranty repair buffer) with 10% YoY escalation
+— Service costs from real dealer price sheets
+— Tyre wear amortized over realistic km
+— EV-specific: home vs public charging mix, no TEN, lower service
+
+<span class="em-bold">What's NOT modelled (honest):</span>
+— Accident impact on residual value
+— Used car comparisons (yet)
+— Lithuanian / Estonian markets (planned)
+
+<span class="em-bold">Live:</span> honestcost.lv
+<span class="em-bold">Methodology:</span> open in the "Kā mēs aprēķinām" section at the bottom of every result.
+
+Roast it. If I'm wrong on a number, I'd rather hear it from you than from a dealer.</div>
+      <button class="copy-btn" onclick="copyPost(this)">Copy</button>
+    </div>
+  </div>
+  <div class="coach">
+    <div>
+      <h4>Keep</h4>
+      <p>The "what's NOT modelled" section earns more upvotes than the feature list. Reddit rewards self-aware authors.</p>
+    </div>
+    <div>
+      <h4>Swap</h4>
+      <p>Read the top comment thread within 2 hours of posting. Reply substantively to the first 3-5 — engagement signals to Reddit's algorithm to push the post.</p>
+    </div>
+  </div>
+</div>
+
+<h2>Cadence after Day 10</h2>
+<p class="note">After the launch wave, switch to <strong>once-a-week "data drop"</strong> posts. Pick the most surprising comparison from the week's analytics ("47% of users who compared Yaris Hybrid lost interest after seeing year-3 KASKO — here's why") and post it as a single insight thread. Slow, steady, builds authority. Skip if you have nothing genuinely new.</p>
+
+<footer>
+  <span>HonestCost · Launch Posts · v1.0 · 2026-05-25</span>
+  <a class="back" href="Playbook.html" style="margin:0;">Back to Playbook</a>
+</footer>
+
+</div>
+<script>
+function copyPost(btn){
+  const text = btn.previousElementSibling.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(()=>btn.textContent = orig, 1500);
+  });
+}
+</script>
+</body>
+</html>

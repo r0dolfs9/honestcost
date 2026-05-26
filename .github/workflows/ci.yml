@@ -1,0 +1,27 @@
+name: HonestCost CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Syntax-check tests
+        run: |
+          node --check test-calc.js
+          node --check test_scenarios.js
+
+      - name: Run calc tests
+        run: |
+          node test-calc.js
+          node test_scenarios.js

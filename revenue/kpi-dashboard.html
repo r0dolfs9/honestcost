@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HonestCost — KPI Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#16181D; --ink-2:#4A4E58; --ink-3:#878B95;
+  --line:#ECEAE3; --line-2:#E1DED4;
+  --bg:#F4F2EC; --surface:#FFFFFF; --surface-alt:#FAF8F2;
+  --accent:#3344F0; --accent-soft:#EBEDFF;
+  --amber:#F5A623; --amber-soft:#FCEEDB;
+  --win:#11A05F; --win-soft:#E5F6EE;
+  --warn:#D24545; --warn-soft:#FBEAEA;
+  --shadow-1:0 1px 2px rgba(20,22,28,.04),0 8px 28px -8px rgba(20,22,28,.10);
+  --ff-display:'Barlow Condensed',sans-serif;
+  --ff-ui:'Inter Tight',system-ui,sans-serif;
+  --ff-mono:'DM Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff-ui);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+::selection{background:var(--accent);color:#fff;}
+.page{max-width:1280px;margin:0 auto;padding:36px 28px 100px;}
+.back{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-bottom:24px;}
+.back::before{content:'←';}
+
+.head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:36px;flex-wrap:wrap;gap:18px;}
+.head-l h1{font-family:var(--ff-display);font-size:54px;font-weight:600;line-height:0.96;letter-spacing:-0.02em;}
+.head-l .meta{font-family:var(--ff-mono);font-size:11px;color:var(--ink-3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px;}
+.head-r{display:flex;gap:8px;}
+.tab{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);padding:8px 14px;border-radius:999px;background:var(--surface);cursor:pointer;border:1px solid var(--line);transition:all .15s;}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+.tab:hover:not(.on){background:var(--surface-alt);}
+
+/* hero row — north star */
+.north{
+  background:linear-gradient(150deg,#1A1D24 0%, #2E2F35 100%);
+  color:#fff;border-radius:24px;padding:32px 36px;margin-bottom:24px;
+  position:relative;overflow:hidden;
+}
+.north::after{content:'';position:absolute;right:-100px;top:-100px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.4) 0%,transparent 70%);}
+.north-grid{position:relative;display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:32px;align-items:end;}
+.north .lbl{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px;}
+.north .big{font-family:var(--ff-display);font-size:84px;line-height:0.95;font-weight:600;letter-spacing:-0.02em;}
+.north .big.amber{color:var(--amber);}
+.north .big small{font-size:30px;color:rgba(255,255,255,.55);font-weight:500;}
+.north .sub{font-size:13px;color:rgba(255,255,255,.65);margin-top:8px;}
+.north .delta{display:inline-flex;align-items:center;gap:6px;font-family:var(--ff-mono);font-size:13px;font-weight:500;}
+.north .delta.up{color:#5DE5A1;}
+.north .delta.dn{color:#FF7575;}
+
+/* kpi grid */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:24px;}
+.kpi{background:var(--surface);border-radius:18px;padding:20px 22px;box-shadow:var(--shadow-1);position:relative;}
+.kpi .lbl{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px;}
+.kpi .val{font-family:var(--ff-display);font-size:44px;line-height:0.95;font-weight:600;letter-spacing:-0.01em;}
+.kpi .val.amber{color:var(--amber);}
+.kpi .val.win{color:var(--win);}
+.kpi .val.warn{color:var(--warn);}
+.kpi .delta{font-family:var(--ff-mono);font-size:11px;font-weight:500;margin-top:6px;display:inline-flex;align-items:center;gap:4px;}
+.kpi .delta.up{color:var(--win);}
+.kpi .delta.dn{color:var(--warn);}
+.kpi .delta.flat{color:var(--ink-3);}
+.kpi .spark{margin-top:10px;height:32px;}
+.kpi .target{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.06em;color:var(--ink-3);margin-top:4px;}
+
+/* event funnel */
+.cols{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-bottom:24px;}
+.card{background:var(--surface);border-radius:20px;padding:24px 26px;box-shadow:var(--shadow-1);}
+.card h3{font-family:var(--ff-display);font-size:24px;font-weight:600;margin-bottom:6px;}
+.card .sub{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:18px;}
+
+.funnel{display:flex;flex-direction:column;gap:8px;}
+.fnl-row{display:grid;grid-template-columns:160px 1fr 80px 60px;gap:14px;align-items:center;font-size:13px;}
+.fnl-row .name{color:var(--ink);font-weight:500;}
+.fnl-row .name code{font-family:var(--ff-mono);font-size:11px;background:var(--surface-alt);padding:2px 6px;border-radius:4px;color:var(--accent);}
+.fnl-row .bar{height:22px;background:var(--surface-alt);border-radius:6px;position:relative;overflow:hidden;}
+.fnl-row .bar-fill{height:100%;background:linear-gradient(90deg,var(--accent) 0%,#6B85FF 100%);border-radius:6px;}
+.fnl-row .bar-fill.green{background:linear-gradient(90deg,var(--win) 0%,#5DE5A1 100%);}
+.fnl-row .bar-fill.amber{background:linear-gradient(90deg,var(--amber) 0%,#FCC571 100%);}
+.fnl-row .num{font-family:var(--ff-mono);font-size:13px;color:var(--ink);text-align:right;font-weight:500;}
+.fnl-row .pct{font-family:var(--ff-mono);font-size:11px;color:var(--ink-3);text-align:right;}
+
+/* gates */
+.gates{display:flex;flex-direction:column;gap:12px;}
+.gate{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:12px;background:var(--surface-alt);}
+.gate-tag{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:4px 10px;border-radius:999px;white-space:nowrap;flex-shrink:0;}
+.gate-tag.pass{background:var(--win-soft);color:var(--win);}
+.gate-tag.work{background:var(--amber-soft);color:#8a5e15;}
+.gate-tag.fail{background:var(--warn-soft);color:var(--warn);}
+.gate-text{font-size:12.5px;color:var(--ink-2);}
+.gate-text strong{color:var(--ink);font-size:13px;display:block;}
+.gate-meta{font-family:var(--ff-mono);font-size:10px;color:var(--ink-3);letter-spacing:0.04em;}
+
+/* leads table */
+.table{width:100%;border-collapse:collapse;font-size:13px;}
+.table th{text-align:left;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500;padding:10px 12px;border-bottom:2px solid var(--line-2);}
+.table td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+.table tr:last-child td{border-bottom:none;}
+.table td.num{font-family:var(--ff-mono);text-align:right;}
+.status{display:inline-block;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px;font-weight:500;}
+.status.new{background:var(--accent-soft);color:var(--accent);}
+.status.demo{background:var(--amber-soft);color:#8a5e15;}
+.status.won{background:var(--win-soft);color:var(--win);}
+.status.dead{background:var(--surface-alt);color:var(--ink-3);}
+
+.notes{background:var(--surface);border-left:3px solid var(--accent);border-radius:0 14px 14px 0;padding:16px 22px;font-size:13.5px;color:var(--ink-2);margin-bottom:22px;}
+.notes strong{color:var(--ink);}
+
+footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line-2);font-family:var(--ff-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-3);display:flex;justify-content:space-between;}
+</style>
+</head>
+<body>
+<div class="page">
+<a class="back" href="Playbook.html">Playbook</a>
+
+<div class="head">
+  <div class="head-l">
+    <div class="meta">Weekly review · ISO Week 27 · 2026-07-06 to 07-12</div>
+    <h1>What the numbers say.</h1>
+  </div>
+  <div class="head-r">
+    <span class="tab">7d</span>
+    <span class="tab on">30d</span>
+    <span class="tab">90d</span>
+    <span class="tab">All</span>
+  </div>
+</div>
+
+<div class="notes">
+<strong>What this dashboard is for.</strong> Open Plausible every Monday morning. Replace the mock numbers below with what's real. Anything moving sideways for two weeks gets a hypothesis, a test, and a 7-day check-back. No metric without a decision attached.
+</div>
+
+<!-- north star -->
+<div class="north">
+  <div class="north-grid">
+    <div>
+      <div class="lbl">MRR · committed</div>
+      <div class="big amber">€420 <small>/mo</small></div>
+      <div class="sub"><span class="delta up">▲ +€220 vs last 30d</span> · 2 dealers paying · 1 in pilot · €240 in overage leads</div>
+    </div>
+    <div>
+      <div class="lbl">Unique users · 30d</div>
+      <div class="big">1,142</div>
+      <div class="sub"><span class="delta up">▲ 38%</span> · 64% mobile · 78% LV / 16% EE / 4% LT</div>
+    </div>
+    <div>
+      <div class="lbl">Analyses run · 30d</div>
+      <div class="big">3,820</div>
+      <div class="sub"><span class="delta up">▲ 51%</span> · <strong style="color:#fff;">3.34</strong> per unique user</div>
+    </div>
+  </div>
+</div>
+
+<!-- 5 kpis -->
+<div class="kpi-row">
+
+  <div class="kpi">
+    <div class="lbl">Analyses / session</div>
+    <div class="val">3.3</div>
+    <span class="delta up">▲ 0.6 wk/wk</span>
+    <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none" width="100%">
+      <polyline points="0,28 12,26 24,24 36,22 48,18 60,16 72,12 84,10 100,6" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+      <polyline points="0,28 12,26 24,24 36,22 48,18 60,16 72,12 84,10 100,6 100,32 0,32" fill="url(#g1)" opacity=".15"/>
+      <defs><linearGradient id="g1" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
+    </svg>
+    <div class="target">target ≥ 3.0 · w12</div>
+  </div>
+
+  <div class="kpi">
+    <div class="lbl">Share-link rate</div>
+    <div class="val amber">7.4%</div>
+    <span class="delta up">▲ 1.2 pp</span>
+    <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none" width="100%">
+      <polyline points="0,26 14,24 28,23 42,19 56,16 70,13 84,11 100,8" fill="none" stroke="var(--amber)" stroke-width="1.5"/>
+    </svg>
+    <div class="target">target ≥ 8% · w12</div>
+  </div>
+
+  <div class="kpi">
+    <div class="lbl">Affiliate CTR</div>
+    <div class="val win">6.1%</div>
+    <span class="delta up">▲ 0.4 pp</span>
+    <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none" width="100%">
+      <polyline points="0,28 14,24 28,21 42,20 56,17 70,15 84,14 100,12" fill="none" stroke="var(--win)" stroke-width="1.5"/>
+    </svg>
+    <div class="target">target ≥ 6% · w6 ✓</div>
+  </div>
+
+  <div class="kpi">
+    <div class="lbl">Email capture</div>
+    <div class="val">4.2%</div>
+    <span class="delta up">▲ 0.8 pp</span>
+    <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none" width="100%">
+      <polyline points="0,29 14,27 28,24 42,22 56,19 70,17 84,15 100,13" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    </svg>
+    <div class="target">target ≥ 4% · w6 ✓</div>
+  </div>
+
+  <div class="kpi">
+    <div class="lbl">Dealer demos booked</div>
+    <div class="val">5</div>
+    <span class="delta flat">— same as last 30d</span>
+    <svg class="spark" viewBox="0 0 100 32" preserveAspectRatio="none" width="100%">
+      <polyline points="0,30 17,26 34,22 51,18 68,14 85,12 100,12" fill="none" stroke="var(--ink-3)" stroke-width="1.5"/>
+    </svg>
+    <div class="target">target ≥ 4 · w6 ✓</div>
+  </div>
+</div>
+
+<!-- columns -->
+<div class="cols">
+  <div class="card">
+    <h3>Event funnel · 30d</h3>
+    <div class="sub">From pageview to revenue intent</div>
+    <div class="funnel">
+
+      <div class="fnl-row">
+        <div class="name">Pageview <code>pageview</code></div>
+        <div class="bar"><div class="bar-fill" style="width:100%"></div></div>
+        <div class="num">2,890</div>
+        <div class="pct">100%</div>
+      </div>
+
+      <div class="fnl-row">
+        <div class="name">Example loaded <code>example_loaded</code></div>
+        <div class="bar"><div class="bar-fill" style="width:74%"></div></div>
+        <div class="num">2,140</div>
+        <div class="pct">74%</div>
+      </div>
+
+      <div class="fnl-row">
+        <div class="name">Analysis run <code>analysis_run</code></div>
+        <div class="bar"><div class="bar-fill" style="width:54%"></div></div>
+        <div class="num">1,560</div>
+        <div class="pct">54%</div>
+      </div>
+
+      <div class="fnl-row">
+        <div class="name">Scrolled full result <code>scrolled_full</code></div>
+        <div class="bar"><div class="bar-fill" style="width:38%"></div></div>
+        <div class="num">1,098</div>
+        <div class="pct">38%</div>
+      </div>
+
+      <div class="fnl-row">
+        <div class="name">Trust opened <code>trust_opened</code></div>
+        <div class="bar"><div class="bar-fill amber" style="width:21%"></div></div>
+        <div class="num">607</div>
+        <div class="pct">21%</div>
+      </div>
+
+      <div class="fnl-row">
+        <div class="name">Share link copied <code>share_link</code></div>
+        <div class="bar"><div class="bar-fill amber" style="width:14%"></div></div>
+        <div class="num">404</div>
+        <div class="pct">14%</div>
+      </div>
+
+      <div class="fnl-row">
+        <div class="name">Affiliate click <code>affiliate_click</code></div>
+        <div class="bar"><div class="bar-fill green" style="width:11%"></div></div>
+        <div class="num">318</div>
+        <div class="pct">11%</div>
+      </div>
+
+      <div class="fnl-row">
+        <div class="name">Email captured <code>email_captured</code></div>
+        <div class="bar"><div class="bar-fill green" style="width:8%"></div></div>
+        <div class="num">231</div>
+        <div class="pct">8%</div>
+      </div>
+
+      <div class="fnl-row">
+        <div class="name">Lead to dealer <code>dealer_lead</code></div>
+        <div class="bar"><div class="bar-fill green" style="width:5%"></div></div>
+        <div class="num">144</div>
+        <div class="pct">5%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Gates</h3>
+    <div class="sub">Where we are vs the playbook</div>
+    <div class="gates">
+
+      <div class="gate">
+        <span class="gate-tag pass">Pass</span>
+        <div class="gate-text">
+          <strong>Gate 0 · Production live</strong>
+          honestcost.lv · HTTPS · share URL works · Plausible recording
+          <div class="gate-meta">Cleared 2026-05-28</div>
+        </div>
+      </div>
+
+      <div class="gate">
+        <span class="gate-tag pass">Pass</span>
+        <div class="gate-text">
+          <strong>Gate 1 · Launch signal</strong>
+          ≥ 100 unique/wk, ≥ 30 analyses, ≥ 5 shares, real feedback received
+          <div class="gate-meta">Cleared 2026-06-10</div>
+        </div>
+      </div>
+
+      <div class="gate">
+        <span class="gate-tag work">In progress</span>
+        <div class="gate-text">
+          <strong>Gate 2 · First revenue</strong>
+          1 paying dealer + 2 in convo + 400 users/mo + 50 emails
+          <div class="gate-meta">2 paying · 3 in convo · ahead on email</div>
+        </div>
+      </div>
+
+      <div class="gate">
+        <span class="gate-tag fail">Locked</span>
+        <div class="gate-text">
+          <strong>Gate 3 · Repeatable</strong>
+          3 dealers · €500 MRR · 1k users/mo · 1 piece of earned media
+          <div class="gate-meta">Need 1 more dealer, 1 press</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- pipeline -->
+<div class="card" style="margin-bottom:24px;">
+  <h3>Dealer pipeline</h3>
+  <div class="sub">Open after Phase 1 · prioritised top down</div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Dealer</th>
+        <th>Stage</th>
+        <th>Last touch</th>
+        <th>Next action</th>
+        <th class="num">€/mo</th>
+        <th style="text-align:right;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Greenmotors Skoda</td>
+        <td>Live, paying</td>
+        <td>Monthly report sent 07-01</td>
+        <td>Renewal conversation @ 90d</td>
+        <td class="num">€200</td>
+        <td style="text-align:right;"><span class="status won">Won</span></td>
+      </tr>
+      <tr>
+        <td>Tesla Riga</td>
+        <td>Pilot mo. 2/1</td>
+        <td>Demo 06-22, contract sent 06-28</td>
+        <td>Get signed PDF back</td>
+        <td class="num">€200</td>
+        <td style="text-align:right;"><span class="status won">Won</span></td>
+      </tr>
+      <tr>
+        <td>Hyundai Latvia</td>
+        <td>Demo done</td>
+        <td>Demo 07-04 · positive</td>
+        <td>Send pricing follow-up + case study</td>
+        <td class="num">—</td>
+        <td style="text-align:right;"><span class="status demo">Demo</span></td>
+      </tr>
+      <tr>
+        <td>Volvo Baltic</td>
+        <td>Demo scheduled</td>
+        <td>DM reply 07-08</td>
+        <td>Demo on 07-15 · prep XC40 vs ID.4</td>
+        <td class="num">—</td>
+        <td style="text-align:right;"><span class="status demo">Demo</span></td>
+      </tr>
+      <tr>
+        <td>Kia Latvia</td>
+        <td>First touch</td>
+        <td>Email sent 07-06</td>
+        <td>Wait 48h then LinkedIn DM</td>
+        <td class="num">—</td>
+        <td style="text-align:right;"><span class="status new">New</span></td>
+      </tr>
+      <tr>
+        <td>Renard (Renault/Dacia)</td>
+        <td>No reply (2× touched)</td>
+        <td>FUP sent 06-30</td>
+        <td>Park · re-pitch in 60d with case study</td>
+        <td class="num">—</td>
+        <td style="text-align:right;"><span class="status dead">Cold</span></td>
+      </tr>
+      <tr>
+        <td>BMW Inchcape</td>
+        <td>Holding · need proof</td>
+        <td>—</td>
+        <td>Pitch after Greenmotors case study ready</td>
+        <td class="num">—</td>
+        <td style="text-align:right;"><span class="status new">Hold</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Plausible events crib -->
+<div class="card">
+  <h3>Events to track · Plausible Goals</h3>
+  <div class="sub">Reference list — keep in sync with integration-snippets.html</div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Event</th>
+        <th>When it fires</th>
+        <th>What we learn</th>
+        <th>Goal type</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code style="font-family:var(--ff-mono);font-size:11.5px;background:var(--surface-alt);padding:2px 6px;border-radius:4px;color:var(--accent);">analysis_run</code></td><td>doAnalyse renders results</td><td>Core conversion. Engagement depth.</td><td>Custom event</td></tr>
+      <tr><td><code style="font-family:var(--ff-mono);font-size:11.5px;background:var(--surface-alt);padding:2px 6px;border-radius:4px;color:var(--accent);">example_loaded</code></td><td>Any of the 3 preset buttons clicked</td><td>Which examples seed best</td><td>Custom event</td></tr>
+      <tr><td><code style="font-family:var(--ff-mono);font-size:11.5px;background:var(--surface-alt);padding:2px 6px;border-radius:4px;color:var(--accent);">car_db_search</code></td><td>Search input ≥ 3 chars, debounced</td><td>Cars to add to CAR_DB next</td><td>Custom event</td></tr>
+      <tr><td><code style="font-family:var(--ff-mono);font-size:11.5px;background:var(--surface-alt);padding:2px 6px;border-radius:4px;color:var(--accent);">share_link_copied</code></td><td>Kopēt saiti button</td><td>Virality proxy</td><td>Custom event</td></tr>
+      <tr><td><code style="font-family:var(--ff-mono);font-size:11.5px;background:var(--surface-alt);padding:2px 6px;border-radius:4px;color:var(--accent);">trust_opened</code></td><td>"Kā mēs aprēķinām" expanded</td><td>Skeptic engagement → dealer-ready</td><td>Custom event</td></tr>
+      <tr><td><code style="font-family:var(--ff-mono);font-size:11.5px;background:var(--surface-alt);padding:2px 6px;border-radius:4px;color:var(--accent);">affiliate_click</code></td><td>Any aff-cta link clicked</td><td>Revenue intent · per destination</td><td>Custom event</td></tr>
+      <tr><td><code style="font-family:var(--ff-mono);font-size:11.5px;background:var(--surface-alt);padding:2px 6px;border-radius:4px;color:var(--accent);">email_captured</code></td><td>EmailJS send resolves</td><td>List growth · CRM seed</td><td>Custom event</td></tr>
+      <tr><td><code style="font-family:var(--ff-mono);font-size:11.5px;background:var(--surface-alt);padding:2px 6px;border-radius:4px;color:var(--accent);">horizon_changed</code></td><td>3g/5g/7g/10g button</td><td>Which time horizons matter</td><td>Custom event</td></tr>
+      <tr><td><code style="font-family:var(--ff-mono);font-size:11.5px;background:var(--surface-alt);padding:2px 6px;border-radius:4px;color:var(--accent);">scrolled_full_result</code></td><td>Scrolled past 85% of result page</td><td>Depth-of-engagement</td><td>Custom event</td></tr>
+      <tr><td><code style="font-family:var(--ff-mono);font-size:11.5px;background:var(--surface-alt);padding:2px 6px;border-radius:4px;color:var(--accent);">dealer_lead</code></td><td>"Saņemt piedāvājumu" clicked (with dealer set)</td><td>BILLABLE event · counts overage</td><td>Custom event + Revenue</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<footer>
+  <span>HonestCost · KPI Dashboard · v1.0 · 2026-05-25 · mock data for demonstration</span>
+  <a class="back" href="Playbook.html" style="margin:0;">Back to Playbook</a>
+</footer>
+
+</div>
+</body>
+</html>

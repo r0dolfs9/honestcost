@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HonestCost — Revenue Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #16181D;
+  --ink-2: #4A4E58;
+  --ink-3: #878B95;
+  --line: #ECEAE3;
+  --line-2: #E1DED4;
+  --bg: #F4F2EC;
+  --surface: #FFFFFF;
+  --surface-alt: #FAF8F2;
+  --accent: #3344F0;
+  --accent-soft: #EBEDFF;
+  --amber: #F5A623;
+  --amber-soft: #FCEEDB;
+  --win: #11A05F;
+  --win-soft: #E5F6EE;
+  --warn: #D24545;
+  --warn-soft: #FBEAEA;
+  --shadow-1: 0 1px 2px rgba(20,22,28,.04), 0 8px 28px -8px rgba(20,22,28,.10);
+  --shadow-2: 0 2px 4px rgba(20,22,28,.05), 0 24px 56px -16px rgba(20,22,28,.16);
+  --ff-display: 'Barlow Condensed', sans-serif;
+  --ff-ui: 'Inter Tight', system-ui, sans-serif;
+  --ff-mono: 'DM Mono', ui-monospace, monospace;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--ff-ui);
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--accent); color: #fff; }
+
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 56px 32px 120px;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 64px;
+}
+
+/* ─── sidebar ─── */
+nav.toc {
+  position: sticky;
+  top: 32px;
+  align-self: start;
+  font-size: 13px;
+  line-height: 1.5;
+}
+nav.toc .brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--ff-display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 32px;
+}
+nav.toc .brand::before {
+  content: '';
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--amber);
+  display: inline-block;
+}
+nav.toc .toc-label {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 12px;
+}
+nav.toc ol {
+  list-style: none;
+  counter-reset: toc;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+nav.toc ol li { counter-increment: toc; }
+nav.toc ol a {
+  display: flex;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+nav.toc ol a:hover { background: rgba(20,22,28,.04); color: var(--ink); }
+nav.toc ol a::before {
+  content: counter(toc, decimal-leading-zero);
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  min-width: 22px;
+}
+nav.toc .links {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+nav.toc .links a {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 6px 0;
+  display: flex; align-items: center; gap: 6px;
+}
+nav.toc .links a::after { content: '→'; opacity: 0.5; }
+nav.toc .links a:hover { opacity: 0.7; }
+
+/* ─── content ─── */
+main { min-width: 0; }
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 6px 12px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+}
+.kicker .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+
+h1.title {
+  font-family: var(--ff-display);
+  font-size: 72px;
+  font-weight: 600;
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  text-wrap: balance;
+}
+.title em { font-style: normal; color: var(--accent); }
+.subtitle {
+  font-size: 19px;
+  color: var(--ink-2);
+  max-width: 56ch;
+  margin-bottom: 48px;
+  text-wrap: pretty;
+}
+.subtitle strong { color: var(--ink); font-weight: 600; }
+
+h2 {
+  font-family: var(--ff-display);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin: 64px 0 8px;
+  text-wrap: balance;
+}
+h2 .num {
+  font-family: var(--ff-mono);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--ink-3);
+  display: block;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+h3 {
+  font-family: var(--ff-ui);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 28px 0 8px;
+  letter-spacing: -0.005em;
+}
+h4 {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 24px 0 8px;
+}
+
+p { margin-bottom: 14px; max-width: 68ch; text-wrap: pretty; }
+p.lede { font-size: 17px; color: var(--ink-2); margin-bottom: 24px; }
+p:last-child { margin-bottom: 0; }
+strong { font-weight: 600; color: var(--ink); }
+em { font-style: italic; color: var(--ink-2); }
+
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(51,68,240,.25); }
+a:hover { border-color: var(--accent); }
+
+ul, ol { margin: 12px 0 18px; padding-left: 22px; max-width: 68ch; }
+li { margin-bottom: 6px; }
+ul.unbull { list-style: none; padding-left: 0; }
+ul.unbull li {
+  position: relative;
+  padding-left: 22px;
+  margin-bottom: 8px;
+}
+ul.unbull li::before {
+  content: '→';
+  position: absolute; left: 0;
+  color: var(--accent);
+  font-family: var(--ff-mono);
+}
+
+/* ─── cards & boxes ─── */
+.card {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 24px 28px;
+  box-shadow: var(--shadow-1);
+  margin: 20px 0;
+}
+.card h3 { margin-top: 0; }
+.card.tight { padding: 18px 22px; }
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 24px 0;
+}
+.kpi {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 18px 18px 20px;
+  box-shadow: var(--shadow-1);
+}
+.kpi .label {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 6px;
+}
+.kpi .value {
+  font-family: var(--ff-display);
+  font-size: 38px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.kpi .value.amber { color: var(--amber); }
+.kpi .value.win { color: var(--win); }
+.kpi .sub {
+  font-size: 12px;
+  color: var(--ink-3);
+  margin-top: 6px;
+}
+
+.callout {
+  border-left: 3px solid var(--accent);
+  padding: 14px 20px;
+  background: var(--accent-soft);
+  border-radius: 0 12px 12px 0;
+  margin: 20px 0;
+  font-size: 14px;
+}
+.callout.amber {
+  border-color: var(--amber);
+  background: var(--amber-soft);
+}
+.callout.warn {
+  border-color: var(--warn);
+  background: var(--warn-soft);
+}
+.callout h4 { color: var(--ink); margin-top: 0; }
+
+.gate {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 22px;
+  background: var(--surface);
+  border-radius: 16px;
+  border: 1px dashed var(--accent);
+  margin: 28px 0;
+  font-size: 13px;
+}
+.gate-icon {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: var(--accent);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.gate-text strong { display: block; font-size: 15px; }
+.gate-text span { color: var(--ink-3); }
+
+/* ─── tables ─── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 13px;
+}
+table th, table td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+table th {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 500;
+  border-bottom: 2px solid var(--line-2);
+}
+table td.num, table th.num { text-align: right; font-family: var(--ff-mono); font-feature-settings: 'tnum'; }
+table tr:hover td { background: var(--surface-alt); }
+
+code, .code {
+  font-family: var(--ff-mono);
+  font-size: 12.5px;
+  background: var(--surface-alt);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+pre {
+  background: #16181D;
+  color: #ECEAE3;
+  padding: 18px 20px;
+  border-radius: 12px;
+  font-family: var(--ff-mono);
+  font-size: 12.5px;
+  line-height: 1.55;
+  overflow-x: auto;
+  margin: 14px 0 20px;
+}
+pre .cmt { color: #878B95; }
+pre .str { color: #F5A623; }
+pre .kw  { color: #6B85FF; }
+
+/* ─── phase header ─── */
+.phase-head {
+  display: flex;
+  align-items: baseline;
+  gap: 24px;
+  margin: 80px 0 28px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line-2);
+}
+.phase-num {
+  font-family: var(--ff-display);
+  font-size: 96px;
+  font-weight: 600;
+  line-height: 0.9;
+  color: var(--accent);
+  letter-spacing: -0.03em;
+  flex-shrink: 0;
+}
+.phase-title {
+  font-family: var(--ff-display);
+  font-size: 44px;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+.phase-meta {
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 6px;
+}
+
+/* numeric callouts */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 20px 0;
+}
+.stat {
+  border-left: 3px solid var(--line-2);
+  padding: 4px 0 4px 18px;
+}
+.stat .big {
+  font-family: var(--ff-display);
+  font-size: 44px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.stat .big.indigo { color: var(--accent); }
+.stat .big.amber { color: var(--amber); }
+.stat .big.win { color: var(--win); }
+.stat .lbl {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-top: 6px;
+}
+.stat .note { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
+
+/* ─── checklist ─── */
+.checklist {
+  list-style: none;
+  padding-left: 0;
+}
+.checklist li {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist input[type=checkbox] {
+  appearance: none;
+  width: 18px; height: 18px;
+  border: 1.5px solid var(--line-2);
+  border-radius: 5px;
+  background: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 3px;
+  position: relative;
+  transition: all 0.15s;
+}
+.checklist input[type=checkbox]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.checklist input[type=checkbox]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px; top: 1px;
+  width: 6px; height: 11px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.checklist .meta {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-left: auto;
+  flex-shrink: 0;
+  align-self: center;
+}
+
+/* ─── footer ─── */
+footer {
+  margin-top: 100px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line-2);
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: flex;
+  justify-content: space-between;
+}
+
+@media print {
+  body { background: #fff; font-size: 12px; }
+  .page { display: block; max-width: none; padding: 0; }
+  nav.toc { display: none; }
+  .phase-head { page-break-before: always; }
+  h2 { page-break-after: avoid; }
+  .card, .kpi, pre { box-shadow: none; border: 1px solid #ddd; }
+}
+@media (max-width: 920px) {
+  .page { grid-template-columns: 1fr; gap: 32px; padding: 32px 20px 60px; }
+  nav.toc { position: static; }
+  h1.title { font-size: 48px; }
+  .phase-num { font-size: 64px; }
+  .phase-title { font-size: 30px; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<nav class="toc">
+  <div class="brand">Honest<span style="visibility:hidden">·</span>Cost</div>
+  <div class="toc-label">The Playbook</div>
+  <ol>
+    <li><a href="#now">Where we are, exactly</a></li>
+    <li><a href="#thesis">The revenue thesis</a></li>
+    <li><a href="#phase0">Ship the redesign</a></li>
+    <li><a href="#phase1">Launch &amp; instrument</a></li>
+    <li><a href="#phase2">First revenue</a></li>
+    <li><a href="#phase3">Repeatable revenue</a></li>
+    <li><a href="#moat">After €500 MRR</a></li>
+    <li><a href="#kpi">Numbers that matter</a></li>
+    <li><a href="#unknowns">Things we don't know yet</a></li>
+    <li><a href="#queued">Queued next</a></li>
+  </ol>
+  <div class="links">
+    <a href="launch-posts.html">Launch posts</a>
+    <a href="dealer-outreach.html">Dealer outreach</a>
+    <a href="dealer-pitch.html">Dealer pitch</a>
+    <a href="integration-snippets.html">Code snippets</a>
+    <a href="pricing.html">Pricing &amp; contract</a>
+    <a href="kpi-dashboard.html">KPI dashboard</a>
+  </div>
+</nav>
+
+<main>
+
+<div class="kicker"><span class="dot"></span> Execution plan · 2026-05-25</div>
+
+<h1 class="title">From a finished file<br>to <em>€500 in monthly revenue.</em></h1>
+
+<p class="subtitle">
+You have a production-grade product sitting in <code>index.html</code> and zero users. This is the exact sequence — twelve weeks, fourteen artifacts, three revenue gates — that turns it into a small, real business. <strong>Not strategy. Execution.</strong>
+</p>
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="label">Today</div>
+    <div class="value">0 €</div>
+    <div class="sub">MRR · 0 users · file is local</div>
+  </div>
+  <div class="kpi">
+    <div class="label">Week 2 gate</div>
+    <div class="value amber">100</div>
+    <div class="sub">unique users / week</div>
+  </div>
+  <div class="kpi">
+    <div class="label">Week 6 gate</div>
+    <div class="value amber">1</div>
+    <div class="sub">paying dealer · any €</div>
+  </div>
+  <div class="kpi">
+    <div class="label">Week 12 target</div>
+    <div class="value win">500 €</div>
+    <div class="sub">MRR · 3 dealers · 1k users/mo</div>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────── -->
+<h2 id="now"><span class="num">01 / where we are, exactly</span>The honest baseline</h2>
+
+<p class="lede">
+Be precise about today, or every later step gets a free pass it doesn't deserve.
+</p>
+
+<h3>What's done</h3>
+<ul class="unbull">
+  <li><strong>Product:</strong> single-file <code>index.html</code> (~1,530 lines) — calc engine v1.0, all 9 functions, TEN tax table corrected to 14-bracket 2025 law, 6 ship-blocker bugs fixed, 7 test scenarios passing.</li>
+  <li><strong>Design:</strong> Studio redesign applied to live file — warm off-white, pillow cards, indigo/amber accent, dark mode with localStorage, theme toggle in nav. Pixel-checked end to end.</li>
+  <li><strong>UX features:</strong> live recalc (300ms debounce), 28-model car database with prefill, mobile breakpoint at 768px, shareable URL hash, ownership horizon presets, OCTA tooltip.</li>
+  <li><strong>SEO assets:</strong> meta tags, OG image 1200×630, sitemap, robots, schema.org WebApplication block — sitting in <code>uploads/</code> ready to merge.</li>
+  <li><strong>Brand:</strong> typography &amp; imagery spec pages, fonts self-hosted (OFL), favicon, OG share card.</li>
+</ul>
+
+<h3>What's not done</h3>
+<ul class="unbull">
+  <li><strong>The push.</strong> The redesigned file is in this project, not on <code>r0dolfs9/honestcost@main</code>. Until it is, nothing else matters.</li>
+  <li><strong>The domain.</strong> <code>honestcost.lv</code> is named in copy but I have no evidence it's registered + CNAME'd to GitHub Pages. Verify or buy.</li>
+  <li><strong>Analytics.</strong> The SEO file references Plausible but nothing in the production <code>index.html</code> ships it. No baseline = no learning.</li>
+  <li><strong>Distribution.</strong> No posts written, no media list, no Latvian forum thread, no dealer pitch sent.</li>
+  <li><strong>Monetization surface.</strong> No affiliate links, no email capture, no "request a quote" CTA, no pricing page.</li>
+</ul>
+
+<div class="callout amber">
+<h4>The one-line summary</h4>
+You've built a Bugatti and parked it in the garage with no plates. Phase 0 is plates, fuel, and a road. Everything after is driving it.
+</div>
+
+<!-- ──────────────────────────────────────────────── -->
+<h2 id="thesis"><span class="num">02 / the revenue thesis</span>Three layers, in this order</h2>
+
+<p class="lede">
+We don't pick one revenue model — we stack them, smallest-effort first, and let traffic decide which one earns its keep. Each layer must be live before the next is built.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Mechanism</th>
+      <th class="num">RPU / mo</th>
+      <th>Effort to start</th>
+      <th>When</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>1 · Affiliate</strong></td>
+      <td>OCTA / KASKO / configurator referral links inside the result screen</td>
+      <td class="num">€0.30 – €1.50</td>
+      <td>2 hours · ship now</td>
+      <td>Week 1</td>
+    </tr>
+    <tr>
+      <td><strong>2 · Dealer embed</strong></td>
+      <td>Dealer pays a flat monthly fee to embed the comparator with their models pre-loaded as defaults</td>
+      <td class="num">€150 – €400</td>
+      <td>2 weeks (pitch + outreach + first signed)</td>
+      <td>Week 4–6</td>
+    </tr>
+    <tr>
+      <td><strong>3 · Qualified leads</strong></td>
+      <td>"Saņemt piedāvājumu" button on the dealer's car → routed to their CRM, billed per lead</td>
+      <td class="num">€15 – €40 / lead</td>
+      <td>Requires 1+ dealer + 500+ users/mo to matter</td>
+      <td>Week 8+</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>The numbers behind the pricing</h3>
+
+<div class="stat-row">
+  <div class="stat">
+    <div class="big indigo">16 k</div>
+    <div class="lbl">new cars sold · Latvia · 2025</div>
+    <div class="note">Stable ±8% YoY. Half are passenger, half commercial.</div>
+  </div>
+  <div class="stat">
+    <div class="big indigo">~30</div>
+    <div class="lbl">dealers with real marketing budget</div>
+    <div class="note">Inchcape, Möller, WESS, Volvo Baltic, Greenmotors, Latvijas Auto, BTA-grouped premium independents…</div>
+  </div>
+  <div class="stat">
+    <div class="big indigo">€2–8 k</div>
+    <div class="lbl">monthly digital marketing per dealer</div>
+    <div class="note">Today spent on Google Ads, Facebook, sponsored content. We compete for a slice.</div>
+  </div>
+</div>
+
+<p>A dealer who closes 1 in 10 leads on a €35,000 car nets roughly €350 of attributable value per lead (10% gross × 10% close rate). Charging <strong>€200/month for embed + 10 leads included, then €15/lead above</strong> is a clear win for them and predictable for us. We sell ROI, not a tool.</p>
+
+<div class="callout">
+<h4>The wedge thought</h4>
+HonestCost is the rare "pro-consumer" tool a dealer wants. Why? Because a customer who's already done a TCO comparison and <em>chose your model</em> is a hot lead — they've talked themselves into the car. Dealers pay for that conversion the way they pay for Google Ads, except cleaner.
+</div>
+
+<!-- ──────────────────────────────────────────────── -->
+<div class="phase-head">
+  <div class="phase-num">00</div>
+  <div>
+    <div class="phase-title" id="phase0">Ship the redesign.</div>
+    <div class="phase-meta">Today · ≤ 2 hours · solo</div>
+  </div>
+</div>
+
+<p class="lede">No distribution, no analytics, no monetization until the redesigned file is live at <code>honestcost.lv</code> with HTTPS and a working share link. This is non-negotiable and easy.</p>
+
+<h3>Step-by-step</h3>
+<ol class="checklist">
+  <li><input type="checkbox"><div><strong>Confirm domain.</strong> Log in to your registrar (domains.lv / zone.eu). If <code>honestcost.lv</code> is yours: good. If not: register today, €12/year. <span class="meta">10 min</span></div></li>
+  <li><input type="checkbox"><div><strong>Push to GitHub.</strong> Replace <code>index.html</code> on <code>r0dolfs9/honestcost@main</code> with the file from this project. Commit message in <a href="../PUSH_HANDOFF.md"><code>PUSH_HANDOFF.md</code></a>. <span class="meta">15 min</span></div></li>
+  <li><input type="checkbox"><div><strong>Enable GitHub Pages.</strong> Settings → Pages → Source = <code>main</code> branch / root. Wait 60s. <span class="meta">5 min</span></div></li>
+  <li><input type="checkbox"><div><strong>Wire the custom domain.</strong> At registrar: <code>CNAME honestcost.lv → r0dolfs9.github.io</code>. In repo: add a <code>CNAME</code> file containing <code>honestcost.lv</code>. Force HTTPS in Pages settings. <span class="meta">15 min</span></div></li>
+  <li><input type="checkbox"><div><strong>Merge SEO assets from <code>uploads/</code>.</strong> Copy <code>og-image.png</code>, <code>favicon.svg</code>, <code>robots.txt</code>, <code>sitemap.xml</code> into repo root. Lift the <code>&lt;meta&gt;</code> block from <code>uploads/index.html</code> head into the production <code>index.html</code>. <span class="meta">20 min</span></div></li>
+  <li><input type="checkbox"><div><strong>Add Plausible.</strong> One line: <code>&lt;script defer data-domain="honestcost.lv" src="https://plausible.io/js/script.js"&gt;&lt;/script&gt;</code>. Create the site at plausible.io. <span class="meta">10 min</span></div></li>
+  <li><input type="checkbox"><div><strong>Smoke test.</strong> Open in a private window: Latvian text renders, "Ielādēt piemēru" loads BMW 118i vs X1, results show €15 067 savings, theme toggle works, share link opens in clean browser. <span class="meta">10 min</span></div></li>
+  <li><input type="checkbox"><div><strong>Submit to Search Console.</strong> Verify ownership (TXT record), submit <code>sitemap.xml</code>. Latvia uses Google ~95% market share — Yandex / Bing optional. <span class="meta">10 min</span></div></li>
+</ol>
+
+<div class="gate">
+  <span class="gate-icon">Gate 0</span>
+  <div class="gate-text">
+    <strong>You may not start Phase 1 until:</strong>
+    <span><code>https://honestcost.lv</code> loads in &lt; 2s · HTTPS green · share URL roundtrips · Plausible records your own pageview.</span>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────── -->
+<div class="phase-head">
+  <div class="phase-num">01</div>
+  <div>
+    <div class="phase-title" id="phase1">Launch &amp; instrument.</div>
+    <div class="phase-meta">Weeks 1–2 · 100 unique users · €0 revenue (still)</div>
+  </div>
+</div>
+
+<p class="lede">
+Two weeks to put the tool in front of 1,500 Latvian eyeballs, capture data, and prove people use it for more than one click. Revenue stays at zero on purpose — the goal is signal, not income.
+</p>
+
+<h3>Distribution — sequenced, not blasted</h3>
+<p>Spread the launch over <strong>10 days across 6 surfaces</strong>. Posting everywhere on day 1 is amateur — you'd waste 80% of your audience. Five distinct posts (see <a href="launch-posts.html">launch-posts.html</a>) targeted to five audiences over ten days lets each one ride its own algorithm.</p>
+
+<table>
+  <thead><tr><th>Day</th><th>Surface</th><th>Angle</th><th>Expected click-thru</th></tr></thead>
+  <tbody>
+    <tr><td>Mon · D1</td><td>Personal LinkedIn (LV/EN)</td><td>"I built this. Here's what surprised me about BMW vs X1."</td><td class="num">3–8% of feed reach</td></tr>
+    <tr><td>Tue · D2</td><td>FB group "Auto Latvijā" (~15k)</td><td>"Salīdzināju Golf vs Octavia 5 gados. Skaitlis kuru neredzēju nekur citur."</td><td class="num">~2% of members</td></tr>
+    <tr><td>Thu · D4</td><td>FB group "Elektroauto Latvijā"</td><td>"Tesla Model 3 vs BMW 320d — patiesā cena pēc 5 gadiem"</td><td class="num">~3% of members</td></tr>
+    <tr><td>Fri · D5</td><td>ss.lv auto forum thread</td><td>"Kāpēc dīleri nerāda 5-gadu izmaksas? Uztaisīju kalkulatoru."</td><td class="num">forum traffic — slow burn</td></tr>
+    <tr><td>Mon · D8</td><td>Email a journalist at <code>auto.delfi.lv</code></td><td>Embargo pitch: "Latvian buyers underestimate KASKO by 47% — data inside"</td><td class="num">10% reply rate · cold</td></tr>
+    <tr><td>Wed · D10</td><td>Reddit r/latvia + r/cars</td><td>English: "Built a TCO calculator for Latvia. Methodology critique welcome."</td><td class="num">karma-dependent</td></tr>
+  </tbody>
+</table>
+
+<h3>Instrumentation — what to measure</h3>
+<p>You need to know not just "how many" but "are they getting value". Set up these Plausible custom events on day 1 (see <a href="kpi-dashboard.html">kpi-dashboard.html</a> for the full event spec):</p>
+
+<pre><span class="cmt">// Drop these into doAnalyse() and the relevant UI handlers</span>
+plausible(<span class="str">'analysis_run'</span>, { props: { winner: winnerName, savings: Math.round(savings) } })
+plausible(<span class="str">'example_loaded'</span>, { props: { preset: <span class="str">'bmw_118i_x1'</span> } })
+plausible(<span class="str">'share_link_copied'</span>)
+plausible(<span class="str">'car_db_search'</span>, { props: { query: q } })
+plausible(<span class="str">'horizon_changed'</span>, { props: { years: y } })
+plausible(<span class="str">'affiliate_click'</span>, { props: { dest: <span class="str">'octa24'</span> } })
+plausible(<span class="str">'email_captured'</span>)</pre>
+
+<h3>Monetization layer 1: ship the affiliate links</h3>
+<p>Two hours of work to add three affiliate slots inside the results screen. Copy-paste from <a href="integration-snippets.html">integration-snippets.html</a>. Even at low traffic, this proves whether the "results screen" surface converts at all.</p>
+
+<ul class="unbull">
+  <li><strong>OCTA</strong> — after the auto-OCTA estimate, "Salīdzini reālās OCTA cenas → octa24.lv" with UTM <code>?utm_source=honestcost&amp;utm_medium=results&amp;utm_campaign=octa_lookup</code></li>
+  <li><strong>KASKO</strong> — under the KASKO row, "Saņem KASKO piedāvājumu → BALTA · ERGO · BTA" with UTM <code>?utm_source=honestcost&amp;utm_medium=results&amp;utm_campaign=kasko_3quote</code></li>
+  <li><strong>Configurator</strong> — next to each car name, "Konfigurē pie dīlera →" to the model's official LV configurator (bmw.lv, vw.lv, toyota.lv). Build a small map <code>CONFIGURATOR_URL[carId]</code> in <code>CAR_DB</code>.</li>
+</ul>
+
+<div class="callout warn">
+<h4>Trust constraint</h4>
+Affiliate links live <em>only inside the result screen</em>, never above the fold, never in the input form. The moment a user feels nudged before they trust the numbers, the tool is dead. Treat this rule as a religion.
+</div>
+
+<h3>Email capture — the optional, low-key one</h3>
+<p>One small block at the bottom of the result screen: <em>"Saglabā šo salīdzinājumu — atsūtām pa e-pastu kopā ar saiti."</em> EmailJS free tier (200/month) handles delivery; the form posts to a Google Sheet via a Formspree-style endpoint for your own CRM. Code in <a href="integration-snippets.html">integration-snippets.html</a>.</p>
+
+<h3>Trust section — the "Kā mēs aprēķinām" expandable</h3>
+<p>Below the results, an expandable section that lists each calculation, each data source, each assumption. This is the single biggest determinant of whether a dealer will trust the tool enough to embed it. Spend the 4 hours.</p>
+
+<div class="gate">
+  <span class="gate-icon">Gate 1</span>
+  <div class="gate-text">
+    <strong>Phase 1 done when:</strong>
+    <span>≥ 100 unique users in 7 rolling days · ≥ 30 analyses · ≥ 5 share-link copies · ≥ 1 unsolicited email or forum reply · 1+ piece of negative feedback that you've actually read and answered.</span>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────── -->
+<div class="phase-head">
+  <div class="phase-num">02</div>
+  <div>
+    <div class="phase-title" id="phase2">First revenue.</div>
+    <div class="phase-meta">Weeks 3–6 · 1 paying dealer · €150–300 MRR</div>
+  </div>
+</div>
+
+<p class="lede">
+The goal is one signed contract, any amount, in writing. Logo + case study &gt; revenue at this stage. With one in hand, the next four close 3× faster.</p>
+
+<h3>Who to pitch first — and who NOT to</h3>
+
+<p><strong>Skip BMW Inchcape and Möller VW first.</strong> They're the obvious targets, which is why they have procurement, legal review, brand guidelines, and three layers of approval. You'll burn a month and lose. Instead:</p>
+
+<table>
+  <thead><tr><th>Tier</th><th>Target</th><th>Why first</th><th>Decision-maker</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>1.5</strong></td>
+      <td>Greenmotors Skoda Riga</td>
+      <td>Hungry, growing, marketing-savvy GM. Skoda is the #1 best-seller in Latvia 2024 → relevant CAR_DB.</td>
+      <td>Marketing lead — find on LinkedIn</td>
+    </tr>
+    <tr>
+      <td><strong>1.5</strong></td>
+      <td>Latio Auto / Auto-Premium</td>
+      <td>Independent premium reseller. Founder-led → can sign in one meeting.</td>
+      <td>Owner direct</td>
+    </tr>
+    <tr>
+      <td><strong>1.5</strong></td>
+      <td>Tesla Riga</td>
+      <td>Different sales model. They want anything that demonstrates EV TCO advantage. Easy pitch.</td>
+      <td>Country manager</td>
+    </tr>
+    <tr>
+      <td><strong>1.5</strong></td>
+      <td>Hyundai Latvia (EV-heavy)</td>
+      <td>Pushing Ioniq 5/6. Same EV TCO story. Smaller org than BMW.</td>
+      <td>Marketing</td>
+    </tr>
+    <tr>
+      <td><strong>1.5</strong></td>
+      <td>Volvo Baltic</td>
+      <td>Premium safety positioning maps perfectly to "total cost honesty" narrative.</td>
+      <td>Marketing</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Full target list with named contacts in <a href="dealer-outreach.html">dealer-outreach.html</a>, complete with LinkedIn DM templates and a 2-paragraph LV cold email.</p>
+
+<h3>The pitch — five slides max</h3>
+<p>The pitch deck (<a href="dealer-pitch.html">dealer-pitch.html</a>) is five slides only and ends on price. Never present a tool — present a customer in their lobby holding the result.</p>
+<ol>
+  <li><strong>The problem.</strong> "Your customer makes a €40,000 decision based on monthly payment and fuel. They don't know what KASKO costs in year 2."</li>
+  <li><strong>The mirror.</strong> Screenshot of HonestCost showing <em>their car</em> winning vs a competitor — populated live before the meeting.</li>
+  <li><strong>The hook.</strong> Their cars become the default examples on the homepage. Their models seed search. "Saņemt piedāvājumu" button on each of their cars → their CRM.</li>
+  <li><strong>The proof.</strong> Last 30 days HonestCost numbers: X users, Y comparisons, Z minutes average time on result. These are people actively shopping for a car.</li>
+  <li><strong>The price.</strong> €200/month, 3-month minimum, first month free, cancel anytime. We set it up.</li>
+</ol>
+
+<h3>The sequence</h3>
+<ol class="checklist">
+  <li><input type="checkbox"><div><strong>Build target list of 12.</strong> Names, roles, LinkedIn URL, dealer email. 1 hour. <span class="meta">W3 · Mon</span></div></li>
+  <li><input type="checkbox"><div><strong>Personalize the pitch deck for each.</strong> Slide 2 mockup uses their car winning vs a real competitor. 10 min × 12. <span class="meta">W3 · Tue</span></div></li>
+  <li><input type="checkbox"><div><strong>Send 12 LinkedIn DMs + 12 follow-up emails 48h later.</strong> Templates in <a href="dealer-outreach.html">dealer-outreach.html</a>. <span class="meta">W3 · Wed → W4 · Mon</span></div></li>
+  <li><input type="checkbox"><div><strong>Book ≥ 4 demo calls.</strong> 30 minutes each. Walk them through their own car on the live site. Don't show slides; show the product. <span class="meta">W4</span></div></li>
+  <li><input type="checkbox"><div><strong>Close 1.</strong> Offer first month free, no risk. Get a signed PDF (one-page agreement in <a href="pricing.html">pricing.html</a>). Even a verbal yes followed by an invoice works. <span class="meta">W5–W6</span></div></li>
+  <li><input type="checkbox"><div><strong>Ship the embed.</strong> The "embed" at this stage is literally: their models become the 3 example presets on the homepage. CAR_DB pre-loads their inventory. CTA buttons point to their leadgen form. 4 hours of work. <span class="meta">W6</span></div></li>
+</ol>
+
+<h3>What you're really selling</h3>
+<div class="callout">
+<h4>The pitch under the pitch</h4>
+You're not selling a tool. You're selling <em>"a calmer customer in your showroom."</em> A buyer who modeled their car on HonestCost knows what KASKO costs in year 2. They've made peace with it. They're not going to back out at the financing desk. That's worth €200/month to a dealer who loses 2-out-of-10 closes at the last hurdle.
+</div>
+
+<div class="gate">
+  <span class="gate-icon">Gate 2</span>
+  <div class="gate-text">
+    <strong>Phase 2 done when:</strong>
+    <span>≥ 1 dealer paying any amount with a signed agreement · 2+ more in active conversation · 400+ users/mo · email list ≥ 50.</span>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────── -->
+<div class="phase-head">
+  <div class="phase-num">03</div>
+  <div>
+    <div class="phase-title" id="phase3">Repeatable revenue.</div>
+    <div class="phase-meta">Weeks 7–12 · 3 dealers · €500+ MRR · 1k users/mo</div>
+  </div>
+</div>
+
+<p class="lede">
+With one customer you have a quote. With three you have a market. The next six weeks turn one signature into a small, repeatable sales motion.</p>
+
+<h3>Three things, in parallel</h3>
+
+<h4>A · Sales — turn the first close into three</h4>
+<ul class="unbull">
+  <li><strong>Make the case study.</strong> A one-pager: dealer name, brand, before/after screenshot, "X leads in 30 days at €Y cost-per-lead vs €Z on Google Ads". Their logo is the headline.</li>
+  <li><strong>Re-pitch the original 12 with the case study attached.</strong> Same audience, new proof. Expect 30% reply rate where before you got 10%.</li>
+  <li><strong>Pitch the brand HQ, not just dealers.</strong> With one BMW-equivalent dealer as proof, approach the importer/distributor (BMW Group Baltic, Möller HQ). They have bigger budgets and can mandate adoption.</li>
+</ul>
+
+<h4>B · Product — the embed gets real</h4>
+<p>The "embed" was a homepage tweak in Phase 2. In Phase 3 it becomes a real white-labeled iframe with three knobs the dealer controls themselves:</p>
+<ul class="unbull">
+  <li><code>?dealer=greenmotors&amp;default_a=skoda_octavia&amp;default_b=vw_golf</code> URL parameters.</li>
+  <li>Dealer logo in the corner of the result card (small, tasteful).</li>
+  <li>Custom CTA URL routed to their CRM with full UTM &amp; comparison-state payload.</li>
+</ul>
+<p>Still no backend. Still single-file. Just URL state + a thin <code>DEALER_CONFIGS</code> object in the script.</p>
+
+<h4>C · Distribution — the second loop</h4>
+<p>The first loop (Phase 1 launch) was a push. The second loop is pull:</p>
+<ul class="unbull">
+  <li><strong>The "shareable result" card.</strong> A 1080×1080 SVG → PNG export of the comparison verdict, designed for Instagram / WhatsApp share. <em>"Es ietaupīju €15 067 izvēloties 118i. Tu?"</em> Every share is a free ad.</li>
+  <li><strong>SEO long-tail.</strong> Auto-generated comparison pages: <code>/vw-golf-vs-skoda-octavia</code>, <code>/tesla-model-3-vs-bmw-320d</code>. 60 cars × 60 cars × Latvian SEO = a long tail of cheap traffic. One static-site generator pass.</li>
+  <li><strong>Press loop 2.</strong> With three months of data, you can sell a story to LA.lv or Delfi: <em>"The 10 cars Latvians compare most — and which one usually wins."</em> Data journalism is catnip for Latvian auto desks.</li>
+</ul>
+
+<div class="gate">
+  <span class="gate-icon">Gate 3</span>
+  <div class="gate-text">
+    <strong>Phase 3 done when:</strong>
+    <span>3 dealers paying · €500+ MRR · 1,000+ users/mo · 1 piece of earned media in a major LV outlet · case study sheet exists and has been used to close a deal.</span>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────── -->
+<h2 id="moat"><span class="num">04 / after €500 mrr</span>The moat, the multipliers, and the exit</h2>
+
+<p class="lede">
+A €500 MRR HonestCost is a side project. A €5k MRR HonestCost is a business. Here are the three multipliers that bridge the gap — pick the one that matches the energy you've got left.</p>
+
+<h3>Multiplier A — Baltics</h3>
+<p>Estonia and Lithuania have identical EU regulatory shape, similar car markets, and only minor tax / service-cost differences. The engine recompiles in a week of focused research per country. Same dealers, three markets. <em>3× the TAM for ~30% the build.</em></p>
+
+<h3>Multiplier B — Insurance / Finance B2B2C</h3>
+<p>BTA, BALTA, ERGO, and LATVENERGO all run customer portals that lack a TCO tool. License HonestCost to one of them as a white-label module — €1,500–3,000/month per portal. One contract = 5× a dealer. This is where the real money is.</p>
+
+<h3>Multiplier C — Data product</h3>
+<p>After 12 months of usage data, you know <em>exactly</em> which cars Latvians compare against which. That's a saleable dataset — to dealers (competitive intelligence), to importers (model planning), to media (data journalism partnerships). A quarterly "Latvia Car Decision Report" at €500/seat × 30 buyers = €15k/quarter recurring.</p>
+
+<h3>The exit picture (for honesty's sake)</h3>
+<p>A profitable, growing HonestCost at €3–5k MRR is interesting to: ss.lv / 1a.lv (vertical content acquisition), Inchcape Digital (vertical integration of dealer tools), or a pan-European TCO operator looking for Baltics presence. Realistic multiple: 2.5–4× annual revenue. <strong>Don't chase the exit. The strongest exit is the one you don't need.</strong></p>
+
+<!-- ──────────────────────────────────────────────── -->
+<h2 id="kpi"><span class="num">05 / numbers that matter</span>What's worth checking weekly</h2>
+
+<p class="lede">Most metrics are noise. These five aren't.</p>
+
+<table>
+  <thead><tr><th>Metric</th><th>What it tells you</th><th class="num">Week 2</th><th class="num">Week 6</th><th class="num">Week 12</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Analyses per session</strong></td>
+      <td>Does the tool earn a second click? &lt;1.5 → product problem.</td>
+      <td class="num">≥ 1.8</td>
+      <td class="num">≥ 2.5</td>
+      <td class="num">≥ 3.0</td>
+    </tr>
+    <tr>
+      <td><strong>Share-link rate</strong></td>
+      <td>Organic-growth potential. Copies / unique users.</td>
+      <td class="num">≥ 3%</td>
+      <td class="num">≥ 5%</td>
+      <td class="num">≥ 8%</td>
+    </tr>
+    <tr>
+      <td><strong>Affiliate click-rate</strong></td>
+      <td>Result screen's commercial muscle.</td>
+      <td class="num">≥ 4%</td>
+      <td class="num">≥ 6%</td>
+      <td class="num">≥ 8%</td>
+    </tr>
+    <tr>
+      <td><strong>Email capture rate</strong></td>
+      <td>Trust + intent + future leverage on dealers.</td>
+      <td class="num">≥ 2%</td>
+      <td class="num">≥ 4%</td>
+      <td class="num">≥ 6%</td>
+    </tr>
+    <tr>
+      <td><strong>Dealer demos booked</strong></td>
+      <td>Reply rate × meaningful conversation rate.</td>
+      <td class="num">0</td>
+      <td class="num">≥ 4</td>
+      <td class="num">≥ 8</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>If any of these drift sideways for two weeks, that's the signal to stop building and start asking why. The dashboard in <a href="kpi-dashboard.html">kpi-dashboard.html</a> is the recommended weekly review surface.</p>
+
+<!-- ──────────────────────────────────────────────── -->
+<h2 id="unknowns"><span class="num">06 / unknowns</span>What we don't know yet — and need to before €500 MRR</h2>
+
+<ol>
+  <li><strong>Will Latvian dealers actually pay for a third-party tool, or only for ads?</strong> Test with one paid pilot at €99/mo if needed. Cheaper than guessing.</li>
+  <li><strong>Are people sharing results, or saving and forgetting?</strong> The share-link metric answers this in Phase 1.</li>
+  <li><strong>Is OCTA / KASKO affiliate revenue real or vapor?</strong> Some Latvian insurers don't run affiliate programs. Confirm payouts before counting them.</li>
+  <li><strong>Does the EV-vs-ICE comparison drive higher engagement?</strong> If yes, double down — EV adoption is the marketing wave to ride 2025–2027.</li>
+  <li><strong>What's the right per-lead price?</strong> Start at €25, A/B test €15 / €25 / €40 across three dealers.</li>
+  <li><strong>Will a brand HQ (importer, not dealer) sign before a dealer does?</strong> Worth one parallel pitch — slower but bigger ticket.</li>
+</ol>
+
+<div class="callout amber">
+<h4>Final note</h4>
+This plan is built to be wrong in places. Of the 14 artifacts shipped here, expect three to need a rewrite by week 4 once real users show up. That's good. The plan's job is to remove every excuse for not starting, not to predict the shape of the answer.
+</div>
+
+<h2 id="queued"><span class="num">07 / queued</span>The formula audit — coming after revenue is live</h2>
+<p class="lede">A swipe-through review of every calc engine formula. One formula per screen, plain-language explanation of what it does + why it's there, with an accept-or-deny gesture so the entire engine becomes auditable end-to-end. Built after Phase 1 ships — the calc is already test-passing, the audit is for transparency and future maintainability.</p>
+<p>Coverage: <strong>TEN tax · KASKO declining basis · OCTA by kW · Leasing PMT · 5-segment depreciation · RBUF (post-warranty buffer) · Fuel (ICE/EV/PHEV with charging mix) · Tyres flat rate by class · Service intervals with time-floor.</strong> Nine formulas, nine cards, accept/deny on each, summary diff at the end. Ships as <code>revenue/formula-audit.html</code> in the next pass.</p>
+
+<footer>
+  <span>HonestCost · Revenue Playbook · v1.0 · 2026-05-25</span>
+  <span>Built to be marked up, not framed.</span>
+</footer>
+
+</main>
+</div>
+
+</body>
+</html>

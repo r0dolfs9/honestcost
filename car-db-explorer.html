@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HonestCost — Car DB Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="car-db.js"></script>
+<style>
+:root{
+  --ink:#16181D; --ink-2:#4A4E58; --ink-3:#878B95;
+  --line:#ECEAE3; --line-2:#E1DED4;
+  --bg:#F4F2EC; --surface:#FFFFFF; --surface-alt:#FAF8F2;
+  --accent:#3344F0; --accent-soft:#EBEDFF;
+  --amber:#F5A623; --amber-soft:#FCEEDB;
+  --win:#11A05F; --win-soft:#E5F6EE;
+  --warn:#D24545; --warn-soft:#FBEAEA;
+  --flag:#9A6CFF; --flag-soft:rgba(154,108,255,.12);
+  --shadow-1:0 1px 2px rgba(20,22,28,.04),0 8px 28px -8px rgba(20,22,28,.10);
+  --ff-display:'Barlow Condensed',sans-serif;
+  --ff-ui:'Inter Tight',system-ui,sans-serif;
+  --ff-mono:'DM Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff-ui);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;min-height:100vh;}
+::selection{background:var(--accent);color:#fff;}
+
+/* topbar */
+.top{padding:18px 28px;border-bottom:1px solid var(--line);background:rgba(244,242,236,.92);backdrop-filter:blur(14px);position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.brand{font-family:var(--ff-display);font-size:22px;font-weight:600;letter-spacing:-0.01em;display:flex;align-items:center;gap:8px;}
+.brand::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--amber);}
+.brand small{font-family:var(--ff-mono);font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);margin-left:6px;}
+.search{flex:1;min-width:280px;max-width:520px;position:relative;}
+.search input{
+  width:100%;padding:11px 16px 11px 40px;border:1px solid var(--line-2);border-radius:14px;
+  font-family:var(--ff-ui);font-size:14px;background:var(--surface);color:var(--ink);
+}
+.search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(51,68,240,.12);}
+.search::before{content:'⌕';position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--ink-3);font-size:16px;}
+
+.kpis{display:flex;gap:14px;font-family:var(--ff-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-3);}
+.kpis span strong{display:block;font-family:var(--ff-display);font-size:22px;font-weight:600;color:var(--ink);line-height:1;}
+
+/* layout */
+.layout{flex:1;display:grid;grid-template-columns:240px 1fr;gap:0;min-height:0;}
+.sidebar{
+  background:var(--surface);border-right:1px solid var(--line);padding:24px 20px;
+  overflow-y:auto;position:sticky;top:73px;align-self:start;
+  max-height:calc(100vh - 73px);
+}
+.side-label{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);margin:8px 0 8px;font-weight:500;}
+.side-label:first-child{margin-top:0;}
+.filter-group{display:flex;flex-direction:column;gap:2px;margin-bottom:18px;}
+.fbtn{
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+  padding:7px 10px;border-radius:8px;background:transparent;border:none;
+  font-family:var(--ff-ui);font-size:13px;color:var(--ink-2);cursor:pointer;text-align:left;
+  transition: background .12s, color .12s;
+}
+.fbtn:hover{background:var(--surface-alt);color:var(--ink);}
+.fbtn.on{background:var(--accent-soft);color:var(--accent);font-weight:500;}
+.fbtn .n{font-family:var(--ff-mono);font-size:10.5px;color:var(--ink-3);}
+.fbtn.on .n{color:var(--accent);}
+
+.main{padding:24px 28px;overflow:auto;min-width:0;}
+.main-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:16px;flex-wrap:wrap;}
+.main-head h2{font-family:var(--ff-display);font-size:32px;font-weight:600;line-height:1;letter-spacing:-0.01em;}
+.main-head .meta{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.06em;color:var(--ink-3);text-transform:uppercase;}
+
+/* table */
+.tbl-wrap{background:var(--surface);border-radius:18px;box-shadow:var(--shadow-1);overflow:hidden;}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;}
+.tbl thead th{
+  text-align:left;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:500;padding:14px 14px 12px;background:var(--surface-alt);
+  border-bottom:1px solid var(--line-2);position:sticky;top:73px;cursor:pointer;
+  user-select:none;
+}
+.tbl thead th:hover{color:var(--ink);}
+.tbl thead th.sort-asc::after{content:' ↑';color:var(--accent);}
+.tbl thead th.sort-desc::after{content:' ↓';color:var(--accent);}
+.tbl thead th.num{text-align:right;}
+.tbl td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle;}
+.tbl td.num{text-align:right;font-family:var(--ff-mono);font-feature-settings:'tnum';}
+.tbl tbody tr{cursor:pointer;transition: background .1s;}
+.tbl tbody tr:hover{background:var(--surface-alt);}
+.tbl tbody tr.sel{background:var(--accent-soft);}
+.tbl .id-col{font-family:var(--ff-mono);font-size:11.5px;color:var(--ink-3);white-space:nowrap;}
+.tbl .name-col{font-weight:500;color:var(--ink);}
+.tbl .brand-col{color:var(--ink-2);}
+.tbl .pill{display:inline-block;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px;}
+.pill.fuel-petrol{background:var(--surface-alt);color:var(--ink-2);}
+.pill.fuel-diesel{background:#FFF1DA;color:#8a5e15;}
+.pill.fuel-mild_hybrid{background:#FFF4D6;color:#8a5e15;}
+.pill.fuel-phev{background:var(--accent-soft);color:var(--accent);}
+.pill.fuel-ev{background:var(--win-soft);color:var(--win);}
+.pill.warn{background:var(--warn-soft);color:var(--warn);}
+
+/* segment count chart */
+.seg-bars{margin-top:18px;background:var(--surface);border-radius:18px;padding:18px 22px;box-shadow:var(--shadow-1);}
+.seg-bars h4{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px;font-weight:500;}
+.seg-row{display:grid;grid-template-columns:90px 1fr 40px;align-items:center;gap:12px;margin-bottom:6px;font-size:13px;}
+.seg-row .name{color:var(--ink-2);}
+.seg-row .bar{height:14px;background:var(--surface-alt);border-radius:4px;position:relative;overflow:hidden;}
+.seg-row .bar-fill{position:absolute;left:0;top:0;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent) 0%,#6B85FF 100%);}
+.seg-row .bar-fill.ev{background:linear-gradient(90deg,var(--win) 0%,#5DE5A1 100%);}
+.seg-row .bar-fill.phev{background:linear-gradient(90deg,var(--flag,#9A6CFF) 0%,#C4A7FF 100%);}
+.seg-row .n{font-family:var(--ff-mono);font-size:12px;color:var(--ink);text-align:right;}
+
+/* detail drawer */
+.drawer{position:fixed;top:0;right:-560px;bottom:0;width:560px;max-width:95vw;background:var(--surface);box-shadow:-18px 0 48px -16px rgba(20,22,28,.16);z-index:20;transition:right .25s cubic-bezier(.2,.7,.3,1);overflow-y:auto;}
+.drawer.open{right:0;}
+.drw-head{position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);padding:22px 28px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.drw-head h3{font-family:var(--ff-display);font-size:28px;font-weight:600;line-height:1.04;}
+.drw-head .meta{font-family:var(--ff-mono);font-size:11px;color:var(--ink-3);letter-spacing:0.06em;margin-top:4px;}
+.drw-close{border:none;background:var(--surface-alt);color:var(--ink-2);font-size:20px;width:36px;height:36px;border-radius:50%;cursor:pointer;line-height:1;}
+.drw-close:hover{background:var(--ink);color:#fff;}
+.drw-body{padding:22px 28px 40px;}
+.drw-section{margin-bottom:22px;}
+.drw-section h4{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500;margin-bottom:8px;}
+.drw-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;}
+.drw-grid div{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.5px;}
+.drw-grid div span:first-child{color:var(--ink-2);}
+.drw-grid div span:last-child{font-family:var(--ff-mono);color:var(--ink);text-align:right;font-weight:500;}
+.drw-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;}
+.drw-btn{
+  padding:9px 14px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);
+  font-family:var(--ff-mono);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--ink-2);cursor:pointer;
+}
+.drw-btn:hover{background:var(--surface-alt);color:var(--ink);}
+.drw-btn.primary{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+.drawer-overlay{position:fixed;inset:0;background:rgba(20,22,28,.3);z-index:15;opacity:0;pointer-events:none;transition:opacity .2s;}
+.drawer-overlay.show{opacity:1;pointer-events:auto;}
+
+/* empty */
+.empty{text-align:center;padding:60px 20px;color:var(--ink-3);}
+.empty h3{font-family:var(--ff-display);font-size:24px;color:var(--ink-2);margin-bottom:8px;}
+
+footer.foot{margin-top:auto;padding:18px 28px;border-top:1px solid var(--line);font-family:var(--ff-mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-3);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+footer.foot a{color:var(--accent);text-decoration:none;}
+
+@media (max-width:920px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{display:none;position:static;max-height:none;border-right:none;border-bottom:1px solid var(--line);}
+  .sidebar.show{display:block;}
+  .main{padding:18px 16px;}
+  .drawer{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">Honest<span style="visibility:hidden">·</span>Cost <small>Car DB Explorer</small></div>
+  <div class="search">
+    <input type="text" id="search" placeholder="Search by brand, model or id… (e.g. tesla, golf, ev6)">
+  </div>
+  <div class="kpis">
+    <span><strong id="kpiTotal">—</strong>Total cars</span>
+    <span><strong id="kpiFiltered">—</strong>In view</span>
+    <span><strong id="kpiBrands">—</strong>Brands</span>
+    <span><strong id="kpiEV">—</strong>Electric</span>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- ─── sidebar filters ─── -->
+  <aside class="sidebar">
+    <div class="side-label">Fuel</div>
+    <div class="filter-group" id="fuelFilters"></div>
+
+    <div class="side-label">Segment</div>
+    <div class="filter-group" id="segFilters"></div>
+
+    <div class="side-label">Brand</div>
+    <div class="filter-group" id="brandFilters"></div>
+  </aside>
+
+  <!-- ─── main table ─── -->
+  <main class="main">
+    <div class="main-head">
+      <h2 id="resultsTitle">All cars</h2>
+      <div class="meta" id="resultsMeta"></div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="tbl" id="tbl">
+        <thead>
+          <tr>
+            <th data-sort="brand">Brand</th>
+            <th data-sort="name">Model</th>
+            <th data-sort="fuel">Fuel</th>
+            <th data-sort="price" class="num">Price €</th>
+            <th data-sort="cons" class="num">Cons</th>
+            <th data-sort="co2" class="num">CO₂ g/km</th>
+            <th data-sort="kw" class="num">kW</th>
+            <th data-sort="warranty" class="num">War</th>
+            <th data-sort="id">ID</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="seg-bars" id="segChart"></div>
+
+  </main>
+
+</div>
+
+<!-- ─── detail drawer ─── -->
+<div class="drawer-overlay" id="overlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drw-head">
+    <div>
+      <h3 id="drwName">—</h3>
+      <div class="meta" id="drwId"></div>
+    </div>
+    <button class="drw-close" id="drwClose">×</button>
+  </div>
+  <div class="drw-body" id="drwBody"></div>
+</aside>
+
+<footer class="foot">
+  <span>HonestCost · Car DB Explorer v1.0 · <span id="footTotal"></span> cars · last updated <span id="footDate"></span></span>
+  <span><a href="formula-audit.html">→ Formula audit</a> · <a href="revenue/Playbook.html">→ Revenue playbook</a></span>
+</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+
+/* ─── state ─── */
+let state = {
+  search: '',
+  fuel: null,    // null = all, else 'petrol' / 'diesel' / etc
+  segment: null, // null = all
+  brand: null,   // null = all
+  sortBy: 'brand',
+  sortDir: 'asc',
+};
+
+const FUEL_LABEL = {
+  petrol: 'Petrol',
+  diesel: 'Diesel',
+  mild_hybrid: 'Hybrid (HEV)',
+  phev: 'PHEV',
+  ev: 'Electric',
+};
+const SEG_LABEL = {
+  economy: 'Economy',
+  mid: 'Mid-range',
+  premium: 'Premium',
+  suv_mid: 'SUV · mid',
+  premium_suv: 'SUV · premium',
+  ev: 'Electric (generic)',
+  phev: 'PHEV (generic)',
+};
+
+/* ─── filter UI ─── */
+function buildSideFilters(){
+  const cars = window.CAR_DB;
+  // counts
+  const fuelCounts = {}, segCounts = {}, brandCounts = {};
+  cars.forEach(c => {
+    fuelCounts[c.fuel] = (fuelCounts[c.fuel] || 0) + 1;
+    segCounts[c.segment] = (segCounts[c.segment] || 0) + 1;
+    brandCounts[c.brand] = (brandCounts[c.brand] || 0) + 1;
+  });
+
+  // FUEL
+  const fc = $('fuelFilters');
+  fc.innerHTML = '';
+  const fAll = mkFilterBtn('All', cars.length, () => { state.fuel = null; refresh(); }, state.fuel === null);
+  fc.appendChild(fAll);
+  ['ev','phev','mild_hybrid','petrol','diesel'].forEach(f => {
+    if (!fuelCounts[f]) return;
+    const b = mkFilterBtn(FUEL_LABEL[f], fuelCounts[f], () => { state.fuel = state.fuel === f ? null : f; refresh(); }, state.fuel === f);
+    fc.appendChild(b);
+  });
+
+  // SEGMENT
+  const sc = $('segFilters');
+  sc.innerHTML = '';
+  sc.appendChild(mkFilterBtn('All', cars.length, () => { state.segment = null; refresh(); }, state.segment === null));
+  Object.entries(segCounts).sort((a,b)=>b[1]-a[1]).forEach(([seg, n]) => {
+    const b = mkFilterBtn(SEG_LABEL[seg] || seg, n, () => { state.segment = state.segment === seg ? null : seg; refresh(); }, state.segment === seg);
+    sc.appendChild(b);
+  });
+
+  // BRAND
+  const bc = $('brandFilters');
+  bc.innerHTML = '';
+  bc.appendChild(mkFilterBtn('All', cars.length, () => { state.brand = null; refresh(); }, state.brand === null));
+  Object.entries(brandCounts).sort((a,b)=>b[1]-a[1]).forEach(([br, n]) => {
+    const b = mkFilterBtn(br, n, () => { state.brand = state.brand === br ? null : br; refresh(); }, state.brand === br);
+    bc.appendChild(b);
+  });
+}
+
+function mkFilterBtn(label, count, onClick, isOn){
+  const b = document.createElement('button');
+  b.className = 'fbtn' + (isOn ? ' on' : '');
+  b.innerHTML = `<span>${label}</span><span class="n">${count}</span>`;
+  b.onclick = onClick;
+  return b;
+}
+
+/* ─── filtering + sorting ─── */
+function getFiltered(){
+  let out = window.CAR_DB;
+  if (state.fuel)    out = out.filter(c => c.fuel === state.fuel);
+  if (state.segment) out = out.filter(c => c.segment === state.segment);
+  if (state.brand)   out = out.filter(c => c.brand === state.brand);
+  if (state.search){
+    const q = state.search.toLowerCase();
+    out = out.filter(c =>
+      c.name.toLowerCase().includes(q) ||
+      c.brand.toLowerCase().includes(q) ||
+      c.id.includes(q)
+    );
+  }
+  // sort
+  const dir = state.sortDir === 'asc' ? 1 : -1;
+  const k = state.sortBy;
+  out = [...out].sort((a, b) => {
+    const av = a[k], bv = b[k];
+    if (typeof av === 'number') return (av - bv) * dir;
+    return String(av).localeCompare(String(bv)) * dir;
+  });
+  return out;
+}
+
+/* ─── rendering ─── */
+function renderTable(){
+  const filtered = getFiltered();
+  const tb = $('tbody');
+  tb.innerHTML = '';
+  filtered.forEach(c => {
+    const tr = document.createElement('tr');
+    tr.dataset.id = c.id;
+    const consUnit = c.fuel === 'ev' ? 'kWh' : c.fuel === 'phev' ? 'L*' : 'L';
+    tr.innerHTML = `
+      <td class="brand-col">${c.brand}</td>
+      <td class="name-col">${c.name}</td>
+      <td><span class="pill fuel-${c.fuel}">${FUEL_LABEL[c.fuel] || c.fuel}</span></td>
+      <td class="num">€${c.price.toLocaleString('lv-LV')}</td>
+      <td class="num">${c.cons.toFixed(1)} ${consUnit}</td>
+      <td class="num">${c.co2}</td>
+      <td class="num">${c.kw}</td>
+      <td class="num">${c.warranty}y</td>
+      <td class="id-col">${c.id}</td>
+    `;
+    tr.onclick = () => openDrawer(c);
+    tb.appendChild(tr);
+  });
+
+  // header sort indicators
+  document.querySelectorAll('.tbl thead th').forEach(th => {
+    th.classList.remove('sort-asc', 'sort-desc');
+    if (th.dataset.sort === state.sortBy) {
+      th.classList.add('sort-' + state.sortDir);
+    }
+  });
+
+  // title + meta
+  const title = [];
+  if (state.brand)   title.push(state.brand);
+  if (state.segment) title.push(SEG_LABEL[state.segment]);
+  if (state.fuel)    title.push(FUEL_LABEL[state.fuel]);
+  if (!title.length) title.push('All cars');
+  $('resultsTitle').textContent = title.join(' · ');
+  $('resultsMeta').textContent = `${filtered.length} cars · sorted by ${state.sortBy} (${state.sortDir})`;
+  $('kpiFiltered').textContent = filtered.length;
+}
+
+function renderSegChart(){
+  const all = window.CAR_DB;
+  const counts = {};
+  all.forEach(c => { counts[c.fuel] = (counts[c.fuel] || 0) + 1; });
+  const max = Math.max(...Object.values(counts));
+  const sc = $('segChart');
+  sc.innerHTML = `<h4>Fuel-type mix · all ${all.length} cars</h4>`;
+  ['ev','phev','mild_hybrid','petrol','diesel'].forEach(f => {
+    if (!counts[f]) return;
+    const pct = (counts[f] / max * 100).toFixed(1);
+    const cls = f === 'ev' ? 'ev' : f === 'phev' ? 'phev' : '';
+    sc.insertAdjacentHTML('beforeend', `
+      <div class="seg-row">
+        <span class="name">${FUEL_LABEL[f]}</span>
+        <span class="bar"><span class="bar-fill ${cls}" style="width:${pct}%"></span></span>
+        <span class="n">${counts[f]}</span>
+      </div>`);
+  });
+}
+
+/* ─── drawer ─── */
+function openDrawer(c){
+  $('drwName').textContent = c.name;
+  $('drwId').textContent = `${c.brand} · ${c.body} · ${c.id}`;
+  $('drwBody').innerHTML = `
+    <div class="drw-section">
+      <h4>Pricing &amp; class</h4>
+      <div class="drw-grid">
+        <div><span>Price (new)</span><span>€${c.price.toLocaleString('lv-LV')}</span></div>
+        <div><span>Segment (dep cat)</span><span>${SEG_LABEL[c.segment] || c.segment}</span></div>
+        <div><span>Body</span><span>${c.body}</span></div>
+        <div><span>Brand</span><span>${c.brand}</span></div>
+      </div>
+    </div>
+
+    <div class="drw-section">
+      <h4>Powertrain</h4>
+      <div class="drw-grid">
+        <div><span>Fuel</span><span><span class="pill fuel-${c.fuel}">${FUEL_LABEL[c.fuel] || c.fuel}</span></span></div>
+        <div><span>Power</span><span>${c.kw} kW (${Math.round(c.kw * 1.34)} hp)</span></div>
+        <div><span>Cons / 100 km</span><span>${c.cons.toFixed(1)} ${c.fuel === 'ev' ? 'kWh' : 'L'}</span></div>
+        <div><span>CO₂ (WLTP)</span><span>${c.co2} g/km</span></div>
+        <div><span>Engine</span><span>${c.cc === 0 ? '— (EV)' : c.cc + ' cc'}</span></div>
+      </div>
+    </div>
+
+    <div class="drw-section">
+      <h4>Ownership &amp; service</h4>
+      <div class="drw-grid">
+        <div><span>Mfr warranty</span><span>${c.warranty} years</span></div>
+        <div><span>Service interval</span><span>${c.svcInt.toLocaleString('lv-LV')} km</span></div>
+        <div><span>Service cost</span><span>€${c.svcCost}/visit</span></div>
+        <div><span>Tyre class</span><span>${c.tyre}</span></div>
+        <div><span>Repair risk</span><span class="${c.repair === 'high' ? 'pill warn' : ''}">${c.repair}</span></div>
+      </div>
+    </div>
+
+    <div class="drw-section">
+      <h4>Estimated TEN (annual road tax)</h4>
+      <p style="font-size:13px;color:var(--ink-2);">Calculated from WLTP CO₂ using the 9-bracket TEN function: <strong>€${tenEstimate(c.co2)}/yr</strong>.</p>
+    </div>
+
+    <div class="drw-section">
+      <h4>JSON</h4>
+      <pre style="background:#16181D;color:#ECEAE3;padding:14px 16px;border-radius:10px;font-family:var(--ff-mono);font-size:11.5px;line-height:1.55;overflow-x:auto;">${JSON.stringify(c, null, 2)}</pre>
+    </div>
+
+    <div class="drw-actions">
+      <button class="drw-btn primary" onclick="copyJSON('${c.id}')">Copy JSON</button>
+      <button class="drw-btn" onclick="loadIntoCalc('${c.id}', 'A')">Use as Car A →</button>
+      <button class="drw-btn" onclick="loadIntoCalc('${c.id}', 'B')">Use as Car B →</button>
+    </div>
+  `;
+  $('drawer').classList.add('open');
+  $('overlay').classList.add('show');
+}
+
+function closeDrawer(){
+  $('drawer').classList.remove('open');
+  $('overlay').classList.remove('show');
+}
+
+function tenEstimate(co2){
+  if(co2<=50)return 0; if(co2<=95)return 30; if(co2<=115)return 50;
+  if(co2<=130)return 80; if(co2<=155)return 120; if(co2<=175)return 180;
+  if(co2<=200)return 260; if(co2<=250)return 380; return 520;
+}
+
+function copyJSON(id){
+  const c = window.CAR_INDEX.byId[id];
+  navigator.clipboard.writeText(JSON.stringify(c, null, 2));
+}
+
+function loadIntoCalc(id, side){
+  // Stub: open the calc with the car pre-loaded via URL hash
+  // This works if the calc reads CAR_DB from car-db.js
+  const url = `index.html#car${side}=${id}`;
+  window.open(url, '_blank');
+}
+
+/* ─── refresh ─── */
+function refresh(){
+  buildSideFilters();
+  renderTable();
+}
+
+/* ─── boot ─── */
+function boot(){
+  // KPIs
+  const all = window.CAR_DB;
+  $('kpiTotal').textContent = all.length;
+  $('kpiBrands').textContent = window.CAR_INDEX.brands.length;
+  $('kpiEV').textContent = all.filter(c => c.fuel === 'ev').length;
+  $('footTotal').textContent = all.length;
+  $('footDate').textContent = new Date().toISOString().slice(0, 10);
+
+  // Search
+  $('search').addEventListener('input', e => {
+    state.search = e.target.value.trim();
+    renderTable();
+  });
+
+  // Sort
+  document.querySelectorAll('.tbl thead th').forEach(th => {
+    th.addEventListener('click', () => {
+      const k = th.dataset.sort;
+      if (state.sortBy === k) {
+        state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        state.sortBy = k;
+        state.sortDir = 'asc';
+      }
+      renderTable();
+    });
+  });
+
+  // Drawer
+  $('drwClose').onclick = closeDrawer;
+  $('overlay').onclick = closeDrawer;
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeDrawer();
+  });
+
+  buildSideFilters();
+  renderTable();
+  renderSegChart();
+}
+
+if (window.CAR_DB && window.CAR_DB.length) boot();
+else window.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>

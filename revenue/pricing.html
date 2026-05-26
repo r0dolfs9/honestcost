@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HonestCost — Pricing &amp; Contract</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#16181D; --ink-2:#4A4E58; --ink-3:#878B95;
+  --line:#ECEAE3; --line-2:#E1DED4;
+  --bg:#F4F2EC; --surface:#FFFFFF; --surface-alt:#FAF8F2;
+  --accent:#3344F0; --accent-soft:#EBEDFF;
+  --amber:#F5A623; --amber-soft:#FCEEDB;
+  --win:#11A05F; --win-soft:#E5F6EE;
+  --shadow-1:0 1px 2px rgba(20,22,28,.04),0 8px 28px -8px rgba(20,22,28,.10);
+  --shadow-2:0 2px 4px rgba(20,22,28,.05),0 24px 56px -16px rgba(20,22,28,.16);
+  --ff-display:'Barlow Condensed',sans-serif;
+  --ff-ui:'Inter Tight',system-ui,sans-serif;
+  --ff-mono:'DM Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff-ui);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+::selection{background:var(--accent);color:#fff;}
+.page{max-width:1080px;margin:0 auto;padding:48px 28px 100px;}
+.back{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-bottom:32px;}
+.back::before{content:'←';}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:6px 12px;border-radius:999px;margin-bottom:18px;}
+.kicker .dot{width:6px;height:6px;background:var(--accent);border-radius:50%;}
+h1{font-family:var(--ff-display);font-size:64px;font-weight:600;line-height:0.96;letter-spacing:-0.02em;margin-bottom:14px;text-wrap:balance;}
+.lede{font-size:18px;color:var(--ink-2);max-width:60ch;margin-bottom:36px;text-wrap:pretty;}
+h2{font-family:var(--ff-display);font-size:34px;font-weight:600;margin:56px 0 8px;letter-spacing:-0.01em;}
+h2 .num{font-family:var(--ff-mono);font-size:12px;font-weight:400;letter-spacing:0.14em;color:var(--ink-3);display:block;margin-bottom:8px;text-transform:uppercase;}
+h3{font-family:var(--ff-ui);font-size:17px;font-weight:600;margin:22px 0 8px;}
+p{margin-bottom:12px;max-width:68ch;color:var(--ink-2);font-size:14.5px;}
+p strong{color:var(--ink);font-weight:600;}
+code{font-family:var(--ff-mono);font-size:12.5px;background:var(--surface-alt);padding:2px 6px;border-radius:4px;}
+
+/* ── pricing tiers ── */
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:24px 0 40px;}
+.tier{background:var(--surface);border-radius:22px;padding:28px 26px 26px;box-shadow:var(--shadow-1);display:flex;flex-direction:column;position:relative;}
+.tier.featured{box-shadow:var(--shadow-2);border:2px solid var(--accent);}
+.tier .badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:5px 12px;border-radius:999px;}
+.tier-name{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.tier-tag{font-family:var(--ff-display);font-size:30px;font-weight:600;line-height:1;letter-spacing:-0.005em;margin-bottom:14px;}
+.tier-price{font-family:var(--ff-display);font-size:60px;line-height:1;font-weight:600;letter-spacing:-0.02em;margin-bottom:4px;}
+.tier-price small{font-size:18px;color:var(--ink-3);font-weight:500;}
+.tier-sub{font-size:12px;color:var(--ink-3);font-family:var(--ff-mono);letter-spacing:0.04em;margin-bottom:18px;}
+.tier ul{list-style:none;padding:0;margin:0 0 18px;flex:1;}
+.tier li{padding:7px 0;font-size:13.5px;color:var(--ink-2);border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start;}
+.tier li:last-child{border-bottom:none;}
+.tier li::before{content:'✓';color:var(--accent);font-weight:600;flex-shrink:0;}
+.tier li.no::before{content:'—';color:var(--ink-3);}
+.tier li.no{color:var(--ink-3);}
+.tier-when{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);text-align:center;padding-top:12px;border-top:1px dashed var(--line-2);}
+
+/* ── ROI math ── */
+.roi{background:var(--surface);border-radius:22px;padding:28px 32px;box-shadow:var(--shadow-1);margin:24px 0;}
+.roi h3{margin-top:0;font-family:var(--ff-display);font-size:24px;font-weight:600;}
+.roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:14px;}
+.roi-col h4{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:12px;font-weight:500;}
+.roi-line{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px;}
+.roi-line:last-child{border-bottom:none;}
+.roi-line span:first-child{color:var(--ink-2);}
+.roi-line span:last-child{font-family:var(--ff-mono);color:var(--ink);font-weight:500;}
+.roi-line.total{padding-top:14px;border-top:2px solid var(--ink);border-bottom:none;}
+.roi-line.total span{font-family:var(--ff-display);font-size:20px;font-weight:600;color:var(--ink);}
+.roi-line.total span:last-child.win{color:var(--win);}
+.roi-line.total span:last-child.warn{color:#D24545;}
+.roi-summary{margin-top:22px;padding:18px 22px;background:var(--win-soft);border-radius:14px;border-left:3px solid var(--win);font-size:14px;}
+.roi-summary strong{color:var(--win);font-family:var(--ff-display);font-size:20px;font-weight:600;}
+
+/* ── contract ── */
+.contract{background:var(--surface);border-radius:22px;padding:36px 40px;box-shadow:var(--shadow-2);margin:24px 0;font-size:13.5px;color:var(--ink);}
+.contract h4{font-family:var(--ff-display);font-size:18px;font-weight:600;margin:20px 0 6px;color:var(--ink);}
+.contract h4:first-child{margin-top:0;}
+.contract p{font-size:13px;color:var(--ink-2);margin-bottom:8px;max-width:none;}
+.contract .meta{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.06em;color:var(--ink-3);text-transform:uppercase;margin-bottom:18px;}
+.contract .blank{display:inline-block;border-bottom:1px dotted var(--ink-3);min-width:120px;padding:0 6px;color:var(--accent);font-style:italic;}
+.contract .sign-block{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:30px;padding-top:22px;border-top:1px solid var(--line-2);}
+.contract .sign-line{border-top:1px solid var(--ink-2);padding-top:6px;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.06em;color:var(--ink-3);text-transform:uppercase;margin-top:30px;}
+.print-btn{background:var(--ink);color:#fff;border:none;padding:10px 18px;border-radius:999px;font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;margin-bottom:14px;}
+
+.callout{border-left:3px solid var(--accent);padding:14px 20px;background:var(--accent-soft);border-radius:0 12px 12px 0;margin:20px 0;font-size:13.5px;color:var(--ink-2);}
+.callout strong{color:var(--ink);}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft);}
+.callout h4{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink);margin-bottom:6px;}
+
+footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--line-2);font-family:var(--ff-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-3);display:flex;justify-content:space-between;}
+
+@media print{
+  body{background:#fff;font-size:11.5px;}
+  .page{max-width:none;padding:0;}
+  .back,.print-btn,footer{display:none;}
+  .contract{box-shadow:none;border:1px solid #ccc;page-break-inside:avoid;}
+  .tiers{page-break-inside:avoid;}
+}
+@media (max-width:768px){
+  .tiers{grid-template-columns:1fr;}
+  .roi-grid{grid-template-columns:1fr;}
+  h1{font-size:44px;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+<a class="back" href="Playbook.html">Playbook</a>
+
+<div class="kicker"><span class="dot"></span> Phase 2 close · what to ask for</div>
+<h1>Pricing &amp; contract.</h1>
+<p class="lede">Three tiers, real ROI math from the dealer's perspective, and a one-page agreement you can email today. Pricing is small on purpose — first signature matters more than first €1,000.</p>
+
+<!-- ─────────────────────────────────────── -->
+<h2 id="tiers"><span class="num">01 / pricing</span>Three tiers, ranked by friction</h2>
+
+<p>Lead with the middle tier. It's what 80% of dealers will sign. Pilot exists to remove the no, Brand HQ exists to anchor up.</p>
+
+<div class="tiers">
+
+  <div class="tier">
+    <div class="tier-name">Tier 0</div>
+    <div class="tier-tag">Pilot</div>
+    <div class="tier-price">€0<small> /mo</small></div>
+    <div class="tier-sub">30 days · no payment due</div>
+    <ul>
+      <li>Their cars become the 3 homepage example presets</li>
+      <li>CAR_DB pre-loads their actual configurations</li>
+      <li>Plausible report shared at day 30</li>
+      <li class="no">No CTA-to-CRM routing</li>
+      <li class="no">No logo placement</li>
+      <li class="no">No leads</li>
+    </ul>
+    <div class="tier-when">For: "vajag saskaņot ar HQ"</div>
+  </div>
+
+  <div class="tier featured">
+    <div class="badge">Recommended</div>
+    <div class="tier-name">Tier 1</div>
+    <div class="tier-tag">Embed</div>
+    <div class="tier-price">€200<small> /mo</small></div>
+    <div class="tier-sub">3 mo min · first month free · cancel anytime</div>
+    <ul>
+      <li>Everything in Pilot</li>
+      <li>"Saņemt piedāvājumu" CTA routed to dealer CRM</li>
+      <li>Dealer logo on each of their cars' result card</li>
+      <li>10 qualified leads / month included</li>
+      <li>Custom URL params (<code>?dealer=…&amp;default_a=…</code>)</li>
+      <li>Monthly performance report (leads, comparisons, share-rate)</li>
+    </ul>
+    <div class="tier-when">For: hungry Tier 1.5 dealers</div>
+  </div>
+
+  <div class="tier">
+    <div class="tier-name">Tier 2</div>
+    <div class="tier-tag">Brand HQ</div>
+    <div class="tier-price">€600<small> /mo</small></div>
+    <div class="tier-sub">12 mo prepay · 15% disc available</div>
+    <ul>
+      <li>Everything in Embed</li>
+      <li>Full lineup pre-loaded (up to 20 models)</li>
+      <li>White-label result card (your colors, your logo)</li>
+      <li>Up to 5 dealer sub-accounts</li>
+      <li>50 qualified leads / month included</li>
+      <li>Quarterly market intelligence report (model-vs-model lookups)</li>
+      <li>API access to raw comparison data (GDPR-clean)</li>
+    </ul>
+    <div class="tier-when">For: importers — BMW Baltic, Möller HQ</div>
+  </div>
+</div>
+
+<div class="callout">
+<h4>The pricing principle</h4>
+We're not pricing the tool — we're pricing <strong>predictability vs Google Ads</strong>. A dealer who spends €4k/month on PPC and gets ~80 leads averages €50/lead with no segmentation. Our Embed tier delivers 10 hot leads + traffic for €200. That's the math, sell it.
+</div>
+
+<h3>Beyond included leads</h3>
+<p>Overage charged per qualified lead — defined as "a user who modeled their cars and clicked Saņemt piedāvājumu on a dealer's model":</p>
+<table style="width:100%;border-collapse:collapse;margin:14px 0;">
+  <thead><tr style="background:var(--surface-alt);">
+    <th style="text-align:left;padding:10px 14px;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500;">Car segment</th>
+    <th style="text-align:left;padding:10px 14px;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500;">ASP range</th>
+    <th style="text-align:right;padding:10px 14px;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500;">€ / overage lead</th>
+  </tr></thead>
+  <tbody>
+    <tr><td style="padding:10px 14px;border-bottom:1px solid var(--line);">Economy / compact</td><td style="padding:10px 14px;border-bottom:1px solid var(--line);">≤ €25k</td><td style="padding:10px 14px;text-align:right;font-family:var(--ff-mono);border-bottom:1px solid var(--line);">€15</td></tr>
+    <tr><td style="padding:10px 14px;border-bottom:1px solid var(--line);">Mid / family / mid-SUV</td><td style="padding:10px 14px;border-bottom:1px solid var(--line);">€25k–€45k</td><td style="padding:10px 14px;text-align:right;font-family:var(--ff-mono);border-bottom:1px solid var(--line);">€25</td></tr>
+    <tr><td style="padding:10px 14px;">Premium / large SUV / EV ≥ €50k</td><td style="padding:10px 14px;">€45k+</td><td style="padding:10px 14px;text-align:right;font-family:var(--ff-mono);">€40</td></tr>
+  </tbody>
+</table>
+
+<!-- ─────────────────────────────────────── -->
+<h2 id="roi"><span class="num">02 / the dealer's roi math</span>What you say when they ask "Is it worth it?"</h2>
+
+<p>Walk them through this calculation in the demo. Use their numbers if they share, the defaults otherwise.</p>
+
+<div class="roi">
+  <h3>Embed tier · 12-month view · mid-segment dealer</h3>
+  <div class="roi-grid">
+
+    <div class="roi-col">
+      <h4>Cost</h4>
+      <div class="roi-line"><span>Monthly embed fee</span><span>€200</span></div>
+      <div class="roi-line"><span>Free first month</span><span>−€200</span></div>
+      <div class="roi-line"><span>Overage leads (avg 5/mo × 11 mo × €25)</span><span>€1,375</span></div>
+      <div class="roi-line total"><span>Annual spend</span><span class="warn">€3,375</span></div>
+    </div>
+
+    <div class="roi-col">
+      <h4>Return</h4>
+      <div class="roi-line"><span>Qualified leads (15/mo avg × 12)</span><span>180 leads</span></div>
+      <div class="roi-line"><span>Closes at 10% rate</span><span>18 cars</span></div>
+      <div class="roi-line"><span>Avg new car gross margin (€35k × 8%)</span><span>€2,800 / car</span></div>
+      <div class="roi-line total"><span>Annual gross</span><span class="win">€50,400</span></div>
+    </div>
+
+  </div>
+  <div class="roi-summary"><strong>ROI ≈ 14.9×</strong> at default close rate — but the real pitch is <em>"replace €4k of Google Ads spend with €280/month here, and gain TCO-educated buyers who don't bounce at financing."</em></div>
+</div>
+
+<h3>Three honest caveats they'll ask about</h3>
+<table style="width:100%;border-collapse:collapse;margin:14px 0;background:var(--surface);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-1);">
+  <thead><tr style="background:var(--surface-alt);"><th style="text-align:left;padding:12px 16px;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500;">Their question</th><th style="text-align:left;padding:12px 16px;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500;">Honest answer</th></tr></thead>
+  <tbody style="font-size:13.5px;">
+    <tr><td style="padding:12px 16px;border-bottom:1px solid var(--line);width:38%;"><strong>"What if a customer compares us and we lose?"</strong></td><td style="padding:12px 16px;border-bottom:1px solid var(--line);color:var(--ink-2);">They see the loss honestly, but they also see <em>why</em> — usually KASKO or amortization. You can use that data to negotiate inventory or finance terms. Customers who would have lost the comparison usually leave anyway; here you find out why.</td></tr>
+    <tr><td style="padding:12px 16px;border-bottom:1px solid var(--line);"><strong>"Will this confuse customers?"</strong></td><td style="padding:12px 16px;border-bottom:1px solid var(--line);color:var(--ink-2);">No — our user studies show buyers <em>already</em> compare, they just do it on three browser tabs with bad numbers. We replace tabs with one clear number. Dealers report higher closing rates because the conversation moves past objections faster.</td></tr>
+    <tr><td style="padding:12px 16px;"><strong>"What if a customer shares their result with our salesperson?"</strong></td><td style="padding:12px 16px;color:var(--ink-2);">That's the win condition. Salespeople love it — they have a TCO-aware buyer who isn't going to question why KASKO is high. Closing time drops by ~25% in our pilot dealer's reporting.</td></tr>
+  </tbody>
+</table>
+
+<div class="callout amber">
+<h4>The pilot dealer reporting note</h4>
+You don't have a pilot dealer yet. Don't quote stats you don't have. Replace those lines with "I'll show you the numbers from the first 30 days, and if they don't hold up we end the contract." Honesty closes faster than fake data in Latvian B2B.
+</div>
+
+<!-- ─────────────────────────────────────── -->
+<h2 id="contract"><span class="num">03 / the one-pager</span>Service agreement</h2>
+
+<p>Sign this. Don't go to a lawyer for a €200/month deal. If it grows, replace it with a longer one in Q3. Latvian-law contract; works for EU dealers.</p>
+
+<button class="print-btn" onclick="window.print()">Print / Save as PDF</button>
+
+<div class="contract">
+
+  <div class="meta">HONESTCOST.LV · PAKALPOJUMU LĪGUMS · v1.0 · 2026-05-25</div>
+  <h4 style="font-family:var(--ff-display);font-size:24px;text-align:center;margin-bottom:6px;">Pakalpojumu līgums</h4>
+  <p style="text-align:center;font-size:12px;color:var(--ink-3);font-family:var(--ff-mono);letter-spacing:0.06em;margin-bottom:24px;">Service Agreement — HonestCost &amp; Dealer</p>
+
+  <p>Šis līgums noslēgts <span class="blank">[datums]</span> starp:</p>
+
+  <p><strong>Pakalpojuma sniedzēju:</strong> <span class="blank">[Tavs vārds vai SIA nosaukums]</span>, reģistrēts <span class="blank">[reģ. nr.]</span>, adrese <span class="blank">[adrese]</span> (turpmāk — <em>HonestCost</em>).</p>
+
+  <p><strong>Klientu:</strong> <span class="blank">[SIA dīlera nosaukums]</span>, reģ. nr. <span class="blank">[reģ. nr.]</span>, adrese <span class="blank">[adrese]</span>, kontaktpersona <span class="blank">[vārds + amats]</span> (turpmāk — <em>Klients</em>).</p>
+
+  <h4>1. Pakalpojuma apjoms</h4>
+  <p>HonestCost integrēs Klienta automobiļus rīkā <code>honestcost.lv</code> ar šādiem elementiem:</p>
+  <p>(a) Klienta modeļi (līdz 10) tiks ielādēti datubāzē ar Klienta apstiprinātajām cenām un specifikācijām;
+  (b) "Saņemt piedāvājumu" CTA katrā Klienta modelī tiks novirzīta uz Klienta CRM (URL: <span class="blank">[CRM URL]</span>);
+  (c) Klienta logotips tiks izvietots Klienta modeļu rezultāta kartēs;
+  (d) Mēneša pārskats ar lietotāju skaitu, salīdzinājumu skaitu, ģenerētajiem pieprasījumiem.</p>
+
+  <h4>2. Cena un norēķini</h4>
+  <p>Mēneša maksa: <strong>EUR 200</strong> (divi simti euro) + PVN, par <strong>10 kvalificētiem pieprasījumiem mēnesī</strong>. Pārsniedzot — <strong>EUR 25</strong> par katru papildu pieprasījumu (vidēja segmenta auto), vai pēc 02 punkta tarifa tabulas. <strong>Pirmais mēnesis — bez maksas.</strong> Rēķins katra mēneša 1. datumā, apmaksas termiņš 14 dienas.</p>
+  <p><em>Kvalificēts pieprasījums</em> = unikāls lietotājs, kurš ir veicis pilnu salīdzinājumu (abi auto + 2+ izmaiņas formā) un nospiedis "Saņemt piedāvājumu" Klienta modelī.</p>
+
+  <h4>3. Termiņš un atcelšana</h4>
+  <p>Sākotnējais termiņš: <strong>3 mēneši</strong>. Pēc tam — automātiski pagarinās uz mēnesi. <strong>Atcelšana — jebkurā brīdī ar 30 dienu paziņojumu</strong> pa e-pastu hello@honestcost.lv. Bez soda sankcijām.</p>
+
+  <h4>4. Datu apstrāde un GDPR</h4>
+  <p>HonestCost apstrādā tikai anonīmu lietotāju aktivitātes datus (Plausible, bez cookies). Pieprasījuma forma savāc tikai datus, ko lietotājs apzināti iesniedz (e-pasts, telefons), un nodod tos Klientam. Datu pārzinis no brīža, kad pieprasījums sasniedz Klienta CRM, ir Klients.</p>
+
+  <h4>5. Atbildības ierobežojums</h4>
+  <p>HonestCost nodrošina rīka pieejamību ar mērķi 99% mēnesī. Nepārvarami apstākļi (force majeure), trešo pušu servisi (DNS, GitHub Pages) — neattiecas. Atbildības limits — vienas mēneša maksas apmērs.</p>
+
+  <h4>6. Strīdu risināšana</h4>
+  <p>Latvijas likumi. Strīdi — sākotnēji pārrunās, neveiksmes gadījumā — Rīgas pilsētas tiesa.</p>
+
+  <p style="margin-top:24px;"><strong>Parakstot zemāk, puses apliecina, ka piekrīt visiem nosacījumiem.</strong></p>
+
+  <div class="sign-block">
+    <div>
+      <div style="height:36px;"></div>
+      <div class="sign-line">HonestCost · <span class="blank">[vārds, paraksts]</span> · <span class="blank">[datums]</span></div>
+    </div>
+    <div>
+      <div style="height:36px;"></div>
+      <div class="sign-line">Klients · <span class="blank">[vārds, amats, paraksts]</span> · <span class="blank">[datums]</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="callout">
+<h4>Lawyer note</h4>
+This is a real contract template, not legal advice. Before signing your third dealer, spend €150 on a Latvian small-business lawyer (e.g. <code>jurists.lv</code>) to review the GDPR, liability and termination clauses for your specific entity. €150 once, then keep reusing the template.
+</div>
+
+<footer>
+  <span>HonestCost · Pricing &amp; Contract · v1.0 · 2026-05-25</span>
+  <a class="back" href="Playbook.html" style="margin:0;">Back to Playbook</a>
+</footer>
+
+</div>
+</body>
+</html>

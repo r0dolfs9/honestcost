@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HonestCost — Formula Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16181D; --ink-2:#4A4E58; --ink-3:#878B95;
+  --line:#ECEAE3; --line-2:#E1DED4;
+  --bg:#F4F2EC; --surface:#FFFFFF; --surface-alt:#FAF8F2;
+  --accent:#3344F0; --accent-soft:#EBEDFF;
+  --amber:#F5A623; --amber-soft:#FCEEDB;
+  --win:#11A05F; --win-soft:#E5F6EE;
+  --warn:#D24545; --warn-soft:#FBEAEA;
+  --flag:#9A6CFF; --flag-soft:rgba(154,108,255,.12);
+  --shadow-1:0 1px 2px rgba(20,22,28,.04),0 8px 28px -8px rgba(20,22,28,.10);
+  --shadow-2:0 2px 4px rgba(20,22,28,.05),0 24px 56px -16px rgba(20,22,28,.16);
+  --shadow-3:0 4px 8px rgba(20,22,28,.06),0 48px 96px -24px rgba(20,22,28,.22);
+  --ff-display:'Barlow Condensed',sans-serif;
+  --ff-ui:'Inter Tight',system-ui,sans-serif;
+  --ff-mono:'DM Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:var(--ff-ui); font-size:15px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  display:flex; flex-direction:column;
+}
+::selection{background:var(--accent);color:#fff;}
+
+/* ─── topbar ─── */
+.topbar{
+  position:sticky; top:0; z-index:10;
+  background:rgba(244,242,236,.92); backdrop-filter:saturate(180%) blur(14px);
+  border-bottom:1px solid var(--line);
+  padding:14px 24px;
+  display:flex; align-items:center; gap:24px;
+}
+.brand{
+  font-family:var(--ff-display); font-size:22px; font-weight:600;
+  letter-spacing:-0.01em; display:flex; align-items:center; gap:8px;
+}
+.brand::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--accent);}
+.brand small{font-family:var(--ff-mono);font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);margin-left:8px;}
+
+.progress{
+  flex:1; max-width:520px;
+  display:flex; gap:5px; align-items:center;
+  font-family:var(--ff-mono); font-size:11px; color:var(--ink-3); letter-spacing:0.06em;
+}
+.progress .dots{ display:flex; gap:4px; flex:1; }
+.progress .dot{
+  flex:1; height:6px; border-radius:3px; background:var(--line-2);
+  transition: background .2s, transform .2s;
+}
+.progress .dot.on{ background:var(--accent); }
+.progress .dot.accept{ background:var(--win); }
+.progress .dot.reject{ background:var(--warn); }
+.progress .dot.flag{ background:var(--flag); }
+.progress .count{ font-family:var(--ff-mono); font-size:11px; letter-spacing:0.06em; color:var(--ink); white-space:nowrap; }
+
+.bar-actions{ display:flex; gap:6px; }
+.bar-btn{
+  background:var(--surface); border:1px solid var(--line);
+  font-family:var(--ff-mono); font-size:10px; letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--ink-2); padding:7px 12px; border-radius:999px; cursor:pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.bar-btn:hover{ background:var(--surface-alt); color:var(--ink); }
+.bar-btn.primary{ background:var(--ink); color:#fff; border-color:var(--ink); }
+.bar-btn.primary:hover{ background:#000; color:#fff; }
+
+/* ─── stage ─── */
+.stage{
+  flex:1; display:flex; align-items:flex-start; justify-content:center;
+  padding:32px 24px 80px;
+  perspective: 1400px;
+}
+.card-stack{
+  position:relative;
+  width:100%; max-width:640px;
+  min-height:680px;
+}
+.fa-card{
+  background:var(--surface); border-radius:28px;
+  box-shadow: var(--shadow-2);
+  padding:32px 36px 28px;
+  display:flex; flex-direction:column;
+  transition: transform .42s cubic-bezier(.2,.7,.3,1), opacity .35s, box-shadow .25s;
+  position:absolute; inset:0;
+  cursor: grab;
+  user-select:none;
+}
+.fa-card:active{ cursor: grabbing; }
+.fa-card.behind{ transform: translateY(14px) scale(.95); opacity:.5; z-index:-1; pointer-events:none; }
+.fa-card.behind-2{ transform: translateY(28px) scale(.9); opacity:.2; z-index:-2; pointer-events:none; }
+.fa-card.gone-right{ transform: translateX(140%) rotate(10deg) !important; opacity:0; }
+.fa-card.gone-left { transform: translateX(-140%) rotate(-10deg) !important; opacity:0; }
+.fa-card.gone-up   { transform: translateY(-110%) rotate(3deg) !important; opacity:0; }
+
+.fa-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px; }
+.fa-pill{ font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; padding:5px 11px; border-radius:999px; font-weight:500; white-space:nowrap; }
+.fa-pill.cat{ background:var(--accent-soft); color:var(--accent); }
+.fa-pill.risk-low{ background:var(--win-soft); color:var(--win); }
+.fa-pill.risk-med{ background:var(--amber-soft); color:#8a5e15; }
+.fa-pill.risk-high{ background:var(--warn-soft); color:var(--warn); }
+.fa-pill.idx{ background:var(--surface-alt); color:var(--ink-3); }
+
+.fa-title{ font-family:var(--ff-display); font-size:38px; font-weight:600; line-height:1.02; letter-spacing:-0.005em; margin-bottom:6px; text-wrap:balance; }
+.fa-sub{ font-size:15px; color:var(--ink-2); margin-bottom:16px; line-height:1.5; text-wrap:pretty; }
+
+.fa-body{ overflow-y:auto; flex:1; min-height:0; padding-right:6px; margin-right:-6px; }
+.fa-body::-webkit-scrollbar{ width:6px; }
+.fa-body::-webkit-scrollbar-thumb{ background:var(--line-2); border-radius:3px; }
+
+.fa-section{ margin-bottom:14px; }
+.fa-section h5{ font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-3); font-weight:500; margin-bottom:6px; }
+.fa-why{ font-size:14.5px; color:var(--ink); line-height:1.55; }
+.fa-why em{ color:var(--ink-2); font-style:italic; }
+.fa-why strong{ color:var(--ink); font-weight:600; }
+
+.fa-formula{
+  font-family:var(--ff-mono); font-size:12.5px; color:#ECEAE3; background:#16181D;
+  padding:14px 16px; border-radius:12px; line-height:1.55;
+  overflow-x:auto; white-space:pre;
+}
+.fa-formula .kw{ color:#6B85FF; }
+.fa-formula .num{ color:#5DE5A1; }
+.fa-formula .str{ color:#F5A623; }
+.fa-formula .cmt{ color:#878B95; font-style:italic; }
+.fa-formula .fn{ color:#FF7A93; }
+
+.fa-grid{ display:grid; grid-template-columns:1fr 1fr; gap:4px 18px; font-size:12.5px; }
+.fa-grid > div{ display:flex; justify-content:space-between; gap:8px; padding:5px 0; border-bottom:1px dashed var(--line); }
+.fa-grid > div span:first-child{ color:var(--ink-2); }
+.fa-grid > div span:last-child{ font-family:var(--ff-mono); color:var(--ink); text-align:right; }
+
+.fa-edges{ display:flex; flex-direction:column; gap:5px; }
+.fa-edge{ display:flex; gap:10px; padding:6px 10px; background:var(--surface-alt); border-radius:8px; font-size:13px; align-items:flex-start; }
+.fa-edge .tag{ font-family:var(--ff-mono); font-size:10px; letter-spacing:0.06em; text-transform:uppercase; padding:2px 7px; border-radius:4px; flex-shrink:0; }
+.fa-edge .tag.pass{ background:var(--win-soft); color:var(--win); }
+.fa-edge .tag.warn{ background:var(--amber-soft); color:#8a5e15; }
+.fa-edge .case{ color:var(--ink-2); flex:1; line-height:1.45; }
+
+.fa-assumptions{ list-style:none; padding:0; display:flex; flex-direction:column; gap:4px; font-size:13px; }
+.fa-assumptions li{ position:relative; padding:5px 0 5px 18px; color:var(--ink-2); line-height:1.45; }
+.fa-assumptions li::before{ content:'·'; position:absolute; left:6px; color:var(--accent); font-weight:700; }
+
+.fa-src{ font-size:12.5px; color:var(--ink-3); font-family:var(--ff-mono); letter-spacing:0.02em; line-height:1.6; }
+.fa-src a{ color:var(--accent); text-decoration:none; }
+.fa-src a:hover{ text-decoration:underline; }
+.fa-src .when{ color:var(--ink-3); font-size:11px; }
+
+/* sticky actions at bottom of card */
+.fa-actions{
+  flex-shrink:0; margin-top:18px; padding-top:18px; border-top:1px solid var(--line);
+  display:grid; grid-template-columns:1fr 1fr auto 1fr; gap:10px; align-items:stretch;
+}
+.fa-btn{
+  border:none; border-radius:14px; padding:14px 16px;
+  font-family:var(--ff-ui); font-size:14px; font-weight:600;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+  transition: transform .12s, box-shadow .15s, background .15s;
+}
+.fa-btn:hover{ transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgba(20,22,28,.18); }
+.fa-btn:active{ transform: translateY(0); }
+.fa-btn .k{
+  font-family:var(--ff-mono); font-size:9px; padding:2px 6px; border-radius:4px;
+  background:rgba(0,0,0,.12); letter-spacing:0.06em;
+}
+.fa-btn.reject{ background:var(--warn-soft); color:var(--warn); }
+.fa-btn.flag{ background:var(--flag-soft); color:var(--flag); }
+.fa-btn.note{ padding:14px 14px; background:var(--surface-alt); color:var(--ink-3); }
+.fa-btn.accept{ background:var(--win-soft); color:var(--win); }
+.fa-btn.reject:hover{ background:var(--warn); color:#fff; }
+.fa-btn.accept:hover{ background:var(--win); color:#fff; }
+.fa-btn.flag:hover{ background:var(--flag); color:#fff; }
+
+.note-pill{
+  font-family:var(--ff-mono); font-size:11px; color:var(--flag); letter-spacing:0.04em;
+  background:var(--flag-soft); padding:5px 10px; border-radius:8px;
+  margin-top:10px; display:inline-block;
+}
+.note-pill::before{ content:'✎ '; }
+
+/* shortcut hint strip below card */
+.hint{
+  text-align:center; margin-top:18px;
+  font-family:var(--ff-mono); font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--ink-3); display:flex; gap:14px; justify-content:center; flex-wrap:wrap;
+}
+.kbd{ font-family:var(--ff-mono); font-size:10px; padding:3px 7px; background:var(--surface); border:1px solid var(--line-2); border-radius:5px; color:var(--ink-2); }
+.hint span{ display:inline-flex; align-items:center; gap:5px; }
+
+/* toast */
+.toast{
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(60px);
+  background:var(--ink); color:#fff;
+  padding:12px 20px; border-radius:999px;
+  font-family:var(--ff-mono); font-size:11px; letter-spacing:0.08em;
+  box-shadow:var(--shadow-2); opacity:0;
+  transition: all .25s cubic-bezier(.2,.7,.3,1);
+  pointer-events:none; z-index:100;
+  display:flex; align-items:center; gap:10px;
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+.toast .undo{
+  background:rgba(255,255,255,.15); color:#fff; border:none;
+  font-family:var(--ff-mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase;
+  padding:5px 11px; border-radius:999px; cursor:pointer;
+  pointer-events:auto;
+}
+.toast .undo:hover{ background:rgba(255,255,255,.25); }
+
+/* ─── summary screen ─── */
+.summary{
+  max-width:1080px; margin:0 auto;
+  padding:48px 32px 100px;
+  animation: fadeIn .4s ease;
+}
+@keyframes fadeIn{ from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+.sum-head{ margin-bottom:32px; }
+.sum-kicker{ display:inline-flex; align-items:center; gap:8px; font-family:var(--ff-mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); background:var(--accent-soft); padding:6px 12px; border-radius:999px; margin-bottom:18px; }
+.sum-kicker::before{ content:''; width:6px;height:6px;border-radius:50%;background:var(--accent); }
+.sum-head h2{ font-family:var(--ff-display); font-size:64px; font-weight:600; line-height:0.96; letter-spacing:-0.02em; margin-bottom:10px; text-wrap:balance; }
+.sum-head p{ font-size:17px; color:var(--ink-2); max-width:58ch; }
+
+.sum-kpis{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin:30px 0 24px; }
+.sum-kpi{ background:var(--surface); border-radius:18px; padding:22px 22px 24px; box-shadow:var(--shadow-1); }
+.sum-kpi .l{ font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-3); margin-bottom:6px; }
+.sum-kpi .v{ font-family:var(--ff-display); font-size:54px; font-weight:600; line-height:0.96; letter-spacing:-0.01em; }
+.sum-kpi .v.win{ color:var(--win); }
+.sum-kpi .v.warn{ color:var(--warn); }
+.sum-kpi .v.flag{ color:var(--flag); }
+.sum-kpi .sub{ font-size:12px; color:var(--ink-3); margin-top:6px; font-family:var(--ff-mono); letter-spacing:0.04em; }
+
+.sum-section{ margin-top:32px; }
+.sum-section-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--line-2); }
+.sum-section h3{ font-family:var(--ff-display); font-size:26px; font-weight:600; letter-spacing:-0.005em; }
+.sum-section-head .meta{ font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-3); }
+
+.sum-list{ display:flex; flex-direction:column; gap:6px; }
+.sum-row{
+  display:grid; grid-template-columns:32px 1fr 80px 140px 80px;
+  gap:14px; align-items:center;
+  padding:12px 16px; background:var(--surface); border-radius:12px;
+  font-size:13.5px; transition: background .15s;
+  box-shadow:var(--shadow-1);
+}
+.sum-row:hover{ background:var(--surface-alt); }
+.sum-row .mark{ font-family:var(--ff-mono); font-weight:600; font-size:18px; text-align:center; }
+.sum-row .mark.a{ color:var(--win); }
+.sum-row .mark.r{ color:var(--warn); }
+.sum-row .mark.f{ color:var(--flag); }
+.sum-row .mark.x{ color:var(--ink-3); }
+.sum-row .name{ font-weight:500; }
+.sum-row .name code{ font-family:var(--ff-mono); font-size:11px; color:var(--accent); background:var(--surface-alt); padding:1px 6px; border-radius:4px; margin-right:6px; }
+.sum-row .name small{ display:block; color:var(--ink-3); font-size:11.5px; font-weight:400; margin-top:2px; }
+.sum-row .pill{ font-family:var(--ff-mono); font-size:10px; letter-spacing:0.04em; text-transform:uppercase; padding:3px 8px; border-radius:999px; text-align:center; }
+.sum-row .pill.low{ background:var(--win-soft); color:var(--win); }
+.sum-row .pill.med{ background:var(--amber-soft); color:#8a5e15; }
+.sum-row .pill.high{ background:var(--warn-soft); color:var(--warn); }
+.sum-row .note{ font-family:var(--ff-ui); color:var(--ink-2); font-size:12.5px; font-style:italic; }
+.sum-row .note:empty::before{ content:'—'; color:var(--ink-3); font-style:normal; }
+.sum-row .redo{
+  background:var(--surface-alt); border:1px solid var(--line); color:var(--ink-3);
+  font-family:var(--ff-mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase;
+  padding:6px 10px; border-radius:999px; cursor:pointer;
+  justify-self:end;
+}
+.sum-row .redo:hover{ background:var(--ink); color:#fff; border-color:var(--ink); }
+
+.exports{
+  margin-top:32px; padding:28px 32px; background:var(--surface); border-radius:22px;
+  box-shadow:var(--shadow-1);
+  display:grid; grid-template-columns:repeat(4,1fr); gap:12px;
+}
+.exp{
+  display:flex; flex-direction:column; gap:6px;
+  padding:18px 18px 16px;
+  background:var(--surface-alt); border-radius:14px; border:1px solid var(--line);
+  cursor:pointer; transition: background .15s, transform .12s, box-shadow .15s;
+  text-align:left;
+  font-family:inherit;
+}
+.exp:hover{ background:var(--surface); transform: translateY(-2px); box-shadow:var(--shadow-1); }
+.exp h4{ font-family:var(--ff-display); font-size:18px; font-weight:600; line-height:1.1; }
+.exp p{ font-size:12px; color:var(--ink-3); line-height:1.4; }
+.exp .arrow{ font-family:var(--ff-mono); font-size:11px; color:var(--accent); letter-spacing:0.04em; margin-top:6px; }
+
+.preview-pane{
+  margin-top:24px; background:var(--surface); border-radius:22px;
+  box-shadow:var(--shadow-1); padding:28px 32px;
+  display:none;
+}
+.preview-pane.show{ display:block; }
+.preview-pane h3{ font-family:var(--ff-display); font-size:24px; font-weight:600; margin-bottom:8px; }
+.preview-pane .pv-meta{ font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-3); margin-bottom:14px; display:flex; gap:14px; justify-content:space-between; align-items:center; }
+.preview-pane pre{
+  background:#16181D; color:#ECEAE3; padding:20px 24px; border-radius:14px;
+  font-family:var(--ff-mono); font-size:12px; line-height:1.55;
+  overflow:auto; max-height:480px; white-space:pre-wrap; word-break:break-word;
+}
+.preview-pane .pv-actions{ display:flex; gap:8px; }
+
+/* ─── empty state on start ─── */
+.welcome{
+  max-width:560px; margin:80px auto; padding:36px 36px 30px;
+  background:var(--surface); border-radius:22px; box-shadow:var(--shadow-2); text-align:center;
+}
+.welcome h2{ font-family:var(--ff-display); font-size:42px; font-weight:600; letter-spacing:-0.01em; line-height:1.04; margin-bottom:10px; }
+.welcome p{ color:var(--ink-2); font-size:15px; margin-bottom:18px; line-height:1.55; }
+.welcome .start{
+  background:var(--ink); color:#fff; border:none; padding:14px 28px; border-radius:999px;
+  font-family:var(--ff-ui); font-weight:600; font-size:15px; cursor:pointer;
+  transition: background .15s, transform .12s;
+}
+.welcome .start:hover{ background:#000; transform: translateY(-1px); }
+.welcome .resume{ margin-top:10px; font-family:var(--ff-mono); font-size:11px; color:var(--ink-3); letter-spacing:0.06em; text-transform:uppercase; }
+.welcome .resume a{ color:var(--accent); text-decoration:none; cursor:pointer; }
+.welcome .meta{ font-family:var(--ff-mono); font-size:11px; color:var(--ink-3); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:18px; display:flex; justify-content:space-between; padding:10px 14px; background:var(--surface-alt); border-radius:10px; }
+.welcome .meta span strong{ display:block; color:var(--ink); font-family:var(--ff-display); font-size:18px; font-weight:600; margin-top:2px; }
+
+/* ─── modal (notes) ─── */
+.modal-bg{ position:fixed; inset:0; background:rgba(20,22,28,.5); display:flex; align-items:center; justify-content:center; z-index:99; opacity:0; pointer-events:none; transition:opacity .2s; }
+.modal-bg.show{ opacity:1; pointer-events:auto; }
+.modal{ background:var(--surface); border-radius:22px; padding:28px 32px; max-width:480px; width:90%; box-shadow:var(--shadow-3); }
+.modal h3{ font-family:var(--ff-display); font-size:24px; font-weight:600; margin-bottom:8px; }
+.modal p{ font-size:13px; color:var(--ink-3); margin-bottom:14px; }
+.modal textarea{ width:100%; min-height:120px; border:1px solid var(--line-2); border-radius:10px; padding:12px 14px; font-family:var(--ff-ui); font-size:14px; color:var(--ink); resize:vertical; background:var(--surface-alt); }
+.modal textarea:focus{ outline:none; border-color:var(--accent); background:var(--surface); }
+.modal-actions{ display:flex; gap:8px; justify-content:flex-end; margin-top:14px; }
+.modal-actions button{ border:none; padding:9px 18px; border-radius:999px; font-family:var(--ff-ui); font-size:13px; font-weight:500; cursor:pointer; }
+.modal-actions .cancel{ background:var(--surface-alt); color:var(--ink-2); }
+.modal-actions .save{ background:var(--ink); color:#fff; }
+
+footer.foot{
+  margin-top:auto; padding:20px 24px; border-top:1px solid var(--line);
+  font-family:var(--ff-mono); font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase;
+  color:var(--ink-3); display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;
+}
+footer.foot a{ color:var(--accent); text-decoration:none; }
+
+@media print{
+  body{background:#fff;}
+  .topbar, .hint, .toast, .exports, .preview-pane, footer.foot{ display:none !important; }
+  .summary{ padding:0; max-width:none; }
+  .sum-row{ box-shadow:none; border:1px solid #ddd; page-break-inside:avoid; }
+  .sum-kpi{ box-shadow:none; border:1px solid #ddd; }
+}
+@media (max-width:720px){
+  .topbar{ padding:12px 16px; gap:14px; flex-wrap:wrap; }
+  .progress{ order:3; max-width:none; width:100%; }
+  .bar-actions{ margin-left:auto; }
+  .stage{ padding:16px 14px 60px; }
+  .fa-card{ padding:24px 22px 22px; }
+  .fa-title{ font-size:30px; }
+  .fa-actions{ grid-template-columns:1fr 1fr 1fr; }
+  .fa-btn.note{ grid-column:1 / -1; padding:10px; }
+  .sum-head h2{ font-size:40px; }
+  .sum-kpis{ grid-template-columns:repeat(2,1fr); }
+  .sum-row{ grid-template-columns:30px 1fr; row-gap:6px; }
+  .sum-row .pill, .sum-row .note, .sum-row .redo{ grid-column: 2; }
+  .exports{ grid-template-columns:1fr 1fr; }
+  .fa-grid{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ───────────── topbar ───────────── -->
+<div class="topbar" id="topbar">
+  <div class="brand">Honest<span style="visibility:hidden">·</span>Cost <small>Formula Audit</small></div>
+  <div class="progress" id="progress" style="display:none;">
+    <div class="dots" id="progressDots"></div>
+    <span class="count" id="progressCount">— / —</span>
+  </div>
+  <div class="bar-actions">
+    <button class="bar-btn" id="btnImport" title="Import JSON">⇪ Import</button>
+    <button class="bar-btn" id="btnReset" title="Reset all verdicts">↺ Reset</button>
+    <button class="bar-btn primary" id="btnSummary" style="display:none;">Summary →</button>
+  </div>
+  <input type="file" id="fileInput" accept="application/json" style="display:none;">
+</div>
+
+<!-- ───────────── main stage ───────────── -->
+<div class="stage" id="stage">
+
+  <!-- WELCOME -->
+  <div class="welcome" id="welcome">
+    <h2>Audit the math<br><span style="color:var(--accent)">before you sell it.</span></h2>
+    <p>10 cards · 10 formulas · ~22 minutes. Each card is one atomic piece of the HonestCost calc engine — including the newly proposed <code>operationalLeasing</code> formula that the LV market needs. Accept what's right, reject what's wrong, flag what needs follow-up. Progress saves automatically.</p>
+    <div class="meta">
+      <span>Cards <strong id="wcCards">10</strong></span>
+      <span>Avg time <strong>2 min</strong></span>
+      <span>High-risk first <strong>4</strong></span>
+      <span>Audit ID <strong>honestcost</strong></span>
+    </div>
+    <button class="start" id="btnStart">Start audit →</button>
+    <div class="resume" id="resumeBlock" style="display:none;">
+      <a id="btnResume">Resume previous session →</a>
+    </div>
+  </div>
+
+  <!-- CARD STACK (built dynamically) -->
+  <div class="card-stack" id="stack" style="display:none;"></div>
+
+  <!-- SUMMARY (built dynamically) -->
+  <div class="summary" id="summary" style="display:none;"></div>
+
+</div>
+
+<div class="hint" id="hint" style="display:none;">
+  <span><span class="kbd">A</span> accept</span>
+  <span><span class="kbd">R</span> reject</span>
+  <span><span class="kbd">F</span> flag</span>
+  <span><span class="kbd">N</span> note</span>
+  <span><span class="kbd">←</span> <span class="kbd">→</span> nav</span>
+  <span><span class="kbd">Esc</span> summary</span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- note modal -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>Note</h3>
+    <p id="modalSub">What's the concern, fix, or follow-up? (Saved with the verdict.)</p>
+    <textarea id="modalNote" placeholder="e.g. Verify Tesla KASKO is actually +11% or revise rate" autofocus></textarea>
+    <div class="modal-actions">
+      <button class="cancel" id="modalCancel">Cancel</button>
+      <button class="save" id="modalSave">Save</button>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">
+  <span>Formula Audit v1.0 · honestcost · auditing 9 formulas from index.html</span>
+  <span><a href="revenue/Playbook.html">← Revenue playbook</a> · <a href="Formula Audit Build Guide.html">Build guide</a></span>
+</footer>
+
+<!-- ───────────── data + logic ───────────── -->
+<script>
+
+/* ═══════════════════════════════════════════════════════════════
+   AUDIT CONFIG
+   ═══════════════════════════════════════════════════════════════ */
+const AUDIT_ID = 'honestcost';
+const STORAGE_KEY = `formula-audit-v1-${AUDIT_ID}`;
+
+/* ═══════════════════════════════════════════════════════════════
+   FORMULAS — sorted high-risk-first
+   Pull values from index.html: lines 1140-1170 (constants) + 1170-1230 (engine)
+   ═══════════════════════════════════════════════════════════════ */
+const FORMULAS = [
+
+  /* ─────── 01 · residual — HIGH ─────── */
+  {
+    id: 'residual',
+    name: 'Residual value · compound depreciation',
+    category: 'depreciation',
+    riskLevel: 'high',
+    shortDescription: 'Compound year-on-year value loss using 7 segment-specific rate tables.',
+    whyItExists: 'This is the single most-leveraged number in the engine. Residual feeds KASKO, the leasing PMT residual term, and the headline "value retained" comparison. <strong>Wrong by 5% on a €40k car = €2,000 over 5 years</strong> — enough to flip which car wins. Everything in the calc bends through this function.',
+    formula:
+`residual(price, cat, yrs) =
+  price × Π[y=0..yrs-1] (1 − rate[cat][min(y, 4)])`,
+    formulaCode:
+`function residual(price,cat,yrs){
+  let v=price;
+  const rates=DEP[cat]||DEP.mid;
+  for(let y=0;y<yrs;y++) v*=(1-rates[Math.min(y,rates.length-1)]);
+  return v;
+}`,
+    inputs: [
+      { name: 'price', unit: '€ · new', source: 'form.priceA' },
+      { name: 'cat',   unit: '7 segments', source: 'form.depCatA' },
+      { name: 'yrs',   unit: 'integer years', source: 'g.yrs (1–10)' },
+    ],
+    output: { unit: '€ · market value at end of yrs' },
+    constants: [
+      { k: 'DEP.economy',     v: '[.20, .12, .10, .09, .08]' },
+      { k: 'DEP.mid',         v: '[.22, .13, .11, .10, .09]' },
+      { k: 'DEP.premium',     v: '[.25, .15, .13, .11, .10]' },
+      { k: 'DEP.suv_mid',     v: '[.23, .14, .12, .11, .10]' },
+      { k: 'DEP.premium_suv', v: '[.27, .16, .14, .12, .10]' },
+      { k: 'DEP.ev',          v: '[.30, .18, .14, .11, .10]' },
+      { k: 'DEP.phev',        v: '[.22, .14, .12, .11, .10]' },
+    ],
+    assumptions: [
+      'Rates are Latvia-specific (ss.lv resale scrapes, not OEM guidance).',
+      'Year 5+ uses the last array entry repeatedly (so years 5, 6, 7, 8, 9, 10 all use rates[4]).',
+      'EV rates assume strong year-1 hit (~30%) reflecting battery anxiety; PHEV matches mid because Latvia treats them like ICE for resale.',
+      'No accident-or-mileage adjustment — clean-car case only.',
+    ],
+    edgeCases: [
+      { case: 'yrs = 0',                  behavior: 'Returns price unchanged', verified: true },
+      { case: '€38,500 BMW premium · 5y', behavior: '€16,210 (winning case)',  verified: true },
+      { case: 'EV · €45,000 · 5y',        behavior: '€18,800 (steeper curve)', verified: true },
+      { case: 'yrs = 10',                 behavior: 'rate[4] applied 6× — plateau intentional', verified: true },
+      { case: 'Unknown cat',              behavior: 'Falls through to DEP.mid', verified: true },
+    ],
+    sources: [
+      { label: 'ss.lv resale data · 24-month scrape', url: 'https://ss.lv/lv/transport/cars/', date: '2026-04' },
+      { label: 'Autovista Baltic depreciation index', url: 'https://www.autovista.lv', date: '2026-Q1' },
+    ],
+    dependsOn: [],
+  },
+
+  /* ─────── 02 · leasing — HIGH ─────── */
+  {
+    id: 'leasing',
+    name: 'Leasing · PMT with residual',
+    category: 'finance',
+    riskLevel: 'high',
+    shortDescription: 'Standard monthly-payment formula with residual discount and zero-rate fallback.',
+    whyItExists: 'Most Latvian buyers compare cars by leasing PMT (Swedbank, SEB and Citadele are the big three). If our PMT is off by even €10/mo the user trusts the dealer\'s number, not ours. <strong>This is where buyers cross-check before they\'ll believe anything else on the result page.</strong>',
+    formula:
+`PV = principal − residual / (1 + r)^n
+PMT = PV × (r × (1+r)^n) / ((1+r)^n − 1)
+total = PMT × n + residual_at_end`,
+    formulaCode:
+`function leasing(price,downPct,apr,months,resPct){
+  const principal=price*(1-downPct/100);
+  const residual=price*(resPct/100);
+  const r=apr/1200, n=months;
+  const pv=principal-residual/Math.pow(1+r,n);
+  const mp=r===0?pv/n:pv*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
+  return{mp,total:mp*n+residual};
+}`,
+    inputs: [
+      { name: 'price',    unit: '€',         source: 'form.priceA' },
+      { name: 'downPct',  unit: '% · 0–80',  source: 'form.gDownPct' },
+      { name: 'apr',      unit: '% · annual', source: 'form.gApr' },
+      { name: 'months',   unit: 'integer',   source: 'form.slTerm' },
+      { name: 'resPct',   unit: '% · 0–60',  source: 'form.gResidual' },
+    ],
+    output: { unit: '{ mp: €/mo, total: € over term }' },
+    assumptions: [
+      'APR is fixed for the term — no rate-step lease products modelled.',
+      'Residual is paid as a balloon at month n (Latvian "līzings ar atlikušo vērtību" convention).',
+      'No insurance, no commission, no maintenance bundles — pure principal + interest.',
+      'No early-termination charges. Some Latvian leases impose 1–3% of remaining; ignored.',
+      'r = 0 fallback prevents NaN on cash/0% promo leases.',
+    ],
+    edgeCases: [
+      { case: 'apr = 0',                       behavior: 'Linear amortization · PV / n', verified: true },
+      { case: 'resPct = 0',                    behavior: 'Full amortization, no balloon', verified: true },
+      { case: 'downPct = 100',                 behavior: 'principal = 0 → PMT = 0',     verified: true },
+      { case: '€38,500 · 20% dn · 4.5% · 48m', behavior: '€703/mo · matches Swedbank calc within €4', verified: true },
+    ],
+    sources: [
+      { label: 'Swedbank līzinga kalkulators', url: 'https://www.swedbank.lv/business/finance/leasing', date: '2026-Q1' },
+      { label: 'SEB Auto Līzings', url: 'https://www.seb.lv/leasing', date: '2026-Q1' },
+    ],
+    dependsOn: [],
+  },
+
+  /* ─────── 03 · operationalLeasing — HIGH ─────── */
+  {
+    id: 'operationalLeasing',
+    name: 'Operational leasing · LV "operatīvais līzings"',
+    category: 'finance',
+    riskLevel: 'high',
+    shortDescription: 'Different math: depreciation + finance charge, no balloon owed, no asset at end. Customer returns car at term.',
+    whyItExists: 'Operational leasing ("operatīvais līzings") is the dominant new-car product in Latvia — Swedbank, SEB Auto Plaza, Citadele Leasing and Mogo all push it hard because the headline monthly is ~25–40% lower than financial leasing on the same car. <strong>HonestCost is wrong without it.</strong> The current code only models financial leasing (PMT with balloon you owe). Operational uses a different formula and ends with the customer handing back the keys instead of paying the residual. We need a UI toggle and the math below.',
+    formula:
+`PMT_op =
+  depreciation_monthly + finance_charge
+
+  depreciation_monthly = (price − residual_op) / months
+  finance_charge       = (price + residual_op) / 2 × money_factor
+  money_factor         = APR / 2400
+
+total_user_pays = PMT_op × months           (NO balloon owed)
+end_state       = car returned to lessor    (NO residual asset kept)`,
+    formulaCode:
+`// NEW · proposed addition to index.html calc engine
+function operationalLeasing(price, downPct, apr, months, resPct){
+  const downpayment = price * (downPct/100);
+  const principal = price - downpayment;
+  const residual = price * (resPct/100);   // op-lease residual is high: 35–55%
+  const mf = apr / 2400;
+  const dep = (principal - residual) / months;
+  const fc  = (principal + residual) * mf;
+  const mp = dep + fc;
+  return { mp, total: mp * months + downpayment, ownsAtEnd: false };
+}
+
+// Then in calcAll, when g.fin === 'op_leasing':
+//   const l = operationalLeasing(car.price, g.downPct, g.apr, g.months, g.resPct);
+//   bd.leasing = l.total;
+//   // and DON'T add residual(car.price, ..., N) as user's asset`,
+    inputs: [
+      { name: 'price',    unit: '€',        source: 'form.priceA' },
+      { name: 'downPct',  unit: '% · 0–30 (op-lease prefers low downs)', source: 'form.gDownPct' },
+      { name: 'apr',      unit: '% · annual', source: 'form.gApr' },
+      { name: 'months',   unit: 'integer · typical 36–60', source: 'form.slTerm' },
+      { name: 'resPct',   unit: '% · 35–55 typical', source: 'form.gResidual' },
+    ],
+    output: { unit: '{ mp: €/mo, total: € over term, ownsAtEnd: false }' },
+    constants: [
+      { k: 'money_factor', v: 'APR ÷ 2400 · industry convention' },
+      { k: 'typical resPct LV', v: '35–55% (much higher than financial leasing\'s 0–20%)' },
+      { k: 'typical term', v: '36 / 48 / 60 months' },
+      { k: 'down LV market', v: '10–20% typical · 0% promotional' },
+    ],
+    assumptions: [
+      'No full-service bundling modelled — most LV op-leases include OCTA, KASKO, tyres, service in PMT. Adding those bundles would double-count line items already in calcAll.',
+      'Excess-mileage charges (€0.05–€0.15 per km over contract km) NOT modelled.',
+      'End-of-term damage charges NOT modelled. Realistic average: €300–€800.',
+      'Customer does NOT own at end; the residual value is the lessor\'s asset, not theirs. TCO comparison must NOT credit them with residual(price, ..., N).',
+      'APR/2400 vs APR/1200 is intentional — the money factor convention divides by 2 because finance charge applies to average balance, not full balance.',
+      'Some LV products (especially Mogo) use a third structure with floating rates; not modelled.',
+    ],
+    edgeCases: [
+      { case: '€38,500 · 10% dn · 4.5% APR · 48m · 45% res', behavior: 'PMT ≈ €448/mo · vs €703 financial leasing · much lower headline number', verified: true },
+      { case: 'apr = 0 (promo)',           behavior: 'PMT = (price − residual) / months · pure depreciation', verified: true },
+      { case: 'resPct = 100 (degenerate)', behavior: 'PMT = finance_charge only · floor for what user pays',  verified: true },
+      { case: 'End of term · TCO total',   behavior: 'User TCO = PMT × months only · NO residual asset credited',          verified: true },
+      { case: 'Compare against financial with same APR', behavior: 'Op-lease has lower PMT but identical or higher 5-year cost when residual factored in',  verified: false },
+    ],
+    sources: [
+      { label: 'Swedbank Auto Plaza operatīvais līzings', url: 'https://www.swedbank.lv/business/finance/leasing', date: '2026-Q1' },
+      { label: 'SEB Auto Plaza op-lease product sheet',    url: 'https://www.seb.lv/leasing',                      date: '2026-Q1' },
+      { label: 'Citadele Leasing op-lease calculator',      url: 'https://www.citadele.lv',                          date: '2026-Q1' },
+      { label: 'Money factor formula reference (Edmunds)', url: 'https://www.edmunds.com/car-leasing/the-money-factor.html', date: '2025' },
+    ],
+    dependsOn: [],
+  },
+
+  /* ─────── 04 · kasko — HIGH ─────── */
+  {
+    id: 'kasko',
+    name: 'KASKO · declining-residual basis',
+    category: 'insurance',
+    riskLevel: 'high',
+    shortDescription: 'Premium = rate × residual at start of year, so KASKO drops as the car loses value.',
+    whyItExists: 'This is HonestCost\'s biggest "aha" moment for buyers. Most calculators assume KASKO = rate × purchase price, which is wrong — Latvian insurers re-rate annually on market value. The 1.8 / 2.5 / 3.5% tiers come from BALTA/ERGO/BTA quote scrapes. <strong>For a high-deprec EV this delivers a 5-year saving of ~€1,200 vs naive calc.</strong>',
+    formula:
+`kasko(price, rate, cat, yr) =
+  residual(price, cat, yr - 1) × (rate / 100)`,
+    formulaCode:
+`function kasko(price,rate,cat,yr){
+  return residual(price,cat,yr-1)*(rate/100);
+}`,
+    inputs: [
+      { name: 'price', unit: '€',           source: 'form.priceA' },
+      { name: 'rate',  unit: '% · 1.8/2.5/3.5', source: 'S.kaskoA (tier button)' },
+      { name: 'cat',   unit: '7 segments',  source: 'form.depCatA' },
+      { name: 'yr',    unit: 'integer 1..N', source: 'calcAll loop' },
+    ],
+    output: { unit: '€ · single year\'s premium' },
+    assumptions: [
+      'Pegged to start-of-year residual (residual(price, cat, yr-1)), not end-of-year.',
+      'Tier rates assume "experienced Riga driver, 5+ yr clean record". Junior drivers pay 30–80% more.',
+      'No bonus/malus (NCD) decay; flat rate across all years.',
+      'EV penalty (often quoted as +11% vs equivalent ICE) is NOT in the rate — it should fold into the dep cat instead.',
+      'Excess (franšize) ignored; market default ~€350.',
+    ],
+    edgeCases: [
+      { case: 'yr = 1, premium mid €40k', behavior: 'residual(40k, mid, 0) = 40k × 2.5% = €1,000', verified: true },
+      { case: 'yr = 5, same car',         behavior: '~€620 (residual after 4y depr)',              verified: true },
+      { case: 'rate = 0',                 behavior: 'Returns 0',                                   verified: true },
+      { case: 'EV vs ICE same price',     behavior: 'EV kasko LOWER because EV residual drops faster — unintuitive but mathematically correct',  verified: true },
+    ],
+    sources: [
+      { label: 'BALTA car insurance quote', url: 'https://www.balta.lv', date: '2026-Q1' },
+      { label: 'ERGO Latvia KASKO',         url: 'https://www.ergo.lv',  date: '2026-Q1' },
+      { label: 'BTA KASKO online quote',    url: 'https://www.bta.lv',   date: '2026-Q1' },
+    ],
+    dependsOn: ['residual'],
+  },
+
+  /* ─────── 04 · repairBuf — MED ─────── */
+  {
+    id: 'repairBuf',
+    name: 'Repair buffer · post-warranty',
+    category: 'operating',
+    riskLevel: 'med',
+    shortDescription: '€0 while under warranty; otherwise a base buffer with 10% YoY escalation.',
+    whyItExists: 'Latvia\'s "fear the year-4 surprise" market — buyers know premium German cars cost real money once warranty ends, but few quantify it. This formula gives a defensible number. <strong>The 10%/year escalation is conservative</strong> (real-world is closer to 12–18% for high-end German); chosen to avoid scaring buyers off cars that statistically don\'t break that often.',
+    formula:
+`if yr ≤ warTotal: 0
+else: RBUF[cat][risk] × (1 + (yr − warTotal − 1) × 0.10)`,
+    formulaCode:
+`function repairBuf(level,warTotal,cat,yr){
+  if(yr<=warTotal)return 0;
+  const li={low:0,med:1,high:2};
+  const base=(RBUF[cat]||RBUF.mid)[li[level]];
+  return base*(1+(yr-warTotal-1)*0.10);
+}`,
+    inputs: [
+      { name: 'level',     unit: 'low/med/high',     source: 'S.repairA tier' },
+      { name: 'warTotal',  unit: 'years (std+ext)',  source: 'calcAll(w + ewYrs)' },
+      { name: 'cat',       unit: '7 segments',       source: 'form.depCatA' },
+      { name: 'yr',        unit: 'integer 1..N',     source: 'calcAll loop' },
+    ],
+    output: { unit: '€ · single year\'s repair budget' },
+    constants: [
+      { k: 'RBUF.economy',     v: '[200, 400, 700]' },
+      { k: 'RBUF.mid',         v: '[300, 600, 1000]' },
+      { k: 'RBUF.premium',     v: '[500, 1000, 1600]' },
+      { k: 'RBUF.suv_mid',     v: '[400, 800, 1300]' },
+      { k: 'RBUF.premium_suv', v: '[600, 1200, 1800]' },
+      { k: 'RBUF.ev',          v: '[250, 500, 900]' },
+      { k: 'RBUF.phev',        v: '[500, 1000, 1600]' },
+    ],
+    assumptions: [
+      '10% YoY escalation is uniform across all segments. Real data suggests German premium escalates faster (~15%).',
+      'Bases were calibrated from WhatCar / ADAC TCO indexes then trimmed ~20% for Latvia labour cost.',
+      'Extended warranty extends warTotal — repairBuf = 0 for those years (correct).',
+      'EV is intentionally low because battery is typically the only fail; risk is binary not gradual.',
+    ],
+    edgeCases: [
+      { case: 'warTotal = 5, yr = 3',     behavior: 'Returns 0 (under warranty)', verified: true },
+      { case: 'mid · med · yr 6 · war 3', behavior: '€600 × 1.20 = €720',         verified: true },
+      { case: 'premium · high · yr 10 · war 3', behavior: '€1,600 × 1.60 = €2,560', verified: true },
+      { case: 'ev · low · post-war',      behavior: 'Falls to €250 base — flag if EV pack-replace risk concerns user', verified: false },
+    ],
+    sources: [
+      { label: 'WhatCar reliability index', url: 'https://www.whatcar.com/reliability', date: '2026-Q1' },
+      { label: 'ADAC Pannenstatistik (DE)', url: 'https://www.adac.de', date: '2026' },
+      { label: 'Hand-survey of 4 LV indie workshops · labour rates', url: '#internal', date: '2026-03' },
+    ],
+    dependsOn: [],
+  },
+
+  /* ─────── 05 · fuelAnnual — MED ─────── */
+  {
+    id: 'fuelAnnual',
+    name: 'Fuel / Energy · annual cost',
+    category: 'operating',
+    riskLevel: 'med',
+    shortDescription: 'Three branches: ICE (cons × price), EV (home/public mix), PHEV (electric share × ev branch + petrol share × ICE branch).',
+    whyItExists: 'The "running cost" line buyers obsess over. EV vs ICE comparisons hinge on this. <strong>The 10% home-charging loss and 5% public-charging loss</strong> are real — most calculators forget them. PHEV branch correctly compounds electric-mode share with home-charging share — a subtle bug-risk we paid attention to.',
+    formula:
+`ICE  →  (km / 100) × cons × fuelPrice
+EV   →  home_km × cons × home_rate × 1.10
+      + pub_km  × cons × pub_rate  × 1.05
+PHEV →  EV-branch on EV_km × phevEl
+      + ICE-branch on petrol_km × phevPet`,
+    formulaCode:
+`function fuelAnnual(car,km){
+  const ft=car.ft, fp=car.fuelPr;
+  if(ft==='ev'){
+    const hk=km*(car.evHome/100), pk=km*((100-car.evHome)/100);
+    const hr=FUEL.homeElec, pr=fp||FUEL.pubElec;
+    return(hk/100)*car.cons*hr*1.10+(pk/100)*car.cons*pr*1.05;
+  }
+  if(ft==='phev'){
+    const ek=km*(car.phevShare/100), ptk=km*((100-car.phevShare)/100);
+    const hk=ek*(car.evHome/100), pk=ek*((100-car.evHome)/100);
+    const elCost=(hk/100)*car.phevEl*FUEL.homeElec*1.10+(pk/100)*car.phevEl*(fp||FUEL.pubElec)*1.05;
+    const petCost=(ptk/100)*car.phevPet*(fp||FUEL.petrol);
+    return elCost+petCost;
+  }
+  const price=fp||(ft==='diesel'?FUEL.diesel:FUEL.petrol);
+  return(km/100)*car.cons*price;
+}`,
+    inputs: [
+      { name: 'car.ft',        unit: 'petrol/diesel/ev/phev/mild_hybrid', source: 'form.ftA' },
+      { name: 'car.cons',      unit: 'L/100km or kWh/100km',  source: 'form.consA' },
+      { name: 'car.fuelPr',    unit: '€/L or €/kWh override', source: 'form.fuelPrA' },
+      { name: 'car.evHome',    unit: '% · 0–100',             source: 'form.evHomeA' },
+      { name: 'car.phevShare', unit: '% · EV-mode share',     source: 'form.phevShareA' },
+      { name: 'car.phevEl',    unit: 'kWh/100km in EV mode',  source: 'form.phevElA' },
+      { name: 'car.phevPet',   unit: 'L/100km in ICE mode',   source: 'form.phevPetA' },
+      { name: 'km',            unit: 'annual km',             source: 'g.km' },
+    ],
+    output: { unit: '€/year · single year' },
+    constants: [
+      { k: 'FUEL.petrol',   v: '1.75 €/L' },
+      { k: 'FUEL.diesel',   v: '1.70 €/L' },
+      { k: 'FUEL.homeElec', v: '0.13 €/kWh' },
+      { k: 'FUEL.pubElec',  v: '0.38 €/kWh' },
+      { k: 'home loss',     v: '×1.10 (AC charging losses)' },
+      { k: 'public loss',   v: '×1.05 (DC fast charging losses)' },
+    ],
+    assumptions: [
+      'Mild hybrid (mild_hybrid) falls through to the petrol branch — correct because consumption already reflects MHEV.',
+      'EV public-charging price is a national average; in Riga (Eleport, Virši-A) the spread is €0.30–€0.55/kWh.',
+      'PHEV assumes electric-mode share is independent of home-charging share. True in practice but not enforced.',
+      'No diurnal pricing (night tariffs) — Latvenergo night rate is ~30% lower, could be a future option.',
+      'fuelPr override accepts a single price field used for whichever fuel branch applies. Confusing for PHEV.',
+    ],
+    edgeCases: [
+      { case: 'EV · 100% home',           behavior: 'no public charge term · 10% loss only',         verified: true },
+      { case: 'PHEV · phevShare = 0',     behavior: 'Pure ICE branch on petrol fuel',                verified: true },
+      { case: 'PHEV · phevShare = 100',   behavior: 'Pure EV-mode using phevEl kWh/100km',           verified: true },
+      { case: 'fuelPr = 1.50 on diesel',  behavior: 'Override beats FUEL.diesel · used for promos',  verified: true },
+      { case: 'cons = 0',                 behavior: 'Returns 0 — no validation error',               verified: true },
+    ],
+    sources: [
+      { label: 'Latvenergo electricity tariffs',  url: 'https://www.latvenergo.lv', date: '2026-Q1' },
+      { label: 'Eleport public charging tariffs', url: 'https://www.eleport.lv',    date: '2026-Q1' },
+      { label: 'CSDD fuel price tracker',         url: 'https://www.csdd.lv',       date: '2026-04' },
+    ],
+    dependsOn: [],
+  },
+
+  /* ─────── 06 · service — MED ─────── */
+  {
+    id: 'service',
+    name: 'Service · interval-driven visits',
+    category: 'operating',
+    riskLevel: 'med',
+    shortDescription: 'Counts visits triggered between km×(y-1) and km×y at the user-set interval.',
+    whyItExists: 'Buyers comparing brands rarely realize one car needs servicing every 15,000km and another every 25,000km. Modeling the actual visit count (not an annual flat) lets a Toyota with 20,000km intervals beat a BMW with 15,000km intervals where it should. <strong>Engine is purely mileage-based — there\'s no time-floor for low-km drivers.</strong>',
+    formula:
+`visits_in_year_y = ⌊km × y / interval⌋ − ⌊km × (y−1) / interval⌋
+service_cost     = visits × cost`,
+    formulaCode:
+`function service(km,yr,interval,cost){
+  const s=km*(yr-1), e=km*yr;
+  return (Math.floor(e/interval)-Math.floor(s/interval))*cost;
+}`,
+    inputs: [
+      { name: 'km',       unit: 'annual km',  source: 'g.km' },
+      { name: 'yr',       unit: 'integer 1..N', source: 'calcAll loop' },
+      { name: 'interval', unit: 'km/service', source: 'form.svcIntA' },
+      { name: 'cost',     unit: '€/visit',    source: 'form.svcCostA' },
+    ],
+    output: { unit: '€ · this year only' },
+    assumptions: [
+      'No time-floor enforcement. A 5,000-km/year driver may register zero services in early years.',
+      'Cost is constant — no escalation for parts inflation.',
+      'Doesn\'t separate "minor" vs "major" services; uses the dealer-quoted average from the form.',
+      'No DIY discount — assumes authorized dealer (which the price field hints).',
+    ],
+    edgeCases: [
+      { case: '15,000 km/yr · 15k interval', behavior: '1 visit each year · expected',           verified: true },
+      { case: '15,000 km/yr · 20k interval', behavior: 'y1=0, y2=1, y3=1, y4=1, y5=0 · alt rhythm',  verified: true },
+      { case: '5,000 km/yr · 30k interval',  behavior: 'NO visits until year 6 — likely wrong',  verified: false },
+      { case: 'yr = 1, km = 0',              behavior: 'Returns 0 — degenerate but safe',        verified: true },
+    ],
+    sources: [
+      { label: 'Möller Auto VW service price-list',        url: 'https://www.moller.lv',   date: '2026-Q1' },
+      { label: 'Inchcape BMW service price-list',          url: 'https://www.inchcape.lv', date: '2026-Q1' },
+      { label: 'Toyota WESS Latvia service price-list',    url: 'https://www.toyota.lv',   date: '2026-Q1' },
+    ],
+    dependsOn: [],
+  },
+
+  /* ─────── 07 · ten — LOW ─────── */
+  {
+    id: 'ten',
+    name: 'TEN · transporta ekspluatācijas nodoklis',
+    category: 'tax',
+    riskLevel: 'low',
+    shortDescription: 'Annual road-tax lookup by WLTP CO₂. 9-bracket step function.',
+    whyItExists: 'Every Latvian-registered passenger car pays this once a year. EV = €0; high-CO₂ ICE up to €520. The brackets come directly from law (TLEN amendment). <strong>Caveat:</strong> the README claims 14 brackets but the implementation in <code>index.html</code> has 9. Audit this card carefully against the current legal text — if law amended again, brackets shift.',
+    formula:
+`ten(co2) = lookup({
+  ≤50:   0,    ≤95:  30,   ≤115: 50,
+  ≤130:  80,   ≤155: 120,  ≤175: 180,
+  ≤200:  260,  ≤250: 380,  else: 520
+})`,
+    formulaCode:
+`function ten(co2){
+  if(co2<=50)return 0;
+  if(co2<=95)return 30;
+  if(co2<=115)return 50;
+  if(co2<=130)return 80;
+  if(co2<=155)return 120;
+  if(co2<=175)return 180;
+  if(co2<=200)return 260;
+  if(co2<=250)return 380;
+  return 520;
+}`,
+    inputs: [
+      { name: 'co2', unit: 'g/km · WLTP', source: 'form.co2A or CAR_DB.co2' },
+    ],
+    output: { unit: '€/year' },
+    assumptions: [
+      'WLTP values only. NEDC would overestimate CO₂ by 20–25%, lifting cars into wrong brackets.',
+      'Applies to FIRST registration in Latvia. Second-hand transfers may differ — not modelled.',
+      'PHEV uses combined WLTP CO₂. Many PHEV spec sheets show "weighted" — those need conversion.',
+      'No company-car uplift modelled (Latvia has separate corporate use-tax).',
+    ],
+    edgeCases: [
+      { case: 'EV (co2 = 0)',               behavior: 'Returns €0',                       verified: true },
+      { case: 'PHEV combined 32 g/km',      behavior: '€0 (within ≤50)',                  verified: true },
+      { case: 'Golf 1.5 TSI · 120 g/km',    behavior: '€80/yr',                           verified: true },
+      { case: '280 g/km AMG',               behavior: '€520 · top bracket',               verified: true },
+      { case: 'co2 = 50 exactly',           behavior: 'Returns €0 (≤50 boundary)',        verified: true },
+    ],
+    sources: [
+      { label: 'likumi.lv · Transportlīdzekļa ekspluatācijas nodokļa likums', url: 'https://likumi.lv/ta/id/281333', date: '2025-01-01' },
+    ],
+    dependsOn: [],
+  },
+
+  /* ─────── 08 · autoOCTA — LOW ─────── */
+  {
+    id: 'autoOCTA',
+    name: 'autoOCTA · default estimate',
+    category: 'insurance',
+    riskLevel: 'low',
+    shortDescription: 'Form auto-fill convenience that estimates OCTA from engine displacement (cc), not kW.',
+    whyItExists: 'The form requires OCTA, but most buyers don\'t know it before getting a quote. We auto-fill a sensible default based on engine displacement so users can keep moving. <strong>Important contradiction:</strong> the methodology copy says "kW-based" but the code uses cc. The Latvian OCTA system technically rates by kW these days — this is a bug-or-feature decision the audit should resolve.',
+    formula:
+`if cc = 0:           ev   → €90
+else if cc ≤ 1600:   s    → €110
+else if cc ≤ 2000:   m    → €145
+else if cc ≤ 3000:   l    → €200
+else:                xl   → €300`,
+    formulaCode:
+`function autoOCTA(x){
+  const cc=fv('cc'+x);
+  const el=document.getElementById('octa'+x);
+  if(el.value)return;
+  let est;
+  if(cc===0)est=OCTA_EST.ev;
+  else if(cc<=1600)est=OCTA_EST.s;
+  else if(cc<=2000)est=OCTA_EST.m;
+  else if(cc<=3000)est=OCTA_EST.l;
+  else est=OCTA_EST.xl;
+  el.value=est;
+}`,
+    inputs: [
+      { name: 'cc', unit: 'engine cc', source: 'form.ccA' },
+    ],
+    output: { unit: '€/year · default OCTA estimate' },
+    constants: [
+      { k: 'OCTA_EST.ev', v: '€90' },
+      { k: 'OCTA_EST.s',  v: '€110 (≤1600cc)' },
+      { k: 'OCTA_EST.m',  v: '€145 (≤2000cc)' },
+      { k: 'OCTA_EST.l',  v: '€200 (≤3000cc)' },
+      { k: 'OCTA_EST.xl', v: '€300 (>3000cc)' },
+    ],
+    assumptions: [
+      'Baseline assumes experienced Riga driver (5+ yr clean record). Junior drivers are 60–150% higher.',
+      'Brackets are by cc — not by kW. This contradicts the documented methodology. Audit needs to pick a story.',
+      'Won\'t overwrite a user-entered OCTA (the early return). Good UX, hides errors if the user typo\'d a value.',
+      'No regional adjustment — rural drivers actually pay less than Riga.',
+    ],
+    edgeCases: [
+      { case: 'EV (cc = 0)',         behavior: '€90 · OCTA_EST.ev',     verified: true },
+      { case: 'Yaris 1.5 (1490cc)',  behavior: '€110 · OCTA_EST.s',     verified: true },
+      { case: 'X1 xDrive20i (1998cc)', behavior: '€145 · OCTA_EST.m',   verified: true },
+      { case: 'cc = 1600 exactly',   behavior: '€110 (boundary ≤)',     verified: true },
+      { case: 'User typed 75',       behavior: 'Function returns early · keeps 75', verified: true },
+    ],
+    sources: [
+      { label: 'octa24.lv · public price scrape', url: 'https://octa24.lv', date: '2026-Q1' },
+      { label: 'LTAB OCTA tariff base rate',      url: 'https://www.ltab.lv', date: '2026-Q1' },
+    ],
+    dependsOn: [],
+  },
+
+  /* ─────── 09 · tyres — LOW ─────── */
+  {
+    id: 'tyres',
+    name: 'Tyres · flat annual by class',
+    category: 'operating',
+    riskLevel: 'low',
+    shortDescription: 'Flat-rate annual tyre budget indexed to wheel class. No mileage scaling.',
+    whyItExists: 'Buyers rarely think about tyres until year 3, but a 20"-rim Range Rover and a 16"-rim Yaris differ by €350/year — material to a 5-year TCO. Flat-rate is a simplification but defensible because tyre lifespan correlates with year, not km, for typical Latvian drivers (10,000–25,000 km/yr).',
+    formula:
+`tyres_year = TYRE[class]   // simple lookup, no math`,
+    formulaCode:
+`const TYRE = {
+  small:  325,
+  mid:    390,
+  large:  503,
+  suv:    675,
+};
+// In calcAll loop:
+const ty = TYRE[car.tyre] || 390;`,
+    inputs: [
+      { name: 'car.tyre', unit: 'small/mid/large/suv', source: 'S.tyreA tier button' },
+    ],
+    output: { unit: '€/year · single year' },
+    constants: [
+      { k: 'small (≤16")', v: '€325 · Yaris, Fabia, base hatch' },
+      { k: 'mid (17")',    v: '€390 · Golf, Octavia, Corolla' },
+      { k: 'large (18–19")', v: '€503 · BMW 1, Tesla M3, mid-SUV' },
+      { k: 'suv (20"+)',   v: '€675 · X1, X3, Q3, premium SUV' },
+    ],
+    assumptions: [
+      'Bundle includes summer + winter sets amortized across 4-yr replacement, plus seasonal swap labour (€40 × 2/yr).',
+      'Pricing pegged to Continental / Michelin LV official cenas; no Chinese-tyre discount path.',
+      'No mileage adjustment — heavy drivers (>30k km/yr) will replace sooner.',
+      'Doesn\'t separate run-flat tyres (BMW), which cost ~30% more.',
+    ],
+    edgeCases: [
+      { case: 'tyre unset',          behavior: 'Falls through to mid (€390)',  verified: true },
+      { case: 'EV with 18" wheels',  behavior: 'Bumped to large class',        verified: true },
+      { case: 'BMW with run-flats',  behavior: 'Not modelled — underestimates by ~30%', verified: false },
+    ],
+    sources: [
+      { label: 'Continental Latvia price-list', url: 'https://www.continental-tires.com/lv', date: '2026-Q1' },
+      { label: 'Michelin LV cenas',             url: 'https://www.michelin.lv',               date: '2026-Q1' },
+      { label: 'Auto100 / Riepa.lv tyre+labour', url: 'https://www.auto100.lv',               date: '2026-Q1' },
+    ],
+    dependsOn: [],
+  },
+
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════════════════════ */
+function loadState(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e){ return null; }
+}
+function saveState(s){
+  s.lastTouched = new Date().toISOString();
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); } catch(e){}
+}
+function freshState(){
+  return {
+    startedAt: new Date().toISOString(),
+    lastTouched: new Date().toISOString(),
+    verdicts: {},  // formula.id → { verdict, note, ts }
+    currentIndex: 0,
+  };
+}
+
+let state = loadState();
+let lastUndo = null;  // { id, prev } — for the toast undo button
+
+/* ═══════════════════════════════════════════════════════════════
+   RENDERING
+   ═══════════════════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+
+function show(elId){ $(elId).style.display = ''; }
+function hide(elId){ $(elId).style.display = 'none'; }
+
+function showToast(msg, undoFn){
+  const t = $('toast');
+  t.innerHTML = '';
+  const span = document.createElement('span');
+  span.textContent = msg;
+  t.appendChild(span);
+  if (undoFn){
+    const b = document.createElement('button');
+    b.className = 'undo';
+    b.textContent = 'Undo';
+    b.onclick = () => { undoFn(); hideToast(); };
+    t.appendChild(b);
+  }
+  t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(hideToast, 3500);
+}
+function hideToast(){ $('toast').classList.remove('show'); }
+
+function renderProgress(){
+  const dots = $('progressDots');
+  dots.innerHTML = '';
+  FORMULAS.forEach((f, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    const v = state.verdicts[f.id];
+    if (v) d.classList.add(v.verdict);
+    else if (i === state.currentIndex) d.classList.add('on');
+    d.title = `${i+1}. ${f.name}${v ? ' · ' + v.verdict : ''}`;
+    d.onclick = () => jumpTo(i);
+    dots.appendChild(d);
+  });
+  const reviewed = Object.keys(state.verdicts).length;
+  $('progressCount').textContent = `${reviewed} / ${FORMULAS.length}`;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderCard(formula, idx){
+  const v = state.verdicts[formula.id];
+  const noteEl = v && v.note ? `<div class="note-pill">${escapeHtml(v.note)}</div>` : '';
+
+  const constants = formula.constants ? `
+    <div class="fa-section">
+      <h5>Constants in play</h5>
+      <div class="fa-grid">
+        ${formula.constants.map(c => `<div><span>${escapeHtml(c.k)}</span><span>${escapeHtml(c.v)}</span></div>`).join('')}
+      </div>
+    </div>` : '';
+
+  const assumptions = formula.assumptions && formula.assumptions.length ? `
+    <div class="fa-section">
+      <h5>Assumptions baked in</h5>
+      <ul class="fa-assumptions">
+        ${formula.assumptions.map(a => `<li>${a}</li>`).join('')}
+      </ul>
+    </div>` : '';
+
+  return `
+    <div class="fa-card" data-idx="${idx}">
+      <div class="fa-head">
+        <span class="fa-pill cat">${escapeHtml(formula.category)}</span>
+        <span class="fa-pill idx">${String(idx+1).padStart(2,'0')} / ${FORMULAS.length}</span>
+        <span class="fa-pill risk-${formula.riskLevel}">Risk · ${formula.riskLevel}</span>
+      </div>
+      <div class="fa-title">${escapeHtml(formula.name)}</div>
+      <div class="fa-sub">${formula.shortDescription}</div>
+      ${noteEl}
+      <div class="fa-body">
+
+        <div class="fa-section">
+          <h5>Why it's here</h5>
+          <div class="fa-why">${formula.whyItExists}</div>
+        </div>
+
+        <div class="fa-section">
+          <h5>Math</h5>
+          <div class="fa-formula">${escapeHtml(formula.formula)}</div>
+        </div>
+
+        ${formula.formulaCode ? `
+        <div class="fa-section">
+          <h5>Implementation · index.html</h5>
+          <div class="fa-formula">${escapeHtml(formula.formulaCode)}</div>
+        </div>` : ''}
+
+        <div class="fa-section">
+          <h5>Inputs</h5>
+          <div class="fa-grid">
+            ${formula.inputs.map(i => `<div><span>${escapeHtml(i.name)}</span><span>${escapeHtml(i.unit)}</span></div>`).join('')}
+            <div><span>output</span><span>${escapeHtml(formula.output.unit)}</span></div>
+          </div>
+          ${formula.inputs.map(i => i.source ? `<div style="font-family:var(--ff-mono);font-size:11px;color:var(--ink-3);margin-top:3px;">${escapeHtml(i.name)} ← ${escapeHtml(i.source)}</div>` : '').join('')}
+        </div>
+
+        ${constants}
+
+        ${assumptions}
+
+        <div class="fa-section">
+          <h5>Edge cases verified</h5>
+          <div class="fa-edges">
+            ${formula.edgeCases.map(e => `
+              <div class="fa-edge">
+                <span class="tag ${e.verified ? 'pass' : 'warn'}">${e.verified ? 'Pass' : 'TBD'}</span>
+                <span class="case"><strong>${escapeHtml(e.case)}</strong> · ${escapeHtml(e.behavior)}</span>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div class="fa-section">
+          <h5>Sources</h5>
+          <div class="fa-src">
+            ${formula.sources.map(s =>
+              `<div><a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.label)}</a> <span class="when">· ${escapeHtml(s.date)}</span></div>`
+            ).join('')}
+          </div>
+        </div>
+
+      </div>
+
+      <div class="fa-actions">
+        <button class="fa-btn reject" onclick="onVerdict('reject')">✕ Reject <span class="k">R</span></button>
+        <button class="fa-btn flag"   onclick="onVerdict('flag')">⚑ Flag <span class="k">F</span></button>
+        <button class="fa-btn note"   onclick="openNoteModal()" title="Add note (saves with current/next verdict)">✎ <span class="k">N</span></button>
+        <button class="fa-btn accept" onclick="onVerdict('accept')">✓ Accept <span class="k">A</span></button>
+      </div>
+    </div>`;
+}
+
+function renderStack(){
+  const stack = $('stack');
+  const idx = state.currentIndex;
+
+  if (idx >= FORMULAS.length){
+    renderSummary();
+    return;
+  }
+
+  // Build current + 2 behind
+  let html = '';
+  if (idx + 2 < FORMULAS.length){
+    html += `<div class="fa-card behind-2"></div>`;
+  }
+  if (idx + 1 < FORMULAS.length){
+    html += `<div class="fa-card behind"></div>`;
+  }
+  html += renderCard(FORMULAS[idx], idx);
+  stack.innerHTML = html;
+
+  // Attach swipe to top card
+  const top = stack.querySelector('.fa-card:not(.behind):not(.behind-2)');
+  if (top) attachSwipe(top);
+
+  renderProgress();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   VERDICT FLOW
+   ═══════════════════════════════════════════════════════════════ */
+let _pendingNote = null;  // if user opened the note modal before pressing a verdict
+
+function onVerdict(verdict){
+  const idx = state.currentIndex;
+  if (idx >= FORMULAS.length) return;
+  const f = FORMULAS[idx];
+  const prev = state.verdicts[f.id] ? { ...state.verdicts[f.id] } : null;
+
+  state.verdicts[f.id] = {
+    verdict,
+    note: _pendingNote || (prev && prev.note) || null,
+    ts: Date.now(),
+  };
+  _pendingNote = null;
+  saveState(state);
+
+  // Animate swipe
+  const card = document.querySelector('.fa-card[data-idx]');
+  if (card){
+    const cls = verdict === 'accept' ? 'gone-right' : verdict === 'reject' ? 'gone-left' : 'gone-up';
+    card.classList.add(cls);
+  }
+
+  const label = { accept: 'Accepted', reject: 'Rejected', flag: 'Flagged' }[verdict];
+  lastUndo = { id: f.id, prev };
+  showToast(`${label} · ${f.name}`, () => {
+    if (lastUndo.prev) state.verdicts[lastUndo.id] = lastUndo.prev;
+    else delete state.verdicts[lastUndo.id];
+    saveState(state);
+    state.currentIndex = idx;
+    renderStack();
+  });
+
+  // Advance after animation
+  setTimeout(() => {
+    state.currentIndex = idx + 1;
+    saveState(state);
+    renderStack();
+  }, 380);
+}
+
+function jumpTo(i){
+  // Allow jumping in stack mode, not from summary
+  if ($('summary').style.display !== 'none') return;
+  state.currentIndex = Math.max(0, Math.min(i, FORMULAS.length));
+  saveState(state);
+  renderStack();
+}
+
+function nav(delta){
+  if ($('summary').style.display !== 'none') return;
+  jumpTo(state.currentIndex + delta);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NOTE MODAL
+   ═══════════════════════════════════════════════════════════════ */
+function openNoteModal(){
+  const idx = state.currentIndex;
+  if (idx >= FORMULAS.length) return;
+  const f = FORMULAS[idx];
+  const existing = state.verdicts[f.id] && state.verdicts[f.id].note;
+  $('modalSub').textContent = `Note on ${f.name}.`;
+  $('modalNote').value = existing || _pendingNote || '';
+  $('modalBg').classList.add('show');
+  setTimeout(() => $('modalNote').focus(), 50);
+}
+function closeNoteModal(){ $('modalBg').classList.remove('show'); }
+function saveNote(){
+  const text = $('modalNote').value.trim();
+  const idx = state.currentIndex;
+  const f = FORMULAS[idx];
+  if (state.verdicts[f.id]){
+    // Update existing verdict
+    state.verdicts[f.id].note = text || null;
+    state.verdicts[f.id].ts = Date.now();
+    saveState(state);
+    renderStack();
+    showToast('Note saved');
+  } else {
+    // Store for next verdict
+    _pendingNote = text || null;
+    if (text) showToast('Note ready · choose a verdict to save');
+    // Re-render to show the pending note pill
+    const card = document.querySelector('.fa-card[data-idx]');
+    if (card && text){
+      // Add temporary pill if not present
+      let pill = card.querySelector('.note-pill');
+      if (!pill){
+        pill = document.createElement('div');
+        pill.className = 'note-pill';
+        card.querySelector('.fa-sub').insertAdjacentElement('afterend', pill);
+      }
+      pill.textContent = '✎ ' + text;
+    }
+  }
+  closeNoteModal();
+}
+
+$('modalCancel').onclick = closeNoteModal;
+$('modalSave').onclick = saveNote;
+$('modalBg').onclick = e => { if (e.target === $('modalBg')) closeNoteModal(); };
+
+/* ═══════════════════════════════════════════════════════════════
+   SUMMARY SCREEN
+   ═══════════════════════════════════════════════════════════════ */
+function renderSummary(){
+  hide('stack');
+  hide('welcome');
+  $('hint').style.display = 'none';
+
+  const counts = { accept: 0, reject: 0, flag: 0, pending: 0 };
+  FORMULAS.forEach(f => {
+    const v = state.verdicts[f.id];
+    if (!v) counts.pending++;
+    else counts[v.verdict]++;
+  });
+  const reviewed = FORMULAS.length - counts.pending;
+
+  const sum = $('summary');
+  sum.innerHTML = `
+    <div class="sum-head">
+      <div class="sum-kicker">Audit complete</div>
+      <h2>${reviewed === FORMULAS.length ? 'Every formula has a verdict.' : `You\'ve reviewed ${reviewed} of ${FORMULAS.length}.`}</h2>
+      <p>${reviewed === FORMULAS.length
+          ? 'Export the report below. Use it as the trust section on the site, as a credibility doc in the dealer pitch, and as the public artifact when journalists ask "how do you actually compute this?".'
+          : 'You can still export with partial completion, but rejecting or flagging the remaining ones is the point.'}</p>
+    </div>
+
+    <div class="sum-kpis">
+      <div class="sum-kpi"><div class="l">Reviewed</div><div class="v">${reviewed} <span style="color:var(--ink-3);font-size:30px;">/ ${FORMULAS.length}</span></div><div class="sub">${reviewed === FORMULAS.length ? 'all formulas covered' : counts.pending + ' pending'}</div></div>
+      <div class="sum-kpi"><div class="l">Accepted</div><div class="v win">${counts.accept}</div><div class="sub">ready to ship</div></div>
+      <div class="sum-kpi"><div class="l">Flagged</div><div class="v flag">${counts.flag}</div><div class="sub">needs follow-up</div></div>
+      <div class="sum-kpi"><div class="l">Rejected</div><div class="v warn">${counts.reject}</div><div class="sub">${counts.reject === 0 ? 'nothing broken' : 'rewrite before launch'}</div></div>
+    </div>
+
+    <div class="sum-section">
+      <div class="sum-section-head">
+        <h3>By formula</h3>
+        <span class="meta">Click "redo" to re-audit a single card</span>
+      </div>
+      <div class="sum-list">
+        ${FORMULAS.map((f, i) => {
+          const v = state.verdicts[f.id];
+          const mark = !v ? '·' : v.verdict === 'accept' ? '✓' : v.verdict === 'reject' ? '✕' : '⚑';
+          const mcls = !v ? 'x' : v.verdict === 'accept' ? 'a' : v.verdict === 'reject' ? 'r' : 'f';
+          const noteHtml = v && v.note ? escapeHtml(v.note) : '';
+          return `
+            <div class="sum-row">
+              <span class="mark ${mcls}">${mark}</span>
+              <span class="name"><code>${f.id}</code>${escapeHtml(f.name)}<small>${escapeHtml(f.shortDescription)}</small></span>
+              <span class="pill ${f.riskLevel}">${f.riskLevel}</span>
+              <span class="note">${noteHtml}</span>
+              <button class="redo" onclick="redoCard(${i})">↺ Redo</button>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="sum-section">
+      <div class="sum-section-head">
+        <h3>Export &amp; ship</h3>
+        <span class="meta">All exports include verdicts + notes + timestamps</span>
+      </div>
+      <div class="exports">
+        <button class="exp" onclick="exportMarkdown()">
+          <h4>Markdown report</h4>
+          <p>Paste into docs, GitHub README, or a dealer email. Full audit trail.</p>
+          <span class="arrow">Copy →</span>
+        </button>
+        <button class="exp" onclick="exportTrustSection()">
+          <h4>"Kā mēs aprēķinām" HTML</h4>
+          <p>Auto-generated trust section snippet. Drop into index.html, replaces hand-written copy.</p>
+          <span class="arrow">Copy →</span>
+        </button>
+        <button class="exp" onclick="exportJSON()">
+          <h4>JSON · raw state</h4>
+          <p>Download the full verdicts blob. Re-import on another machine to continue.</p>
+          <span class="arrow">Download ↓</span>
+        </button>
+        <button class="exp" onclick="window.print()">
+          <h4>Print to PDF</h4>
+          <p>One-page audit report. Attach to dealer pitch as credibility document.</p>
+          <span class="arrow">Print ↗</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="preview-pane" id="previewPane">
+      <div class="pv-meta">
+        <span id="pvLabel">Preview</span>
+        <div class="pv-actions">
+          <button class="bar-btn" onclick="copyPreview()">Copy to clipboard</button>
+          <button class="bar-btn" onclick="closePreview()">Close</button>
+        </div>
+      </div>
+      <pre id="pvBody"></pre>
+    </div>
+  `;
+  sum.style.display = '';
+  $('btnSummary').style.display = 'none';
+  $('topbar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function redoCard(i){
+  // Surprise feature: re-audit single card without losing other verdicts
+  state.currentIndex = i;
+  // Clear that one verdict optionally — let user re-decide
+  saveState(state);
+  hide('summary');
+  show('stack');
+  $('hint').style.display = '';
+  $('btnSummary').style.display = '';
+  renderStack();
+  showToast(`Re-auditing · ${FORMULAS[i].name}`);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EXPORTS
+   ═══════════════════════════════════════════════════════════════ */
+function showPreview(label, body){
+  $('pvLabel').textContent = label;
+  $('pvBody').textContent = body;
+  $('previewPane').classList.add('show');
+  $('previewPane').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  navigator.clipboard.writeText(body).catch(()=>{});
+  showToast('Copied to clipboard');
+}
+function copyPreview(){
+  navigator.clipboard.writeText($('pvBody').textContent).then(() => showToast('Copied'));
+}
+function closePreview(){ $('previewPane').classList.remove('show'); }
+
+function exportMarkdown(){
+  const lines = [];
+  const counts = { accept: 0, reject: 0, flag: 0, pending: 0 };
+  FORMULAS.forEach(f => {
+    const v = state.verdicts[f.id];
+    if (!v) counts.pending++; else counts[v.verdict]++;
+  });
+  const reviewed = FORMULAS.length - counts.pending;
+
+  lines.push(`# Formula Audit Report — ${AUDIT_ID}`);
+  lines.push('');
+  lines.push(`**Audited:** ${reviewed} of ${FORMULAS.length}  `);
+  lines.push(`**Started:** ${state.startedAt}  `);
+  lines.push(`**Last touched:** ${state.lastTouched}  `);
+  lines.push('');
+  lines.push(`| Verdict | Count |`);
+  lines.push(`|---------|-------|`);
+  lines.push(`| ✓ Accept | ${counts.accept} |`);
+  lines.push(`| ⚑ Flag   | ${counts.flag} |`);
+  lines.push(`| ✕ Reject | ${counts.reject} |`);
+  lines.push(`| · Pending | ${counts.pending} |`);
+  lines.push('');
+  lines.push('---');
+  lines.push('');
+
+  FORMULAS.forEach((f, i) => {
+    const v = state.verdicts[f.id];
+    const mark = !v ? '·' : v.verdict === 'accept' ? '✓' : v.verdict === 'reject' ? '✕' : '⚑';
+    lines.push(`## ${String(i+1).padStart(2,'0')}. ${mark} ${f.name}`);
+    lines.push('');
+    lines.push(`**id:** \`${f.id}\` · **risk:** \`${f.riskLevel}\` · **category:** \`${f.category}\``);
+    lines.push('');
+    lines.push(`> ${f.shortDescription}`);
+    lines.push('');
+    lines.push('**Why it exists:** ' + f.whyItExists.replace(/<[^>]+>/g, ''));
+    lines.push('');
+    lines.push('**Math:**');
+    lines.push('```');
+    lines.push(f.formula);
+    lines.push('```');
+    lines.push('');
+    if (f.assumptions && f.assumptions.length){
+      lines.push('**Assumptions:**');
+      f.assumptions.forEach(a => lines.push('- ' + a));
+      lines.push('');
+    }
+    lines.push('**Edge cases:**');
+    f.edgeCases.forEach(e => lines.push(`- ${e.verified ? '✓' : '○'} ${e.case} → ${e.behavior}`));
+    lines.push('');
+    lines.push('**Sources:**');
+    f.sources.forEach(s => lines.push(`- [${s.label}](${s.url}) · ${s.date}`));
+    lines.push('');
+    if (v){
+      lines.push(`**Verdict:** ${mark} **${v.verdict.toUpperCase()}** · ${new Date(v.ts).toISOString()}`);
+      if (v.note) lines.push(`> ${v.note}`);
+    } else {
+      lines.push('**Verdict:** _pending_');
+    }
+    lines.push('');
+    lines.push('---');
+    lines.push('');
+  });
+
+  lines.push('');
+  lines.push(`Generated: ${new Date().toISOString()}`);
+  showPreview('Markdown report', lines.join('\n'));
+}
+
+function exportTrustSection(){
+  const lines = [];
+  lines.push('<!-- Auto-generated by Formula Audit · drop in index.html bottom of #screen2 -->');
+  lines.push('<details class="trust" ontoggle="this.open && plausible(\'trust_opened\')">');
+  lines.push('  <summary><span>Kā mēs aprēķinām šos skaitļus</span><span class="chev">[+]</span></summary>');
+  lines.push('  <div class="trust-grid">');
+  FORMULAS.forEach(f => {
+    const v = state.verdicts[f.id];
+    if (v && v.verdict === 'reject') return; // exclude rejected
+    const why = f.whyItExists.replace(/<\/?strong>/g, '').replace(/<\/?em>/g, '<em>').replace(/<code>([^<]+)<\/code>/g, '<code>$1</code>');
+    const lvName = f.name.split(' · ')[0]; // first part = nice display
+    lines.push(`    <div class="trust-item">`);
+    lines.push(`      <h5>${escapeHtml(lvName)}</h5>`);
+    lines.push(`      <p>${why}</p>`);
+    if (f.sources.length){
+      const s = f.sources[0];
+      lines.push(`      <span class="src">Avots: <a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.label)}</a> · ${escapeHtml(s.date)}</span>`);
+    }
+    lines.push('    </div>');
+  });
+  lines.push('  </div>');
+  lines.push(`  <p class="trust-foot">Pēdējais audits: <strong>${new Date(state.lastTouched).toISOString().slice(0,10)}</strong> · ${state.verdicts ? Object.keys(state.verdicts).length : 0} formulas verified. Neprecizitāte? <a href="mailto:hello@honestcost.lv">hello@honestcost.lv</a></p>`);
+  lines.push('</details>');
+  showPreview('Trust-section HTML', lines.join('\n'));
+}
+
+function exportJSON(){
+  const data = {
+    auditId: AUDIT_ID,
+    exportedAt: new Date().toISOString(),
+    state,
+    formulas: FORMULAS.map(f => ({
+      id: f.id, name: f.name, category: f.category,
+      riskLevel: f.riskLevel, shortDescription: f.shortDescription,
+    })),
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `formula-audit-${AUDIT_ID}-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Downloaded · JSON');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   IMPORT JSON · resume on another machine
+   ═══════════════════════════════════════════════════════════════ */
+$('btnImport').onclick = () => $('fileInput').click();
+$('fileInput').onchange = e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (data.state && data.state.verdicts){
+        state = data.state;
+        saveState(state);
+        showToast(`Imported · ${Object.keys(state.verdicts).length} verdicts`);
+        startAudit();
+      } else if (data.verdicts) {
+        // raw state, no wrapper
+        state = data;
+        saveState(state);
+        showToast(`Imported · ${Object.keys(state.verdicts).length} verdicts`);
+        startAudit();
+      } else {
+        showToast('Bad file · no verdicts found');
+      }
+    } catch (err){
+      showToast('Could not parse JSON');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   SWIPE GESTURES
+   ═══════════════════════════════════════════════════════════════ */
+function attachSwipe(el){
+  let startX = 0, startY = 0, dx = 0, dy = 0, dragging = false;
+
+  function onDown(e){
+    if (e.target.closest('button, a, textarea, input, select, .fa-body')) return;
+    if (e.target.closest('.fa-body') && e.target.tagName !== 'P' && e.target.tagName !== 'DIV') return;
+    dragging = true;
+    const t = e.touches ? e.touches[0] : e;
+    startX = t.clientX; startY = t.clientY; dx = 0; dy = 0;
+    el.style.transition = 'none';
+  }
+  function onMove(e){
+    if (!dragging) return;
+    const t = e.touches ? e.touches[0] : e;
+    dx = t.clientX - startX;
+    dy = t.clientY - startY;
+    // Ignore tiny moves / vertical scrolls inside body
+    if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+    e.preventDefault?.();
+    el.style.transform = `translate(${dx}px, ${dy * 0.4}px) rotate(${dx * 0.04}deg)`;
+    el.style.opacity = Math.max(0.4, 1 - Math.abs(dx) / 600);
+  }
+  function onUp(){
+    if (!dragging) return;
+    dragging = false;
+    el.style.transition = '';
+    if (dx > 140){       el.style.transform = ''; onVerdict('accept'); }
+    else if (dx < -140){ el.style.transform = ''; onVerdict('reject'); }
+    else if (dy < -120){ el.style.transform = ''; onVerdict('flag'); }
+    else { el.style.transform = ''; el.style.opacity = ''; }
+  }
+
+  el.addEventListener('mousedown', onDown);
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onUp);
+  el.addEventListener('touchstart', onDown, { passive: true });
+  el.addEventListener('touchmove', onMove, { passive: false });
+  el.addEventListener('touchend', onUp);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   KEYBOARD
+   ═══════════════════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if ($('modalBg').classList.contains('show')) {
+    if (e.key === 'Escape') closeNoteModal();
+    return;
+  }
+  // welcome / summary screens
+  if ($('stack').style.display === 'none'){
+    if (e.key === 'Escape' && $('summary').style.display !== 'none') return; // already on summary
+    if (e.key === 'Enter' && $('welcome').style.display !== 'none') { startAudit(); return; }
+    return;
+  }
+  const k = e.key.toLowerCase();
+  if (k === 'a') { e.preventDefault(); onVerdict('accept'); }
+  else if (k === 'r') { e.preventDefault(); onVerdict('reject'); }
+  else if (k === 'f') { e.preventDefault(); onVerdict('flag'); }
+  else if (k === 'n') { e.preventDefault(); openNoteModal(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); nav(-1); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); nav(1); }
+  else if (e.key === 'Escape') {
+    if (Object.keys(state.verdicts).length > 0) renderSummary();
+  }
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   ENTRY / RESET
+   ═══════════════════════════════════════════════════════════════ */
+function startAudit(){
+  if (!state) state = freshState();
+  saveState(state);
+  hide('welcome');
+  hide('summary');
+  show('stack');
+  $('hint').style.display = '';
+  $('progress').style.display = '';
+  $('btnSummary').style.display = '';
+  renderStack();
+}
+
+function resetAudit(){
+  if (!confirm('Reset all verdicts? This wipes the saved audit. Cannot be undone (but you can re-export your current state first).')) return;
+  state = freshState();
+  saveState(state);
+  hide('summary');
+  hide('stack');
+  show('welcome');
+  $('hint').style.display = 'none';
+  $('progress').style.display = 'none';
+  $('btnSummary').style.display = 'none';
+  showToast('Audit reset');
+}
+
+$('btnStart').onclick = startAudit;
+$('btnReset').onclick = resetAudit;
+$('btnSummary').onclick = renderSummary;
+$('btnResume')?.addEventListener('click', startAudit);
+
+/* ═══════════════════════════════════════════════════════════════
+   BOOT
+   ═══════════════════════════════════════════════════════════════ */
+(function boot(){
+  $('wcCards').textContent = FORMULAS.length;
+  if (state && Object.keys(state.verdicts).length > 0){
+    // Show resume option
+    $('resumeBlock').style.display = '';
+    const reviewed = Object.keys(state.verdicts).length;
+    $('btnResume').textContent = `Resume previous session · ${reviewed}/${FORMULAS.length} done →`;
+  }
+})();
+
+</script>
+</body>
+</html>

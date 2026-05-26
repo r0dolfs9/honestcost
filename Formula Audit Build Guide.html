@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formula Audit — Build Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16181D; --ink-2:#4A4E58; --ink-3:#878B95;
+  --line:#ECEAE3; --line-2:#E1DED4;
+  --bg:#F4F2EC; --surface:#FFFFFF; --surface-alt:#FAF8F2;
+  --accent:#3344F0; --accent-soft:#EBEDFF;
+  --amber:#F5A623; --amber-soft:#FCEEDB;
+  --win:#11A05F; --win-soft:#E5F6EE;
+  --warn:#D24545; --warn-soft:#FBEAEA;
+  --flag:#9A6CFF; --flag-soft:rgba(154,108,255,.10);
+  --shadow-1:0 1px 2px rgba(20,22,28,.04),0 8px 28px -8px rgba(20,22,28,.10);
+  --shadow-2:0 2px 4px rgba(20,22,28,.05),0 24px 56px -16px rgba(20,22,28,.16);
+  --shadow-3:0 4px 8px rgba(20,22,28,.06),0 48px 96px -24px rgba(20,22,28,.22);
+  --ff-display:'Barlow Condensed',sans-serif;
+  --ff-ui:'Inter Tight',system-ui,sans-serif;
+  --ff-mono:'DM Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff-ui);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+::selection{background:var(--accent);color:#fff;}
+
+.page{max-width:1240px;margin:0 auto;padding:48px 32px 120px;display:grid;grid-template-columns:220px 1fr;gap:64px;}
+
+/* sidebar */
+nav.toc{position:sticky;top:32px;align-self:start;font-size:13px;line-height:1.5;}
+nav.toc .brand{display:flex;align-items:center;gap:8px;font-family:var(--ff-display);font-size:22px;font-weight:600;letter-spacing:-0.01em;margin-bottom:28px;}
+nav.toc .brand::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--accent);display:inline-block;}
+nav.toc .toc-label{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:12px;}
+nav.toc ol{list-style:none;counter-reset:toc;display:flex;flex-direction:column;gap:2px;}
+nav.toc ol li{counter-increment:toc;}
+nav.toc ol a{display:flex;gap:10px;padding:6px 8px;border-radius:8px;color:var(--ink-2);text-decoration:none;transition:background .15s,color .15s;}
+nav.toc ol a:hover{background:rgba(20,22,28,.04);color:var(--ink);}
+nav.toc ol a::before{content:counter(toc,decimal-leading-zero);font-family:var(--ff-mono);font-size:11px;color:var(--ink-3);letter-spacing:0.04em;min-width:22px;}
+.back-link{display:inline-flex;gap:6px;font-family:var(--ff-mono);font-size:11px;color:var(--ink-3);text-decoration:none;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:24px;}
+.back-link::before{content:'←';}
+.back-link:hover{color:var(--ink);}
+
+main{min-width:0;}
+
+.kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:6px 12px;border-radius:999px;margin-bottom:20px;}
+.kicker .dot{width:6px;height:6px;background:var(--accent);border-radius:50%;}
+
+h1.title{font-family:var(--ff-display);font-size:72px;font-weight:600;line-height:0.96;letter-spacing:-0.02em;margin-bottom:14px;text-wrap:balance;}
+h1.title em{font-style:normal;color:var(--accent);}
+.subtitle{font-size:19px;color:var(--ink-2);max-width:58ch;margin-bottom:32px;text-wrap:pretty;}
+
+h2{font-family:var(--ff-display);font-size:40px;font-weight:600;line-height:1.05;letter-spacing:-0.01em;margin:64px 0 8px;text-wrap:balance;}
+h2 .num{font-family:var(--ff-mono);font-size:13px;font-weight:400;letter-spacing:0.1em;color:var(--ink-3);display:block;margin-bottom:8px;text-transform:uppercase;}
+h3{font-family:var(--ff-ui);font-size:18px;font-weight:600;margin:24px 0 8px;letter-spacing:-0.005em;}
+h4{font-family:var(--ff-mono);font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);margin:20px 0 8px;}
+
+p{margin-bottom:12px;max-width:66ch;text-wrap:pretty;color:var(--ink-2);font-size:14.5px;}
+p.lede{font-size:17px;color:var(--ink-2);margin-bottom:22px;}
+p strong{color:var(--ink);font-weight:600;}
+ul,ol{margin:10px 0 16px;padding-left:22px;max-width:66ch;color:var(--ink-2);}
+li{margin-bottom:5px;font-size:14.5px;}
+ul.unbull{list-style:none;padding-left:0;}
+ul.unbull li{position:relative;padding-left:22px;}
+ul.unbull li::before{content:'→';position:absolute;left:0;color:var(--accent);font-family:var(--ff-mono);}
+
+code{font-family:var(--ff-mono);font-size:12.5px;background:var(--surface-alt);padding:2px 6px;border-radius:4px;color:var(--ink);}
+pre{background:#16181D;color:#ECEAE3;padding:18px 22px;border-radius:14px;font-family:var(--ff-mono);font-size:12.5px;line-height:1.6;overflow-x:auto;margin:14px 0 18px;}
+pre .cmt{color:#878B95;font-style:italic;}
+pre .str{color:#F5A623;}
+pre .kw{color:#6B85FF;}
+pre .num{color:#5DE5A1;}
+pre .key{color:#FF7A93;}
+
+.callout{border-left:3px solid var(--accent);padding:14px 20px;background:var(--accent-soft);border-radius:0 12px 12px 0;margin:18px 0;font-size:14px;color:var(--ink);}
+.callout h4{color:var(--ink);margin:0 0 6px;}
+.callout.amber{border-color:var(--amber);background:var(--amber-soft);}
+.callout.win{border-color:var(--win);background:var(--win-soft);}
+
+/* ── the live demo card ── */
+.demo-stage{
+  background:linear-gradient(180deg, var(--surface-alt) 0%, var(--bg) 100%);
+  border-radius:24px;
+  padding:48px 32px 40px;
+  margin:24px 0 28px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  border:1px solid var(--line);
+  position:relative;
+  overflow:hidden;
+}
+.demo-stage .stage-label{
+  position:absolute; top:16px; left:20px;
+  font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-3);
+}
+.demo-progress{
+  display:flex; gap:6px; margin-bottom:24px; align-items:center;
+  font-family:var(--ff-mono); font-size:11px; color:var(--ink-3); letter-spacing:0.06em;
+}
+.demo-progress .dot{ width:6px; height:6px; border-radius:50%; background:var(--line-2); }
+.demo-progress .dot.on{ background:var(--accent); width:18px; border-radius:3px; }
+.demo-progress .dot.done{ background:var(--win); }
+.demo-progress .num{ margin-left:8px; }
+
+.card-stack{ position:relative; width:100%; max-width:520px; height:640px; }
+.fa-card{
+  position:absolute; inset:0;
+  background:var(--surface); border-radius:24px;
+  box-shadow:var(--shadow-2);
+  padding:28px 28px 24px;
+  display:flex; flex-direction:column;
+  transition: transform .35s cubic-bezier(.2,.7,.3,1), opacity .35s, box-shadow .25s;
+  overflow:hidden;
+}
+.fa-card.behind{
+  transform: translateY(14px) scale(.95);
+  opacity:.55;
+  z-index:-1;
+}
+.fa-card.behind-2{
+  transform: translateY(26px) scale(.9);
+  opacity:.25;
+  z-index:-2;
+}
+.fa-card.swiped-right{ transform: translateX(120%) rotate(8deg); opacity:0; }
+.fa-card.swiped-left { transform: translateX(-120%) rotate(-8deg); opacity:0; }
+.fa-card.swiped-flag { transform: translateY(-100%) rotate(2deg); opacity:0; }
+
+.fa-card-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:12px; }
+.fa-cat{ font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); background:var(--accent-soft); padding:5px 10px; border-radius:999px; }
+.fa-risk{ font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; padding:5px 10px; border-radius:999px; }
+.fa-risk.low{ background:var(--win-soft); color:var(--win); }
+.fa-risk.med{ background:var(--amber-soft); color:#8a5e15; }
+.fa-risk.high{ background:var(--warn-soft); color:var(--warn); }
+.fa-title{ font-family:var(--ff-display); font-size:30px; font-weight:600; line-height:1.04; letter-spacing:-0.005em; margin-bottom:4px; }
+.fa-sub{ font-size:14px; color:var(--ink-2); line-height:1.45; margin-bottom:18px; }
+
+.fa-section{ margin-bottom:14px; }
+.fa-section h5{ font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-3); font-weight:500; margin-bottom:6px; }
+.fa-why{ font-size:13.5px; color:var(--ink); line-height:1.5; }
+.fa-why em{ color:var(--ink-2); font-style:italic; }
+
+.fa-formula{
+  font-family:var(--ff-mono); font-size:13px; color:#ECEAE3;
+  background:#16181D; padding:12px 14px; border-radius:10px; line-height:1.5;
+  overflow-x:auto; white-space:pre;
+}
+.fa-formula .kw{ color:#6B85FF; }
+.fa-formula .num{ color:#5DE5A1; }
+.fa-formula .str{ color:#F5A623; }
+
+.fa-inputs{ display:grid; grid-template-columns:1fr 1fr; gap:6px 16px; font-size:12.5px; }
+.fa-inputs div{ display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px dashed var(--line); }
+.fa-inputs div span:first-child{ color:var(--ink-2); }
+.fa-inputs div span:last-child{ font-family:var(--ff-mono); color:var(--ink); }
+
+.fa-edges{ display:flex; flex-direction:column; gap:5px; font-size:12.5px; }
+.fa-edge{ display:flex; gap:8px; padding:5px 8px; background:var(--surface-alt); border-radius:8px; }
+.fa-edge .tag{ font-family:var(--ff-mono); font-size:10px; letter-spacing:0.06em; text-transform:uppercase; padding:1px 7px; border-radius:4px; flex-shrink:0; }
+.fa-edge .tag.pass{ background:var(--win-soft); color:var(--win); }
+.fa-edge .tag.fail{ background:var(--warn-soft); color:var(--warn); }
+.fa-edge .case{ color:var(--ink-2); flex:1; }
+
+.fa-src{ font-family:var(--ff-mono); font-size:11px; color:var(--ink-3); letter-spacing:0.04em; line-height:1.55; }
+.fa-src a{ color:var(--accent); text-decoration:none; }
+.fa-src a:hover{ text-decoration:underline; }
+
+.fa-actions{
+  margin-top:auto; padding-top:18px; border-top:1px solid var(--line);
+  display:flex; gap:8px; align-items:stretch;
+}
+.fa-btn{
+  flex:1; border:none; border-radius:14px; padding:14px 16px;
+  font-family:var(--ff-ui); font-size:14px; font-weight:600;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+  transition: transform .12s, box-shadow .15s, background .15s;
+}
+.fa-btn:hover{ transform: translateY(-1px); box-shadow: 0 6px 16px -6px rgba(20,22,28,.18); }
+.fa-btn:active{ transform: translateY(0); }
+.fa-btn .k{
+  font-family:var(--ff-mono); font-size:9px; padding:2px 6px; border-radius:4px;
+  background:rgba(0,0,0,.12); letter-spacing:0.06em;
+}
+.fa-btn.reject{ background:var(--warn-soft); color:var(--warn); }
+.fa-btn.flag{ background:var(--flag-soft); color:var(--flag); }
+.fa-btn.accept{ background:var(--win-soft); color:var(--win); }
+.fa-btn.note{
+  flex:0 0 auto; padding:14px 14px; background:var(--surface-alt); color:var(--ink-3);
+}
+
+.demo-hint{
+  font-family:var(--ff-mono); font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--ink-3); margin-top:18px; display:flex; gap:16px; align-items:center;
+}
+.demo-hint .kbd{
+  font-family:var(--ff-mono); font-size:10px; padding:3px 7px; background:var(--surface);
+  border:1px solid var(--line-2); border-radius:5px; color:var(--ink-2);
+}
+
+.demo-toast{
+  position:absolute; bottom:16px; right:20px;
+  background:var(--ink); color:#fff; padding:8px 14px; border-radius:999px;
+  font-family:var(--ff-mono); font-size:11px; letter-spacing:0.06em;
+  opacity:0; transform:translateY(8px); transition: all .25s;
+  pointer-events:none;
+}
+.demo-toast.show{ opacity:1; transform:translateY(0); }
+
+/* ── schema table ── */
+.schema{ width:100%; border-collapse:collapse; margin:14px 0 20px; font-size:13px; }
+.schema thead th{ text-align:left; font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-3); font-weight:500; padding:10px 12px; border-bottom:2px solid var(--line-2); }
+.schema td{ padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+.schema td.key{ font-family:var(--ff-mono); color:var(--accent); font-size:12.5px; white-space:nowrap; }
+.schema td.type{ font-family:var(--ff-mono); color:var(--ink-3); font-size:11.5px; }
+.schema td.req{ text-align:center; width:60px; font-family:var(--ff-mono); font-size:11px; }
+.schema .req.yes{ color:var(--warn); font-weight:600; }
+.schema .req.opt{ color:var(--ink-3); }
+
+/* ── reusability checklist ── */
+.steps{ counter-reset: step; list-style:none; padding:0; margin:16px 0; }
+.steps li{
+  counter-increment: step;
+  position:relative;
+  padding:18px 22px 18px 70px;
+  background:var(--surface); border-radius:14px;
+  box-shadow:var(--shadow-1); margin-bottom:10px;
+  font-size:14px;
+}
+.steps li::before{
+  content: counter(step, decimal-leading-zero);
+  position:absolute; left:18px; top:18px;
+  font-family:var(--ff-display); font-size:30px; font-weight:600; color:var(--accent);
+  line-height:1; letter-spacing:-0.01em;
+}
+.steps li strong{ display:block; margin-bottom:4px; color:var(--ink); font-size:14.5px; }
+.steps li .meta{ font-family:var(--ff-mono); font-size:10.5px; letter-spacing:0.06em; color:var(--ink-3); text-transform:uppercase; margin-top:6px; display:block; }
+
+/* ── formula backlog ── */
+.backlog{ width:100%; border-collapse:collapse; margin:14px 0; font-size:13.5px; background:var(--surface); border-radius:16px; overflow:hidden; box-shadow:var(--shadow-1); }
+.backlog thead th{ text-align:left; font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-3); font-weight:500; padding:14px 16px; background:var(--surface-alt); border-bottom:1px solid var(--line-2); }
+.backlog td{ padding:14px 16px; border-bottom:1px solid var(--line); vertical-align:top; }
+.backlog tr:last-child td{ border-bottom:none; }
+.backlog tr:hover td{ background:var(--surface-alt); }
+.backlog td.fn{ font-family:var(--ff-mono); color:var(--accent); font-weight:500; white-space:nowrap; }
+.backlog td.risk{ width:80px; }
+.bag-risk{ display:inline-block; font-family:var(--ff-mono); font-size:10px; letter-spacing:0.06em; text-transform:uppercase; padding:3px 8px; border-radius:999px; }
+.bag-risk.low{ background:var(--win-soft); color:var(--win); }
+.bag-risk.med{ background:var(--amber-soft); color:#8a5e15; }
+.bag-risk.high{ background:var(--warn-soft); color:var(--warn); }
+.backlog td.order{ font-family:var(--ff-display); font-size:22px; font-weight:600; color:var(--ink-3); width:50px; text-align:center; line-height:1; }
+
+/* ── summary preview ── */
+.summary-preview{
+  background:var(--surface); border-radius:22px; padding:28px 32px;
+  box-shadow:var(--shadow-1); margin:20px 0;
+}
+.sum-kpis{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:22px; }
+.sum-kpi{ padding:14px 16px; background:var(--surface-alt); border-radius:14px; }
+.sum-kpi .l{ font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-3); margin-bottom:4px; }
+.sum-kpi .v{ font-family:var(--ff-display); font-size:36px; font-weight:600; line-height:1; letter-spacing:-0.01em; }
+.sum-kpi .v.win{ color:var(--win); }
+.sum-kpi .v.warn{ color:var(--warn); }
+.sum-kpi .v.flag{ color:var(--flag); }
+.sum-list{ display:flex; flex-direction:column; gap:4px; }
+.sum-row{ display:grid; grid-template-columns:24px 1fr 60px 120px; gap:12px; align-items:center; padding:8px 10px; border-radius:8px; font-size:13px; }
+.sum-row:hover{ background:var(--surface-alt); }
+.sum-row .mark{ font-family:var(--ff-mono); font-weight:600; }
+.sum-row .mark.a{ color:var(--win); }
+.sum-row .mark.r{ color:var(--warn); }
+.sum-row .mark.f{ color:var(--flag); }
+.sum-row .name{ font-weight:500; }
+.sum-row .name code{ font-family:var(--ff-mono); font-size:11.5px; color:var(--ink-3); background:none; padding:0; }
+.sum-row .meta{ font-family:var(--ff-mono); font-size:11px; color:var(--ink-3); }
+
+footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--line-2);font-family:var(--ff-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-3);display:flex;justify-content:space-between;}
+
+@media (max-width:920px){
+  .page{ grid-template-columns:1fr; gap:32px; padding:32px 20px 60px; }
+  nav.toc{ position:static; }
+  h1.title{ font-size:48px; }
+  .card-stack{ height:auto; min-height:600px; }
+  .fa-card{ position:relative; }
+  .fa-card.behind, .fa-card.behind-2{ display:none; }
+  .sum-kpis{ grid-template-columns:repeat(2,1fr); }
+  .fa-inputs{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<!-- ── sidebar TOC ── -->
+<nav class="toc">
+  <a class="back-link" href="revenue/Playbook.html">Revenue playbook</a>
+  <div class="brand">Formula Audit</div>
+  <div class="toc-label">Build Guide</div>
+  <ol>
+    <li><a href="#goal">The goal</a></li>
+    <li><a href="#artifact">What gets built</a></li>
+    <li><a href="#demo">Live card · try it</a></li>
+    <li><a href="#schema">The data shape</a></li>
+    <li><a href="#anatomy">Card anatomy</a></li>
+    <li><a href="#flow">Swipe flow &amp; UX</a></li>
+    <li><a href="#summary">Summary screen</a></li>
+    <li><a href="#reuse">Reuse for another calc</a></li>
+    <li><a href="#backlog">HonestCost backlog</a></li>
+    <li><a href="#done">Exit criteria</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<div class="kicker"><span class="dot"></span> Build guide · v1.0 · 2026-05-25</div>
+
+<h1 class="title">Audit the math <em>before</em><br>you sell anything.</h1>
+
+<p class="subtitle">
+A reusable specification for the formula audit tool — built once for HonestCost, reusable for the next calculator. This document is the plan. The output is a single HTML file: <strong>swipe through every formula, accept-deny-flag each, end on a transparent report</strong> you can hand to a dealer, a journalist, or a future you.
+</p>
+
+<!-- ───────────────────── -->
+<h2 id="goal"><span class="num">01 / the goal</span>What "audit complete" looks like.</h2>
+
+<p class="lede">A trustworthy calc engine is one where <strong>every atomic formula has been individually defended in plain language by a human who could have rejected it</strong> — and didn't. That's what we're building.</p>
+
+<p>The audit is done when:</p>
+<ul class="unbull">
+  <li>Every atomic formula in the engine has a card.</li>
+  <li>Every card has been reviewed: accepted, rejected, or flagged with a note.</li>
+  <li>The summary report exports as a single text/markdown blob — the "audit trail" you can paste anywhere.</li>
+  <li>Rejected formulas have an action item attached (rewrite, replace, remove).</li>
+  <li>You'd be comfortable showing the report to a skeptical engineer.</li>
+</ul>
+
+<div class="callout">
+<h4>What this is NOT</h4>
+This is not a unit test runner. Unit tests prove the code does what the code says. The audit asks the harder question: <em>does what the code says match reality?</em> A formula can be perfectly implemented and still be wrong.
+</div>
+
+<!-- ───────────────────── -->
+<h2 id="artifact"><span class="num">02 / the artifact</span>One file. Swipe through. Done.</h2>
+
+<p>The output is a single self-contained HTML file: <code>formula-audit.html</code>. Open it, swipe through the cards, finish. State persists in <code>localStorage</code> so closing the tab doesn't lose progress. At the end you get a summary screen with one-click export.</p>
+
+<h3>The driver loop, conceptually</h3>
+<pre><span class="cmt">// formula-audit.html — pseudocode</span>
+<span class="kw">const</span> FORMULAS = [/* one entry per atomic formula — see schema */];
+<span class="kw">const</span> state = loadFromLocalStorage() || initialState();
+
+<span class="kw">function</span> renderCard(index){
+  <span class="kw">const</span> formula = FORMULAS[index];
+  <span class="kw">const</span> verdict = state.verdicts[formula.id];   <span class="cmt">// 'accept' | 'reject' | 'flag' | null</span>
+  paintCard(formula, verdict);
+  paintProgress(index, FORMULAS.length, state);
+}
+
+<span class="kw">function</span> onVerdict(id, verdict, note){
+  state.verdicts[id] = { verdict, note, ts: Date.now() };
+  saveToLocalStorage(state);
+  advance();
+}
+
+<span class="kw">function</span> onComplete(){
+  renderSummary(FORMULAS, state);   <span class="cmt">// last screen</span>
+}</pre>
+
+<p>That's the whole architecture. ~200 lines of JS, ~150 lines of CSS, plus the <code>FORMULAS</code> data array — which is the part that changes per calc.</p>
+
+<!-- ───────────────────── -->
+<h2 id="demo"><span class="num">03 / live card</span>Try the experience — it's the spec.</h2>
+
+<p class="lede">This is one real, working card from the HonestCost backlog. Use the buttons or keyboard (<code>A</code> accept, <code>R</code> reject, <code>F</code> flag, <code>N</code> note, <code>←</code>/<code>→</code> nav). Behaviour is exactly what the full tool will do.</p>
+
+<div class="demo-stage" id="demoStage">
+  <span class="stage-label">Live preview · interactive</span>
+
+  <div class="demo-progress" id="demoProgress">
+    <span class="dot done"></span>
+    <span class="dot done"></span>
+    <span class="dot on"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="num">03 / 05</span>
+  </div>
+
+  <div class="card-stack">
+
+    <!-- behind cards -->
+    <div class="fa-card behind-2"></div>
+    <div class="fa-card behind"></div>
+
+    <!-- the active card — TEN tax -->
+    <div class="fa-card" id="demoCard">
+      <div class="fa-card-head">
+        <span class="fa-cat">Tax · Latvia</span>
+        <span class="fa-risk low">Risk · Low</span>
+      </div>
+
+      <div class="fa-title">TEN — Transporta nodoklis</div>
+      <div class="fa-sub">Annual road-tax lookup by WLTP CO₂. Step function with 9 brackets.</div>
+
+      <div class="fa-section">
+        <h5>Why it's here</h5>
+        <div class="fa-why">Every passenger car registered in Latvia post-2020 pays this annually. <em>EV = €0</em>; high-CO₂ ICE pays up to €520/yr. The brackets come from the 2025 amended law — invisible in any spec sheet.</div>
+      </div>
+
+      <div class="fa-section">
+        <h5>Formula</h5>
+        <div class="fa-formula"><span class="kw">ten</span>(co2) = lookup({
+  ≤<span class="num">50</span>:<span class="num">0</span>, ≤<span class="num">95</span>:<span class="num">30</span>, ≤<span class="num">115</span>:<span class="num">50</span>, ≤<span class="num">130</span>:<span class="num">80</span>,
+  ≤<span class="num">155</span>:<span class="num">120</span>, ≤<span class="num">175</span>:<span class="num">180</span>, ≤<span class="num">200</span>:<span class="num">260</span>, ≤<span class="num">250</span>:<span class="num">380</span>,
+  else:<span class="num">520</span>
+})</div>
+      </div>
+
+      <div class="fa-section">
+        <h5>Inputs</h5>
+        <div class="fa-inputs">
+          <div><span>co2</span><span>g/km · WLTP</span></div>
+          <div><span>output</span><span>€/year</span></div>
+        </div>
+      </div>
+
+      <div class="fa-section">
+        <h5>Edge cases verified</h5>
+        <div class="fa-edges">
+          <div class="fa-edge"><span class="tag pass">Pass</span><span class="case">EV (co2=0) → €0</span></div>
+          <div class="fa-edge"><span class="tag pass">Pass</span><span class="case">120 g/km Golf 1.5 TSI → €80</span></div>
+          <div class="fa-edge"><span class="tag pass">Pass</span><span class="case">280 g/km AMG → €520 (top bracket)</span></div>
+          <div class="fa-edge"><span class="tag pass">Pass</span><span class="case">PHEV with combined WLTP 32 g/km → €0</span></div>
+        </div>
+      </div>
+
+      <div class="fa-section">
+        <h5>Source</h5>
+        <div class="fa-src">
+          <a href="#" target="_blank">likumi.lv · Transportlīdzekļa ekspluatācijas nodokļa likums</a><br>
+          Last verified: 2025-01-01 · law amendment effective from 2025-01-01
+        </div>
+      </div>
+
+      <div class="fa-actions">
+        <button class="fa-btn reject" onclick="verdict('reject')">✕ Reject <span class="k">R</span></button>
+        <button class="fa-btn flag"   onclick="verdict('flag')">⚑ Flag <span class="k">F</span></button>
+        <button class="fa-btn note"   onclick="addNote()" title="Add note">✎</button>
+        <button class="fa-btn accept" onclick="verdict('accept')">✓ Accept <span class="k">A</span></button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="demo-hint">
+    <span>Keyboard:</span>
+    <span><span class="kbd">A</span> accept</span>
+    <span><span class="kbd">R</span> reject</span>
+    <span><span class="kbd">F</span> flag</span>
+    <span><span class="kbd">N</span> note</span>
+    <span><span class="kbd">←</span> <span class="kbd">→</span> nav</span>
+  </div>
+
+  <div class="demo-toast" id="demoToast">Saved</div>
+</div>
+
+<div class="callout amber">
+<h4>What you just felt</h4>
+The card is tall enough to carry everything you need to make a decision (formula, inputs, sources, edge cases), but the actions stay sticky at the bottom — your hand doesn't move. The keyboard shortcuts are the killer feature for power-users doing 20+ formulas. Persistence happens silently. <em>That's the whole UX. Now we spec the parts.</em>
+</div>
+
+<!-- ───────────────────── -->
+<h2 id="schema"><span class="num">04 / the data shape</span>One schema, every calc.</h2>
+
+<p class="lede">This is the contract. Same schema for HonestCost, same schema for your next calculator. Fill it once per formula and the audit tool renders without changes.</p>
+
+<table class="schema">
+  <thead>
+    <tr><th>Field</th><th>Type</th><th>Required</th><th>What it does in the card</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="key">id</td><td class="type">string · unique</td><td class="req"><span class="req yes">yes</span></td><td>Key for state persistence. Use the actual function name: <code>ten</code>, <code>kasko</code>.</td></tr>
+    <tr><td class="key">name</td><td class="type">string</td><td class="req"><span class="req yes">yes</span></td><td>Title of the card. Plain language, not the function signature.</td></tr>
+    <tr><td class="key">category</td><td class="type">string</td><td class="req"><span class="req yes">yes</span></td><td>Pill in the corner. <code>tax</code> · <code>finance</code> · <code>insurance</code> · <code>operating</code> · <code>depreciation</code> · <code>fuel</code> · custom.</td></tr>
+    <tr><td class="key">shortDescription</td><td class="type">string · 1 sentence</td><td class="req"><span class="req yes">yes</span></td><td>Subtitle under the name. One line that frames what the formula does.</td></tr>
+    <tr><td class="key">whyItExists</td><td class="type">string · 2–3 sentences</td><td class="req"><span class="req yes">yes</span></td><td>The defense of the formula. Why is this even in the calc? What would break without it?</td></tr>
+    <tr><td class="key">formula</td><td class="type">string · math notation</td><td class="req"><span class="req yes">yes</span></td><td>The math, not the JS. One line if possible; multi-line OK with proper indentation.</td></tr>
+    <tr><td class="key">formulaCode</td><td class="type">string · JS</td><td class="req"><span class="req opt">opt</span></td><td>Actual code from the source file. Useful when implementation differs subtly from math.</td></tr>
+    <tr><td class="key">inputs</td><td class="type">array&lt;{name, unit, source}&gt;</td><td class="req"><span class="req yes">yes</span></td><td>Inputs grid. <code>source</code> = where this value comes from in practice (form field? CAR_DB? user choice?).</td></tr>
+    <tr><td class="key">output</td><td class="type">{unit}</td><td class="req"><span class="req yes">yes</span></td><td>What comes out and in what unit. Bottom row of the inputs grid.</td></tr>
+    <tr><td class="key">assumptions</td><td class="type">array&lt;string&gt;</td><td class="req"><span class="req opt">opt</span></td><td>Bullet list of explicit assumptions. Anything you'd have to defend in an interview.</td></tr>
+    <tr><td class="key">edgeCases</td><td class="type">array&lt;{case, behavior, verified}&gt;</td><td class="req"><span class="req yes">yes</span></td><td>Min 3 verified edge cases per formula. Forces you to have actually tested it.</td></tr>
+    <tr><td class="key">sources</td><td class="type">array&lt;{label, url, date}&gt;</td><td class="req"><span class="req yes">yes</span></td><td>Where the numbers came from. Min 1 per formula. <em>"My memory"</em> doesn't count.</td></tr>
+    <tr><td class="key">riskLevel</td><td class="type">'low' | 'med' | 'high'</td><td class="req"><span class="req yes">yes</span></td><td>How bad if we're wrong? Pill in the corner. Drives review priority.</td></tr>
+    <tr><td class="key">dependsOn</td><td class="type">array&lt;formula.id&gt;</td><td class="req"><span class="req opt">opt</span></td><td>Other formulas this one consumes. Lets the summary view show the graph.</td></tr>
+  </tbody>
+</table>
+
+<h3>Worked example — one fully-filled entry</h3>
+
+<pre><span class="cmt">// One entry of the FORMULAS array — TEN tax, fully filled in.</span>
+{
+  <span class="key">id</span>: <span class="str">"ten"</span>,
+  <span class="key">name</span>: <span class="str">"TEN — Transporta ekspluatācijas nodoklis"</span>,
+  <span class="key">category</span>: <span class="str">"tax"</span>,
+  <span class="key">shortDescription</span>: <span class="str">"Annual road-tax lookup by WLTP CO₂. Step function with 9 brackets."</span>,
+  <span class="key">whyItExists</span>: <span class="str">"Every passenger car registered in Latvia post-2020 pays this annually. EV = €0; high-CO₂ ICE pays up to €520/yr. The brackets come from the 2025 amended law — invisible in any spec sheet."</span>,
+  <span class="key">formula</span>: <span class="str">"ten(co2) = lookup(co2_brackets, co2)"</span>,
+  <span class="key">formulaCode</span>: <span class="str">"function ten(co2){ if(co2&lt;=50) return 0; ... return 520; }"</span>,
+  <span class="key">inputs</span>: [
+    { <span class="key">name</span>: <span class="str">"co2"</span>, <span class="key">unit</span>: <span class="str">"g/km · WLTP"</span>, <span class="key">source</span>: <span class="str">"Form field cc-2 or CAR_DB.co2"</span> }
+  ],
+  <span class="key">output</span>: { <span class="key">unit</span>: <span class="str">"€/year"</span> },
+  <span class="key">assumptions</span>: [
+    <span class="str">"WLTP CO₂ figures only (post-2020). NEDC values would overestimate by 20–25%."</span>,
+    <span class="str">"Brackets apply to first registration in Latvia; transfers may differ."</span>,
+    <span class="str">"PHEV uses combined WLTP CO₂, not weighted."</span>
+  ],
+  <span class="key">edgeCases</span>: [
+    { <span class="key">case</span>: <span class="str">"EV (co2=0)"</span>, <span class="key">behavior</span>: <span class="str">"Returns €0"</span>, <span class="key">verified</span>: <span class="kw">true</span> },
+    { <span class="key">case</span>: <span class="str">"VW Golf 1.5 TSI · 120 g/km"</span>, <span class="key">behavior</span>: <span class="str">"€80/yr"</span>, <span class="key">verified</span>: <span class="kw">true</span> },
+    { <span class="key">case</span>: <span class="str">"AMG · 280 g/km"</span>, <span class="key">behavior</span>: <span class="str">"€520/yr · top bracket"</span>, <span class="key">verified</span>: <span class="kw">true</span> },
+    { <span class="key">case</span>: <span class="str">"PHEV · 32 g/km combined"</span>, <span class="key">behavior</span>: <span class="str">"€0 (within ≤50)"</span>, <span class="key">verified</span>: <span class="kw">true</span> }
+  ],
+  <span class="key">sources</span>: [
+    { <span class="key">label</span>: <span class="str">"likumi.lv · TLEN amendment"</span>,
+      <span class="key">url</span>: <span class="str">"https://likumi.lv/ta/id/281333"</span>,
+      <span class="key">date</span>: <span class="str">"2025-01-01"</span> }
+  ],
+  <span class="key">riskLevel</span>: <span class="str">"low"</span>,
+  <span class="key">dependsOn</span>: []
+}</pre>
+
+<div class="callout">
+<h4>Why this schema, and not less</h4>
+Two fields earn their place: <strong>whyItExists</strong> forces you to defend the formula in plain language (the moment you can't, you've found a problem). <strong>edgeCases · min 3</strong> forces you to have actually run the formula, not just looked at the code. Everything else flows from those two.
+</div>
+
+<!-- ───────────────────── -->
+<h2 id="anatomy"><span class="num">05 / card anatomy</span>Top-down, decision-density-ordered.</h2>
+
+<p class="lede">A card reads from "I have no idea what this is" to "I'm ready to accept" in 8 seconds for a low-risk formula, 90 seconds for a high-risk one. The vertical order matters.</p>
+
+<ol>
+  <li><strong>Category pill + risk pill</strong> (top corners) — instant frame. Tax vs depreciation vs insurance + low/med/high. Drives how much attention to give.</li>
+  <li><strong>Plain-language name + 1-line description</strong> — "what is this thing" answered before any math appears.</li>
+  <li><strong>Why it exists</strong> — the defense. Most important field. If a reviewer disagrees here, the rest is moot.</li>
+  <li><strong>Formula in math notation</strong> — one line ideally. The shape of the math, not the code.</li>
+  <li><strong>Inputs grid</strong> — each input with unit and source. Tells you what the formula needs and where each input is sourced in the live app.</li>
+  <li><strong>Edge cases verified</strong> — 3+ pass/fail rows. Proves the formula was actually run.</li>
+  <li><strong>Sources</strong> — links + date. The "why should I believe these numbers" answer.</li>
+  <li><strong>Sticky actions</strong> — Reject / Flag / Note / Accept, big touch targets, keyboard-accessible.</li>
+</ol>
+
+<h3>Risk-level guidance</h3>
+<table class="schema">
+  <thead><tr><th>Level</th><th>Definition</th><th>Example</th><th>Review depth</th></tr></thead>
+  <tbody>
+    <tr><td class="key">low</td><td>Wrong by ±10% changes nothing material in the output.</td><td>TEN tax (≤€520/yr in a €15k+ total)</td><td>Quick read · 8s</td></tr>
+    <tr><td class="key">med</td><td>Wrong by ±10% noticeably shifts the verdict.</td><td>Service cost, tyre cost</td><td>Read sources · 30s</td></tr>
+    <tr><td class="key">high</td><td>Wrong by ±10% can flip the winner.</td><td>Depreciation, KASKO, leasing PMT</td><td>Walk through math · 60–90s</td></tr>
+  </tbody>
+</table>
+
+<!-- ───────────────────── -->
+<h2 id="flow"><span class="num">06 / flow &amp; ux</span>How the swipe works.</h2>
+
+<h3>Navigation rules</h3>
+<ul class="unbull">
+  <li><strong>Right swipe / A key / accept button</strong> → mark accept, advance to next card.</li>
+  <li><strong>Left swipe / R key / reject button</strong> → mark reject, prompt for "what's wrong?" note, advance.</li>
+  <li><strong>Up swipe / F key / flag button</strong> → mark flag (needs more info / parked), advance.</li>
+  <li><strong>N key / pencil button</strong> → add note without changing verdict.</li>
+  <li><strong>← → keys</strong> → navigate without verdict (review previous card). Verdict still persists.</li>
+  <li><strong>Esc</strong> → open summary view at any time.</li>
+</ul>
+
+<h3>Persistence</h3>
+<pre><span class="cmt">// localStorage key shape — single object per audit run</span>
+<span class="str">'formula-audit-v1-honestcost'</span>: {
+  <span class="key">startedAt</span>: <span class="str">"2026-05-25T14:32:00Z"</span>,
+  <span class="key">lastTouched</span>: <span class="str">"2026-05-25T15:08:00Z"</span>,
+  <span class="key">verdicts</span>: {
+    <span class="key">ten</span>:       { <span class="key">verdict</span>: <span class="str">"accept"</span>, <span class="key">note</span>: <span class="kw">null</span>, <span class="key">ts</span>: <span class="num">1716647200000</span> },
+    <span class="key">kasko</span>:     { <span class="key">verdict</span>: <span class="str">"flag"</span>,   <span class="key">note</span>: <span class="str">"Verify 11% Tesla penalty"</span>, <span class="key">ts</span>: ... },
+    <span class="key">leasing</span>:   { <span class="key">verdict</span>: <span class="str">"accept"</span>, <span class="key">note</span>: <span class="kw">null</span>, <span class="key">ts</span>: ... }
+  }
+}</pre>
+<p>State is checkpointed every action. Closing the tab loses zero. Returning resumes on the first un-verdicted card. Add a per-audit ID (<code>honestcost</code>) so the same tool can audit a different calc without state collision.</p>
+
+<h3>Animations — keep them honest</h3>
+<ul class="unbull">
+  <li>Card translates off-screen on action (~350ms, eased) — gives the gesture weight.</li>
+  <li>Behind-card scales up and forward — the "next one's ready" affordance.</li>
+  <li>Toast in the corner confirms save — no popup, no modal, no friction.</li>
+  <li>Progress dots fill as you go — the gamification that earns the next 30 minutes.</li>
+</ul>
+
+<!-- ───────────────────── -->
+<h2 id="summary"><span class="num">07 / summary screen</span>The final-page report.</h2>
+
+<p class="lede">Earned by completing every card. This is the artifact you can paste into a doc, hand to a dealer, or post on a Reddit thread when someone challenges the math.</p>
+
+<div class="summary-preview">
+  <div class="sum-kpis">
+    <div class="sum-kpi"><div class="l">Reviewed</div><div class="v">9 / 9</div></div>
+    <div class="sum-kpi"><div class="l">Accepted</div><div class="v win">7</div></div>
+    <div class="sum-kpi"><div class="l">Flagged</div><div class="v flag">2</div></div>
+    <div class="sum-kpi"><div class="l">Rejected</div><div class="v warn">0</div></div>
+  </div>
+
+  <div class="sum-list">
+    <div class="sum-row"><span class="mark a">✓</span><span class="name"><code>ten</code> · TEN tax</span><span class="meta">low</span><span class="meta">accepted · 14:32</span></div>
+    <div class="sum-row"><span class="mark a">✓</span><span class="name"><code>leasing</code> · PMT formula</span><span class="meta">high</span><span class="meta">accepted · 14:35</span></div>
+    <div class="sum-row"><span class="mark f">⚑</span><span class="name"><code>kasko</code> · Declining-residual basis</span><span class="meta">high</span><span class="meta">flagged · "Verify Tesla +11%"</span></div>
+    <div class="sum-row"><span class="mark a">✓</span><span class="name"><code>residual</code> · 5-segment depreciation</span><span class="meta">high</span><span class="meta">accepted · 14:41</span></div>
+    <div class="sum-row"><span class="mark a">✓</span><span class="name"><code>service</code> · Interval visits</span><span class="meta">med</span><span class="meta">accepted · 14:45</span></div>
+    <div class="sum-row"><span class="mark f">⚑</span><span class="name"><code>repairBuf</code> · 10% YoY post-warranty</span><span class="meta">med</span><span class="meta">flagged · "10% feels arbitrary"</span></div>
+    <div class="sum-row"><span class="mark a">✓</span><span class="name"><code>fuelAnnual</code> · ICE/EV/PHEV branches</span><span class="meta">med</span><span class="meta">accepted · 14:52</span></div>
+    <div class="sum-row"><span class="mark a">✓</span><span class="name"><code>autoOCTA</code> · kW-based estimator</span><span class="meta">low</span><span class="meta">accepted · 14:55</span></div>
+    <div class="sum-row"><span class="mark a">✓</span><span class="name"><code>tyres</code> · Flat by class</span><span class="meta">low</span><span class="meta">accepted · 14:57</span></div>
+  </div>
+</div>
+
+<h3>Export options on the summary screen</h3>
+<ul class="unbull">
+  <li><strong>Copy as Markdown</strong> — for pasting into a doc / GitHub README / dealer FAQ.</li>
+  <li><strong>Download as JSON</strong> — the raw <code>state.verdicts</code> blob. Re-importable to resume.</li>
+  <li><strong>Print to PDF</strong> — single-page audit report you can attach to the dealer pitch.</li>
+  <li><strong>Generate "Kā mēs aprēķinām" snippet</strong> — auto-build the HTML trust-section from accepted formulas. Connects directly to <a href="revenue/integration-snippets.html">the integration snippet</a>.</li>
+</ul>
+
+<div class="callout win">
+<h4>The downstream payoff</h4>
+The "Kā mēs aprēķinām" trust section on the live site is currently hand-written. Once the audit is built, it can be <strong>auto-generated from the verdicts</strong>. Each accepted formula becomes one trust-section card with its <code>whyItExists</code> as body and <code>sources</code> as footer. Audit and dealer-credibility surface = same artifact.
+</div>
+
+<!-- ───────────────────── -->
+<h2 id="reuse"><span class="num">08 / reuse</span>Five steps to audit the next calc.</h2>
+
+<p class="lede">The whole point of the schema is that the tool doesn't change between calcs. The data does. Here's exactly what changes when you point the audit at a different calculator.</p>
+
+<ol class="steps">
+  <li>
+    <strong>Copy <code>formula-audit.html</code> next to the calc.</strong>
+    The audit file is self-contained. No build step, no dependencies, no backend. Drop it in the same folder as the calc's <code>index.html</code>.
+    <span class="meta">5 min</span>
+  </li>
+  <li>
+    <strong>Update the <code>AUDIT_ID</code> constant.</strong>
+    One line at the top: <code>const AUDIT_ID = 'honestcost'</code> → <code>'mortgagecalc'</code> (or whatever). This isolates the localStorage so the two audits don't collide.
+    <span class="meta">1 min</span>
+  </li>
+  <li>
+    <strong>List the atomic formulas in the calc.</strong>
+    Open the calc's source. Every function that returns a number and isn't just plumbing (DOM reads, formatting) is a formula. Aim for 5–15 entries. For HonestCost: 9. For a simpler mortgage calc: probably 4–6.
+    <span class="meta">15 min</span>
+  </li>
+  <li>
+    <strong>Fill in the <code>FORMULAS</code> array using the schema.</strong>
+    One entry per formula. Sit down with the source code open. Hardest field: <code>whyItExists</code> — if you struggle to write it, the formula might not belong in the calc. Easiest: <code>formulaCode</code> — copy-paste from source.
+    <span class="meta">10–20 min per formula</span>
+  </li>
+  <li>
+    <strong>Open the file. Audit. Export.</strong>
+    Sit down, do all the cards in one or two sessions, paste the markdown export into the calc's docs. Done.
+    <span class="meta">30–90 min total</span>
+  </li>
+</ol>
+
+<div class="callout amber">
+<h4>What you DON'T do for a new calc</h4>
+You don't touch the HTML structure. You don't touch the CSS. You don't touch the swipe / keyboard / persistence logic. The only file content that changes is the <code>FORMULAS</code> array and the <code>AUDIT_ID</code> string. That's the reusability test — if you find yourself editing rendering code, the schema is wrong.
+</div>
+
+<!-- ───────────────────── -->
+<h2 id="backlog"><span class="num">09 / honestcost backlog</span>The 9 cards we're about to fill.</h2>
+
+<p class="lede">Sorted high-risk-first. High-risk formulas can flip the comparison verdict, so they earn the deepest review and the most-skeptical sources.</p>
+
+<table class="backlog">
+  <thead>
+    <tr>
+      <th style="width:50px;">#</th>
+      <th>Formula</th>
+      <th>What it does</th>
+      <th>Why it's hard</th>
+      <th>Risk</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="order">01</td>
+      <td class="fn">residual(price, cat, yrs)</td>
+      <td>Compound depreciation per segment</td>
+      <td>5 segment rates × 10 years = 50 numbers, all from market scrapes. Wrong by 5% = comparison flips.</td>
+      <td class="risk"><span class="bag-risk high">High</span></td>
+    </tr>
+    <tr>
+      <td class="order">02</td>
+      <td class="fn">leasing(p, dp, apr, n, res)</td>
+      <td>PMT with residual discount</td>
+      <td>Standard formula but easy to misread residual handling. APR sensitivity is huge.</td>
+      <td class="risk"><span class="bag-risk high">High</span></td>
+    </tr>
+    <tr>
+      <td class="order">03</td>
+      <td class="fn">kasko(price, rate, cat, yr)</td>
+      <td>KASKO on declining residual</td>
+      <td>Rate × residual is right; tier rates (1.5–3.5%) are scraped, not quoted. EV penalty is folklore.</td>
+      <td class="risk"><span class="bag-risk high">High</span></td>
+    </tr>
+    <tr>
+      <td class="order">04</td>
+      <td class="fn">repairBuf(level, war, cat, yr)</td>
+      <td>Post-warranty maintenance buffer + 10% YoY</td>
+      <td>The 10% escalation is by feel. The –20% Latvia discount needs more than one source.</td>
+      <td class="risk"><span class="bag-risk med">Med</span></td>
+    </tr>
+    <tr>
+      <td class="order">05</td>
+      <td class="fn">fuelAnnual(car, km)</td>
+      <td>ICE / EV / PHEV branches with charging mix</td>
+      <td>EV home charging % is a single user-set knob; 66% default is current data but volatile.</td>
+      <td class="risk"><span class="bag-risk med">Med</span></td>
+    </tr>
+    <tr>
+      <td class="order">06</td>
+      <td class="fn">service(km, yr, interval, cost)</td>
+      <td>Visits = floor(km × yr / interval)</td>
+      <td>Time-floor (1 visit per 2 years) was added to fix low-km bug. Check it's wired in calcAll.</td>
+      <td class="risk"><span class="bag-risk med">Med</span></td>
+    </tr>
+    <tr>
+      <td class="order">07</td>
+      <td class="fn">autoOCTA(x)</td>
+      <td>OCTA estimate by kW</td>
+      <td>5 tier costs; "experienced Riga driver" baseline is implicit and disclaimed. Junior drivers way off.</td>
+      <td class="risk"><span class="bag-risk low">Low</span></td>
+    </tr>
+    <tr>
+      <td class="order">08</td>
+      <td class="fn">tyres (TYRE_ANNUAL_COST)</td>
+      <td>Flat €/yr by tyre class</td>
+      <td>Plain lookup. Easy to defend; tyre prices LV are pinned to Continental/Michelin sheets.</td>
+      <td class="risk"><span class="bag-risk low">Low</span></td>
+    </tr>
+    <tr>
+      <td class="order">09</td>
+      <td class="fn">ten(co2)</td>
+      <td>WLTP CO₂ → annual road tax</td>
+      <td>Plain lookup. 14-bracket table is law. Hard to be wrong if the table is right.</td>
+      <td class="risk"><span class="bag-risk low">Low</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout">
+<h4>Audit order rationale</h4>
+We review high-risk first because the worst-case is finding a flaw on card 9 and realizing it invalidates cards 1–8. High-risk-first means the cheapest discoveries happen earliest. If <code>residual</code> turns out to be wrong, you stop the audit, fix the data, and restart — having spent 5 minutes, not 45.
+</div>
+
+<!-- ───────────────────── -->
+<h2 id="done"><span class="num">10 / exit criteria</span>When to stop and ship.</h2>
+
+<p>The audit is done — and the trust section, the dealer pitch, and the journalism pitch are all unlocked — when:</p>
+
+<ul class="unbull">
+  <li>All 9 HonestCost cards have a verdict.</li>
+  <li>No high-risk formula is in <code>reject</code> state without an action item.</li>
+  <li>Every <code>flag</code> has a 1-line note explaining what's needed to resolve.</li>
+  <li>The summary markdown export is saved to <code>FORMULA_AUDIT_REPORT.md</code> in the repo root.</li>
+  <li>The auto-generated "Kā mēs aprēķinām" snippet has replaced the hand-written one in <code>index.html</code>.</li>
+</ul>
+
+<p>What you do after audit:</p>
+<ol>
+  <li><strong>Fix every rejection.</strong> Rewrite the formula or pull it out of the calc entirely.</li>
+  <li><strong>Resolve every flag</strong> within 7 days. Update the card, re-audit just that one card, export again.</li>
+  <li><strong>Replace the trust section on the live site</strong> with the auto-generated one.</li>
+  <li><strong>Save <code>FORMULA_AUDIT_REPORT.md</code> in the GitHub repo</strong> — it's a credibility artifact, link to it from social posts and dealer pitches.</li>
+  <li><strong>Re-run the audit quarterly.</strong> Source numbers drift (KASKO rates, fuel prices, tax tables). Stale audit = stale trust.</li>
+</ol>
+
+<div class="callout win">
+<h4>Why this is the right first thing</h4>
+You were going to launch with hand-written trust copy and hope a dealer or journalist didn't probe too hard. Now: the audit happens once (a few focused hours), the artifact is permanent, the trust section auto-generates from it, every later dealer pitch is anchored in it, and the same tool audits your next calculator with zero rewrite. <em>One file, three months of saved face.</em>
+</div>
+
+<h3>Next concrete action</h3>
+<p>When you say go, I build <code>formula-audit.html</code> — single file, the <code>FORMULAS</code> array pre-filled with all 9 HonestCost entries to the level of detail in the schema example above, the swipe / keyboard / persistence logic wired up, and the summary screen with all four exports. You open it, swipe nine times, paste the markdown report wherever you want.</p>
+
+<footer>
+  <span>Formula Audit · Build Guide · v1.0 · 2026-05-25</span>
+  <a href="revenue/Playbook.html" style="font-family:var(--ff-mono);font-size:11px;color:var(--accent);text-decoration:none;letter-spacing:0.1em;text-transform:uppercase;">Revenue Playbook →</a>
+</footer>
+
+</main>
+</div>
+
+<!-- ── interactive demo logic ── -->
+<script>
+const STORAGE = 'fa-demo-preview-v1';
+function loadState(){ try { return JSON.parse(localStorage.getItem(STORAGE)) || {}; } catch(e){ return {}; } }
+function saveState(s){ localStorage.setItem(STORAGE, JSON.stringify(s)); }
+
+let demoState = loadState();
+const card = document.getElementById('demoCard');
+const toast = document.getElementById('demoToast');
+
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=> toast.classList.remove('show'), 1400);
+}
+
+function verdict(v){
+  demoState.ten = { verdict: v, ts: Date.now() };
+  saveState(demoState);
+  const cls = v === 'accept' ? 'swiped-right' : v === 'reject' ? 'swiped-left' : 'swiped-flag';
+  card.classList.add(cls);
+  const label = { accept: 'Accepted', reject: 'Rejected', flag: 'Flagged' }[v];
+  showToast(`${label} · saved`);
+  setTimeout(()=>{
+    card.classList.remove('swiped-right', 'swiped-left', 'swiped-flag');
+    showToast('Reset · try again');
+  }, 1200);
+}
+
+function addNote(){
+  const n = prompt('Note on this formula (optional):', '');
+  if (n != null){
+    demoState.ten_note = n;
+    saveState(demoState);
+    showToast('Note saved');
+  }
+}
+
+document.addEventListener('keydown', (e) => {
+  const stage = document.getElementById('demoStage');
+  const rect = stage.getBoundingClientRect();
+  if (rect.top > window.innerHeight || rect.bottom < 0) return;
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  const k = e.key.toLowerCase();
+  if (k === 'a') { e.preventDefault(); verdict('accept'); }
+  else if (k === 'r') { e.preventDefault(); verdict('reject'); }
+  else if (k === 'f') { e.preventDefault(); verdict('flag'); }
+  else if (k === 'n') { e.preventDefault(); addNote(); }
+});
+</script>
+</body>
+</html>

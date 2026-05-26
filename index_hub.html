@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HonestCost — Project Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16181D; --ink-2:#4A4E58; --ink-3:#878B95;
+  --line:#ECEAE3; --line-2:#E1DED4;
+  --bg:#F4F2EC; --surface:#FFFFFF; --surface-alt:#FAF8F2;
+  --accent:#3344F0; --accent-soft:#EBEDFF;
+  --amber:#F5A623; --amber-soft:#FCEEDB;
+  --win:#11A05F; --win-soft:#E5F6EE;
+  --warn:#D24545;
+  --flag:#9A6CFF; --flag-soft:rgba(154,108,255,.12);
+  --shadow-1:0 1px 2px rgba(20,22,28,.04),0 8px 28px -8px rgba(20,22,28,.10);
+  --shadow-2:0 2px 4px rgba(20,22,28,.05),0 24px 56px -16px rgba(20,22,28,.16);
+  --shadow-3:0 4px 8px rgba(20,22,28,.06),0 48px 96px -24px rgba(20,22,28,.22);
+  --ff-display:'Barlow Condensed',sans-serif;
+  --ff-ui:'Inter Tight',system-ui,sans-serif;
+  --ff-mono:'DM Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff-ui);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+::selection{background:var(--accent);color:#fff;}
+
+.page{max-width:1240px;margin:0 auto;padding:48px 32px 100px;}
+
+/* ─── hero ─── */
+.hero{
+  background:linear-gradient(160deg,#1A1D24 0%, #2E2F35 80%);
+  color:#fff; border-radius:32px; padding:56px 60px 52px;
+  position:relative; overflow:hidden; margin-bottom:32px;
+  box-shadow:var(--shadow-3);
+}
+.hero::after{
+  content:''; position:absolute; right:-140px; top:-140px;
+  width:520px; height:520px; border-radius:50%;
+  background:radial-gradient(circle,rgba(245,166,35,.5) 0%,transparent 65%);
+  pointer-events:none;
+}
+.hero::before{
+  content:''; position:absolute; left:-100px; bottom:-200px;
+  width:420px; height:420px; border-radius:50%;
+  background:radial-gradient(circle,rgba(51,68,240,.35) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-inner{position:relative;z-index:1;}
+.h-brand{
+  font-family:var(--ff-display); font-size:24px; font-weight:600; letter-spacing:-0.005em;
+  display:flex; align-items:center; gap:10px; margin-bottom:32px;
+}
+.h-brand::before{content:''; width:10px; height:10px; border-radius:50%; background:var(--amber);}
+.h-brand small{
+  font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase;
+  color:rgba(255,255,255,.55); margin-left:8px; font-weight:500;
+}
+.h-title{
+  font-family:var(--ff-display); font-size:96px; font-weight:600; line-height:0.94;
+  letter-spacing:-0.022em; margin-bottom:18px; max-width:18ch; text-wrap:balance;
+}
+.h-title em{font-style:normal;color:var(--amber);}
+.h-sub{
+  font-size:19px; color:rgba(255,255,255,.78); max-width:60ch; line-height:1.45;
+  margin-bottom:42px;
+}
+.h-sub strong{color:#fff;font-weight:600;}
+
+.h-stats{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:20px;
+  padding-top:30px; border-top:1px solid rgba(255,255,255,.12);
+}
+.h-stat .l{
+  font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase;
+  color:rgba(255,255,255,.55); margin-bottom:6px;
+}
+.h-stat .v{
+  font-family:var(--ff-display); font-size:54px; line-height:0.96; font-weight:600;
+  letter-spacing:-0.015em;
+}
+.h-stat .v small{font-size:24px;color:rgba(255,255,255,.55);font-weight:500;}
+.h-stat .v.amber{color:var(--amber);}
+.h-stat .sub{font-size:12px;color:rgba(255,255,255,.55);margin-top:6px;font-family:var(--ff-mono);letter-spacing:0.04em;}
+
+/* ─── section heads ─── */
+.sec-head{
+  display:flex; justify-content:space-between; align-items:baseline; gap:14px;
+  margin:48px 0 18px; padding-bottom:14px; border-bottom:1px solid var(--line-2);
+}
+.sec-head h2{
+  font-family:var(--ff-display); font-size:44px; font-weight:600; line-height:1.02;
+  letter-spacing:-0.012em; text-wrap:balance;
+}
+.sec-head .meta{
+  font-family:var(--ff-mono); font-size:11px; color:var(--ink-3);
+  letter-spacing:0.14em; text-transform:uppercase; white-space:nowrap;
+}
+
+/* ─── card grid ─── */
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;}
+.card{
+  background:var(--surface); border-radius:22px; padding:26px 30px 28px;
+  box-shadow:var(--shadow-1); display:flex; flex-direction:column;
+  text-decoration:none; color:var(--ink);
+  transition: transform .15s cubic-bezier(.2,.7,.3,1), box-shadow .15s, border-color .15s;
+  border:1px solid transparent; position:relative; overflow:hidden;
+  min-height:220px;
+}
+.card:hover{ transform: translateY(-3px); box-shadow:var(--shadow-2); border-color:var(--line-2); }
+.card-num{
+  font-family:var(--ff-mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--ink-3); margin-bottom:10px;
+}
+.card h3{
+  font-family:var(--ff-display); font-size:30px; font-weight:600; line-height:1.04;
+  letter-spacing:-0.005em; margin-bottom:8px; text-wrap:balance;
+}
+.card p{ font-size:14px; color:var(--ink-2); line-height:1.5; flex:1; }
+.card .badges{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;}
+.bdg{
+  font-family:var(--ff-mono); font-size:10px; letter-spacing:0.06em; text-transform:uppercase;
+  padding:3px 9px; border-radius:999px; background:var(--surface-alt); color:var(--ink-2);
+}
+.bdg.win{background:var(--win-soft);color:var(--win);}
+.bdg.accent{background:var(--accent-soft);color:var(--accent);}
+.bdg.amber{background:var(--amber-soft);color:#8a5e15;}
+.bdg.flag{background:var(--flag-soft);color:var(--flag);}
+
+.card .arrow{
+  position:absolute; top:24px; right:26px;
+  font-family:var(--ff-mono); color:var(--ink-3); font-size:18px;
+  transition: transform .15s, color .15s;
+}
+.card:hover .arrow{ transform: translateX(4px); color:var(--accent); }
+
+.card.feature{
+  background: linear-gradient(160deg, #FFFFFF 0%, #FAF8F2 100%);
+  border:1px solid var(--line-2);
+}
+.card.feature h3{ font-size:36px; }
+.card.large{ grid-column: span 6; min-height:240px; }
+.card.med  { grid-column: span 4; }
+.card.small{ grid-column: span 3; }
+.card.wide { grid-column: span 12; min-height:auto; padding:22px 26px; }
+.card.wide{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;}
+.card.wide h3{font-size:24px;margin-bottom:4px;}
+.card.wide p{font-size:13px;}
+
+.card.indigo{
+  background:linear-gradient(150deg,#3344F0 0%,#5365FF 100%);
+  color:#fff;
+}
+.card.indigo h3{color:#fff;}
+.card.indigo p{color:rgba(255,255,255,.85);}
+.card.indigo .card-num{color:rgba(255,255,255,.6);}
+.card.indigo .bdg{background:rgba(255,255,255,.18);color:#fff;}
+.card.indigo .arrow{color:rgba(255,255,255,.6);}
+.card.indigo:hover .arrow{color:#fff;}
+
+.card.ink{
+  background:linear-gradient(150deg,#16181D 0%,#2E2F35 100%);
+  color:#fff;
+}
+.card.ink h3{color:#fff;}
+.card.ink p{color:rgba(255,255,255,.82);}
+.card.ink .card-num{color:rgba(255,255,255,.55);}
+.card.ink .bdg{background:rgba(255,255,255,.15);color:rgba(255,255,255,.92);}
+.card.ink .arrow{color:rgba(255,255,255,.55);}
+.card.ink:hover .arrow{color:var(--amber);}
+
+/* timeline */
+.timeline{
+  background:var(--surface); border-radius:22px; padding:28px 32px;
+  box-shadow:var(--shadow-1);
+}
+.timeline-grid{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:0;
+  margin-top:10px; position:relative;
+}
+.tl-row{padding:0 12px;position:relative;}
+.tl-row + .tl-row::before{
+  content:''; position:absolute; left:-1px; top:6px; bottom:0;
+  border-left:1px solid var(--line);
+}
+.tl-tag{
+  font-family:var(--ff-mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--accent); padding:3px 9px; background:var(--accent-soft); border-radius:999px;
+  display:inline-block; margin-bottom:10px;
+}
+.tl-tag.done{ background:var(--win-soft); color:var(--win); }
+.tl-tag.next{ background:var(--amber-soft); color:#8a5e15; }
+.tl-tag.future{ background:var(--surface-alt); color:var(--ink-3); }
+.tl-title{font-family:var(--ff-display);font-size:24px;font-weight:600;line-height:1;margin-bottom:6px;}
+.tl-sub{font-size:12px;color:var(--ink-3);font-family:var(--ff-mono);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:10px;}
+.tl-body{font-size:13px;color:var(--ink-2);line-height:1.5;}
+
+/* ─── what's new strip ─── */
+.whatsnew{
+  background:var(--surface); border-radius:22px; padding:28px 32px;
+  box-shadow:var(--shadow-1); margin-top:24px;
+}
+.wn-row{display:grid;grid-template-columns:80px 1fr;gap:18px;padding:14px 0;border-bottom:1px solid var(--line);align-items:start;}
+.wn-row:last-child{border-bottom:none;}
+.wn-when{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.06em;color:var(--ink-3);text-transform:uppercase;padding-top:1px;}
+.wn-what strong{display:block;font-weight:600;color:var(--ink);margin-bottom:3px;font-size:14.5px;}
+.wn-what{font-size:13.5px;color:var(--ink-2);line-height:1.5;}
+.wn-what code{font-family:var(--ff-mono);font-size:11.5px;background:var(--surface-alt);padding:1px 6px;border-radius:4px;color:var(--accent);}
+.wn-what a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(51,68,240,.25);}
+.wn-what a:hover{border-color:var(--accent);}
+
+footer{
+  margin-top:60px;padding-top:24px;border-top:1px solid var(--line-2);
+  font-family:var(--ff-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;
+  color:var(--ink-3);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
+}
+
+@media (max-width:920px){
+  .page{padding:28px 18px 60px;}
+  .h-title{font-size:56px;}
+  .hero{padding:36px 28px 32px;border-radius:24px;}
+  .h-stats{grid-template-columns:repeat(2,1fr);gap:16px;}
+  .sec-head h2{font-size:32px;}
+  .grid{grid-template-columns:1fr;}
+  .card.large,.card.med,.card.small,.card.wide{grid-column:span 1;}
+  .timeline-grid{grid-template-columns:1fr;gap:18px;}
+  .tl-row + .tl-row::before{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ─── HERO ─── -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="h-brand">HonestCost <small>Project Hub · v1.0</small></div>
+      <h1 class="h-title">From a finished file to <em>€500 MRR.</em></h1>
+      <p class="h-sub">
+        Twelve weeks. Three revenue gates. <strong>17 artifacts</strong> on disk.<br>
+        Open the playbook to read the plan, or jump to any tool below. This page is your single entry point — bookmark it.
+      </p>
+      <div class="h-stats">
+        <div class="h-stat">
+          <div class="l">Today</div>
+          <div class="v">€0 <small>MRR</small></div>
+          <div class="sub">file is local · 0 users</div>
+        </div>
+        <div class="h-stat">
+          <div class="l">Week 12 target</div>
+          <div class="v amber">€500 <small>MRR</small></div>
+          <div class="sub">3 dealers · 1k users/mo</div>
+        </div>
+        <div class="h-stat">
+          <div class="l">Cars in DB</div>
+          <div class="v">376</div>
+          <div class="sub">39 brands · 178 EV / PHEV</div>
+        </div>
+        <div class="h-stat">
+          <div class="l">Formulas to audit</div>
+          <div class="v">10</div>
+          <div class="sub">~22 min · saves automatically</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── START HERE ─── -->
+  <div class="sec-head">
+    <h2>Start here.</h2>
+    <span class="meta">The 3 docs you need today</span>
+  </div>
+
+  <div class="grid">
+
+    <a class="card large feature ink" href="revenue/Playbook.html">
+      <div class="arrow">→</div>
+      <div class="card-num">01 / strategic</div>
+      <h3>Revenue playbook</h3>
+      <p>The 12-week execution plan. Phase 0 (ship), Phase 1 (launch), Phase 2 (first dealer), Phase 3 (repeatable). Every step has a gate, a metric, and a referenced artifact.</p>
+      <div class="badges">
+        <span class="bdg">Read first</span>
+        <span class="bdg">~15 min</span>
+        <span class="bdg">Source: REVENUE_PLAN.md</span>
+      </div>
+    </a>
+
+    <a class="card large feature indigo" href="formula-audit.html">
+      <div class="arrow">→</div>
+      <div class="card-num">02 / audit</div>
+      <h3>Formula audit · the tool</h3>
+      <p>Swipe through all 10 calc-engine formulas — including the newly-added operational leasing card. Accept / reject / flag each, export markdown + auto-generated trust section. Persistence built in.</p>
+      <div class="badges">
+        <span class="bdg">Do this 2nd</span>
+        <span class="bdg">~22 min</span>
+        <span class="bdg">Keyboard shortcuts: A R F N</span>
+      </div>
+    </a>
+
+    <a class="card wide" href="car-db-explorer.html">
+      <div class="arrow">→</div>
+      <div>
+        <div class="card-num">03 / data</div>
+        <h3>Car DB Explorer · 376 cars</h3>
+        <p>Browse, search, filter, sort the production car database. Click any row for the full JSON. Verify pricing / kW / CO₂ before launch.</p>
+      </div>
+      <div class="badges">
+        <span class="bdg accent">376 cars</span>
+        <span class="bdg amber">39 brands</span>
+        <span class="bdg win">178 electrified</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ─── REVENUE EXECUTION ─── -->
+  <div class="sec-head">
+    <h2>Revenue execution.</h2>
+    <span class="meta">6 artifacts · sequenced by phase</span>
+  </div>
+
+  <div class="grid">
+
+    <a class="card med" href="revenue/launch-posts.html">
+      <div class="arrow">→</div>
+      <div class="card-num">Phase 1 · day 1–10</div>
+      <h3>Launch posts</h3>
+      <p>6 Latvian launch posts (LinkedIn, FB Auto Latvijā, FB EV LV, ss.lv, journalist pitch, Reddit). Copy-paste ready with coach notes.</p>
+      <div class="badges">
+        <span class="bdg accent">LV copy</span>
+        <span class="bdg">~120–220 words each</span>
+      </div>
+    </a>
+
+    <a class="card med" href="revenue/dealer-outreach.html">
+      <div class="arrow">→</div>
+      <div class="card-num">Phase 2 · week 3–6</div>
+      <h3>Dealer outreach</h3>
+      <p>12 named dealer targets, three LV templates (DM, email, follow-up), objection-handling table.</p>
+      <div class="badges">
+        <span class="bdg accent">12 targets</span>
+        <span class="bdg amber">Skip BMW first</span>
+      </div>
+    </a>
+
+    <a class="card med" href="revenue/dealer-pitch.html">
+      <div class="arrow">→</div>
+      <div class="card-num">Phase 2 · the leave-behind</div>
+      <h3>Dealer pitch · 5 slides</h3>
+      <p>Problem → mirror → hook → proof → price. Fullscreen deck, exportable to PDF. Personalize per dealer before sending.</p>
+      <div class="badges">
+        <span class="bdg accent">1920×1080</span>
+        <span class="bdg">Ends on €200/mo</span>
+      </div>
+    </a>
+
+    <a class="card med" href="revenue/integration-snippets.html">
+      <div class="arrow">→</div>
+      <div class="card-num">Phase 1 · in-app</div>
+      <h3>Integration snippets</h3>
+      <p>Drop-in code: affiliate strip, EmailJS capture, "Kā mēs aprēķinām" trust section, Plausible custom events. With live previews.</p>
+      <div class="badges">
+        <span class="bdg accent">4 snippets</span>
+        <span class="bdg">UTM-tagged</span>
+      </div>
+    </a>
+
+    <a class="card med" href="revenue/pricing.html">
+      <div class="arrow">→</div>
+      <div class="card-num">Phase 2 · the ask</div>
+      <h3>Pricing &amp; contract</h3>
+      <p>Three tiers (Pilot / Embed €200 / Brand HQ €600), ROI math from dealer's view, one-page service agreement ready to sign.</p>
+      <div class="badges">
+        <span class="bdg accent">3 tiers</span>
+        <span class="bdg win">14.9× ROI walkthrough</span>
+      </div>
+    </a>
+
+    <a class="card med" href="revenue/kpi-dashboard.html">
+      <div class="arrow">→</div>
+      <div class="card-num">Weekly review</div>
+      <h3>KPI dashboard</h3>
+      <p>North-star MRR, 5 KPIs with sparklines, event funnel, dealer pipeline, Plausible Goals reference. Open every Monday.</p>
+      <div class="badges">
+        <span class="bdg accent">Mock data</span>
+        <span class="bdg">10 events tracked</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ─── ENGINEERING ─── -->
+  <div class="sec-head">
+    <h2>Engineering &amp; data.</h2>
+    <span class="meta">Behind the calc</span>
+  </div>
+
+  <div class="grid">
+
+    <a class="card large" href="Formula Audit Build Guide.html">
+      <div class="arrow">→</div>
+      <div class="card-num">Reusable spec</div>
+      <h3>Formula audit · the build guide</h3>
+      <p>The reusable spec behind the audit tool — schema, card anatomy, swipe flow, exit criteria. Use it to audit the next calculator: copy the file, edit one constant, refill the FORMULAS array, ship.</p>
+      <div class="badges">
+        <span class="bdg accent">Reusable</span>
+        <span class="bdg">Live demo card</span>
+        <span class="bdg">9-section spec</span>
+      </div>
+    </a>
+
+    <a class="card med" href="formula-audit.html">
+      <div class="arrow">→</div>
+      <div class="card-num">10 cards</div>
+      <h3>Formula audit · the tool</h3>
+      <p>Now includes <strong>operational leasing</strong> as a 10th card — the missing LV product. New math, new sources, accept-or-reject.</p>
+      <div class="badges">
+        <span class="bdg accent">+ op-leasing</span>
+        <span class="bdg flag">High-risk × 4</span>
+      </div>
+    </a>
+
+    <a class="card med" href="car-db-explorer.html">
+      <div class="arrow">→</div>
+      <div class="card-num">Production data</div>
+      <h3>Car DB Explorer</h3>
+      <p>Search any of 376 cars. Click for full JSON. Sidebar filters by fuel, segment, brand. Sortable columns.</p>
+      <div class="badges">
+        <span class="bdg accent">376 cars</span>
+        <span class="bdg">39 brands</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ─── ROADMAP ─── -->
+  <div class="sec-head">
+    <h2>Where this lands.</h2>
+    <span class="meta">12-week roadmap · gates</span>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-grid">
+
+      <div class="tl-row">
+        <span class="tl-tag done">Done · today</span>
+        <div class="tl-title">Phase 0</div>
+        <div class="tl-sub">file → live</div>
+        <p class="tl-body">Push to <code>r0dolfs9/honestcost</code>. Wire <code>honestcost.lv</code> CNAME. Force HTTPS. Add Plausible. Submit sitemap. <em>~2 hours.</em></p>
+      </div>
+
+      <div class="tl-row">
+        <span class="tl-tag next">Next · week 1–2</span>
+        <div class="tl-title">Phase 1</div>
+        <div class="tl-sub">launch + instrument</div>
+        <p class="tl-body">6 launch posts over 10 days. Drop affiliate strip + email capture + trust section. Goal: 100 unique/week, 30 analyses, 5 share-link copies.</p>
+      </div>
+
+      <div class="tl-row">
+        <span class="tl-tag future">Then · week 3–6</span>
+        <div class="tl-title">Phase 2</div>
+        <div class="tl-sub">first revenue</div>
+        <p class="tl-body">Pitch 12 dealers (Greenmotors, Tesla LV first). Close 1 at €200/mo with first month free. Embed their cars as homepage examples.</p>
+      </div>
+
+      <div class="tl-row">
+        <span class="tl-tag future">Then · week 7–12</span>
+        <div class="tl-title">Phase 3</div>
+        <div class="tl-sub">repeatable</div>
+        <p class="tl-body">Case study → reprise the 12 with proof. Real embed with URL params + dealer logo. 3 dealers, €500 MRR, 1k users/mo.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ─── CHANGELOG ─── -->
+  <div class="sec-head">
+    <h2>What's new this build.</h2>
+    <span class="meta">2026-05-26</span>
+  </div>
+
+  <div class="whatsnew">
+    <div class="wn-row">
+      <span class="wn-when">+ Now</span>
+      <div class="wn-what"><strong>Project Hub created</strong>this page. One entry into all 17 artifacts. Bookmark it as <code>/index_hub.html</code> or open via the playbook.</div>
+    </div>
+    <div class="wn-row">
+      <span class="wn-when">+ Now</span>
+      <div class="wn-what"><strong>Car DB · 376 entries</strong>generated <code>car-db.js</code> with 39 brands covering the LV market. Skoda · VW · BMW · Mercedes · Audi · Toyota · Hyundai · Kia · Tesla · Volvo lead the volume. <a href="car-db-explorer.html">Browse →</a></div>
+    </div>
+    <div class="wn-row">
+      <span class="wn-when">+ Now</span>
+      <div class="wn-what"><strong>Operational leasing audit card</strong>added as the 10th formula. Latvian-specific math (depreciation + finance charge, no balloon, no asset at end). Surfaces an actual gap in the calc engine — the current code only models financial leasing. <a href="formula-audit.html">Audit it →</a></div>
+    </div>
+    <div class="wn-row">
+      <span class="wn-when">+ Now</span>
+      <div class="wn-what"><strong>Formula audit tool · v1.0</strong>full swipe + keyboard + persistence + 4 exports (Markdown, trust-section HTML, JSON, PDF). Re-audit individual cards from the summary. JSON import to resume on another machine.</div>
+    </div>
+    <div class="wn-row">
+      <span class="wn-when">+ Earlier</span>
+      <div class="wn-what"><strong>Revenue playbook v1.0</strong>complete 12-week plan in <code>REVENUE_PLAN.md</code> + <a href="revenue/Playbook.html">Playbook.html</a>. 6 supporting artifacts shipped: launch posts, dealer outreach, dealer pitch, integration snippets, pricing &amp; contract, KPI dashboard.</div>
+    </div>
+    <div class="wn-row">
+      <span class="wn-when">~ Queued</span>
+      <div class="wn-what"><strong>UI toggle for op-leasing in index.html</strong>once the audit accepts the operational-leasing formula, the calc engine needs <code>g.fin = 'op_leasing'</code> path + a toggle button group. Estimate: 1 hour of work in the calc engine + 30 min of UI.</div>
+    </div>
+  </div>
+
+  <footer>
+    <span>HonestCost · Project Hub · v1.0 · 2026-05-26 · 17 artifacts on disk</span>
+    <span><a href="REVENUE_PLAN.md" style="color:var(--accent);text-decoration:none;">REVENUE_PLAN.md</a> · the markdown source</span>
+  </footer>
+
+</div>
+
+</body>
+</html>

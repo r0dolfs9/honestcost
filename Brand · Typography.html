@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HonestCost — Type System</title>
+<link rel="stylesheet" href="fonts.css" />
+<style>
+  :root {
+    --ink: #16181D;
+    --ink-2: #4A4E58;
+    --ink-3: #878B95;
+    --line: #E5E2D8;
+    --bg: #F4F2EC;
+    --surface: #FFFFFF;
+    --accent: #3344F0;
+    --amber: #F5A623;
+    --win: #11A05F;
+
+    --ff-display: 'Barlow Condensed', 'Inter Tight', sans-serif;
+    --ff-ui: 'Inter Tight', 'Inter', system-ui, sans-serif;
+    --ff-mono: 'DM Mono', ui-monospace, monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: var(--ff-ui); font-size: 15px; line-height: 1.5; letter-spacing: -0.005em; -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--accent); color: #fff; }
+
+  .page { max-width: 1280px; margin: 0 auto; padding: 56px 64px 96px; }
+
+  /* ─── chrome ─── */
+  header.brand-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 28px; margin-bottom: 56px; border-bottom: 1px solid var(--line);
+  }
+  .crumb { display: inline-flex; align-items: center; gap: 10px; font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .crumb .here { color: var(--ink); }
+  .logo { display: inline-flex; align-items: baseline; font-family: var(--ff-display); font-size: 24px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
+  .logo .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); margin: 0 1px 6px; display: inline-block; align-self: center; }
+
+  /* ─── hero ─── */
+  .hero h1 {
+    font-family: var(--ff-display); font-weight: 500;
+    font-size: 132px; line-height: 0.92; letter-spacing: -0.04em;
+    margin: 0 0 18px;
+  }
+  .hero h1 .muted { color: var(--ink-3); }
+  .hero p.lede { max-width: 680px; font-size: 19px; color: var(--ink-2); margin: 0; }
+
+  /* ─── kicker / labels ─── */
+  .kicker { font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 14px; }
+  .section-title { font-family: var(--ff-display); font-weight: 500; font-size: 56px; line-height: 1; letter-spacing: -0.03em; margin: 0 0 12px; }
+  section { padding: 80px 0; border-bottom: 1px solid var(--line); }
+  section:last-of-type { border-bottom: none; }
+  .lede-2 { font-size: 17px; color: var(--ink-2); max-width: 640px; margin: 0 0 40px; }
+
+  /* ─── face card ─── */
+  .face {
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 32px 40px 36px;
+    box-shadow: 0 1px 2px rgba(20,22,28,.04), 0 8px 28px -8px rgba(20,22,28,.10);
+  }
+  .face + .face { margin-top: 20px; }
+  .face .row { display: grid; grid-template-columns: 240px 1fr; gap: 40px; align-items: start; }
+  .face .name { font-family: var(--ff-ui); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+  .face .face-title { font-family: var(--ff-display); font-size: 32px; font-weight: 500; letter-spacing: -0.02em; margin: 6px 0 4px; }
+  .face .role { font-size: 13px; color: var(--ink-2); }
+  .face .specimen { overflow: hidden; }
+
+  /* specimens */
+  .spec-display { font-family: var(--ff-display); font-weight: 500; font-size: 168px; line-height: 0.86; letter-spacing: -0.04em; }
+  .spec-display .sub { font-size: 22px; font-family: var(--ff-ui); font-weight: 400; color: var(--ink-3); letter-spacing: -0.01em; display: block; margin-top: 12px; }
+  .spec-display .currency { font-size: 0.55em; color: var(--ink-3); font-weight: 400; }
+  .weights { display: flex; gap: 24px; margin-top: 28px; flex-wrap: wrap; }
+  .weight { display: flex; flex-direction: column; gap: 4px; }
+  .weight .glyph { font-family: var(--ff-display); font-size: 64px; line-height: 1; letter-spacing: -0.03em; }
+  .weight .w-label { font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+
+  .spec-ui { font-family: var(--ff-ui); }
+  .spec-ui .big { font-size: 56px; font-weight: 500; letter-spacing: -0.025em; line-height: 1.05; margin-bottom: 14px; max-width: 580px; }
+  .spec-ui .med { font-size: 26px; font-weight: 500; letter-spacing: -0.015em; line-height: 1.25; color: var(--ink); margin-bottom: 12px; max-width: 580px; }
+  .spec-ui .body { font-size: 15px; color: var(--ink-2); line-height: 1.55; max-width: 580px; }
+
+  .spec-mono { font-family: var(--ff-mono); font-size: 14px; }
+  .spec-mono table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .spec-mono th, .spec-mono td { padding: 10px 0; border-bottom: 1px solid var(--line); text-align: right; font-weight: 400; }
+  .spec-mono th { font-family: var(--ff-ui); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); text-align: right; }
+  .spec-mono th:first-child, .spec-mono td:first-child { text-align: left; }
+  .spec-mono tr:last-child td { border-bottom: none; }
+  .spec-mono .pos { color: var(--win); }
+  .spec-mono .neg { color: #D24545; }
+
+  /* ─── scale ladder ─── */
+  .scale {
+    background: var(--surface); border-radius: 24px; padding: 32px 40px;
+    box-shadow: 0 1px 2px rgba(20,22,28,.04), 0 8px 28px -8px rgba(20,22,28,.10);
+  }
+  .scale-row {
+    display: grid; grid-template-columns: 100px 80px 80px 1fr; gap: 24px;
+    align-items: baseline; padding: 18px 0; border-bottom: 1px solid var(--line);
+  }
+  .scale-row:last-child { border-bottom: none; }
+  .scale-row .meta { font-family: var(--ff-mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.06em; }
+  .scale-row .meta .strong { color: var(--ink); }
+  .scale-row .px { font-family: var(--ff-mono); font-size: 11px; color: var(--ink-2); }
+  .scale-row .lh { font-family: var(--ff-mono); font-size: 11px; color: var(--ink-3); }
+  .scale-row .sample { color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* numeric anatomy showcase */
+  .numerics { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; }
+  .num-card { background: var(--surface); border-radius: 24px; padding: 32px 36px; box-shadow: 0 1px 2px rgba(20,22,28,.04), 0 8px 28px -8px rgba(20,22,28,.10); }
+  .num-card .label { font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .price-hero {
+    font-family: var(--ff-display); font-weight: 500;
+    font-size: 192px; line-height: 0.88; letter-spacing: -0.045em;
+    margin-top: 8px; color: var(--ink);
+  }
+  .price-hero .unit { font-size: 26px; font-family: var(--ff-ui); color: var(--ink-3); font-weight: 400; letter-spacing: -0.01em; }
+  .price-hero.win { color: var(--win); }
+  .tabnums {
+    font-family: var(--ff-mono); font-variant-numeric: tabular-nums;
+    display: flex; flex-direction: column; gap: 10px; font-size: 14px;
+    color: var(--ink-2);
+  }
+  .tabnums .r { display: flex; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  .tabnums .r .v { color: var(--ink); }
+
+  /* rules: do / don't */
+  .rules { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .rule { background: var(--surface); border-radius: 20px; padding: 24px 28px; box-shadow: 0 1px 2px rgba(20,22,28,.04), 0 8px 28px -8px rgba(20,22,28,.10); position: relative; overflow: hidden; }
+  .rule.do { border-top: 3px solid var(--win); }
+  .rule.dont { border-top: 3px solid #D24545; }
+  .rule .tag { font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .rule.do .tag { color: var(--win); }
+  .rule.dont .tag { color: #D24545; }
+  .rule h4 { font-family: var(--ff-ui); font-weight: 500; font-size: 17px; letter-spacing: -0.01em; margin: 6px 0 8px; }
+  .rule p { font-size: 13px; color: var(--ink-2); margin: 0; }
+  .rule .demo { margin-top: 18px; padding: 18px 0 0; border-top: 1px solid var(--line); }
+
+  /* token table */
+  .tokens { background: var(--surface); border-radius: 24px; padding: 8px 0; box-shadow: 0 1px 2px rgba(20,22,28,.04), 0 8px 28px -8px rgba(20,22,28,.10); }
+  .tk-row { display: grid; grid-template-columns: 220px 1fr 140px 100px; align-items: center; gap: 20px; padding: 16px 36px; border-bottom: 1px solid var(--line); }
+  .tk-row:last-child { border-bottom: none; }
+  .tk-name { font-family: var(--ff-mono); font-size: 12px; color: var(--ink); }
+  .tk-name .strong { color: var(--accent); }
+  .tk-sample { font-family: var(--ff-ui); }
+  .tk-meta { font-family: var(--ff-mono); font-size: 11px; color: var(--ink-3); }
+
+  /* pairings */
+  .pairing { background: var(--surface); border-radius: 24px; padding: 36px 40px; box-shadow: 0 1px 2px rgba(20,22,28,.04), 0 8px 28px -8px rgba(20,22,28,.10); }
+  .pairing-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 32px; align-items: end; }
+  .pairing .pair-eyebrow { font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .pairing .pair-head { font-family: var(--ff-display); font-weight: 500; font-size: 76px; line-height: 0.95; letter-spacing: -0.035em; margin: 8px 0 14px; }
+  .pairing .pair-body { font-size: 16px; color: var(--ink-2); line-height: 1.55; max-width: 460px; margin: 0; }
+  .pairing .pair-stat { padding: 24px 28px; background: var(--bg); border-radius: 18px; }
+  .pairing .pair-stat .l { font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+  .pairing .pair-stat .v { font-family: var(--ff-display); font-weight: 500; font-size: 84px; line-height: 0.95; letter-spacing: -0.04em; color: var(--ink); margin-top: 4px; }
+  .pairing .pair-stat .v.win { color: var(--win); }
+  .pairing .pair-stat .s { font-family: var(--ff-mono); font-size: 12px; color: var(--ink-2); margin-top: 8px; }
+
+  /* footer */
+  footer { margin-top: 80px; padding-top: 40px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-family: var(--ff-mono); font-size: 11px; letter-spacing: 0.06em; color: var(--ink-3); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="brand-bar">
+    <span class="logo">Honest<span class="dot"></span>Cost</span>
+    <span class="crumb">Brand · Foundations <span style="color:var(--line)">/</span> <span class="here">Typography</span></span>
+    <span class="crumb">v1.0 · 2026</span>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" style="border-bottom:none;padding-top:0;padding-bottom:64px">
+    <div class="kicker">Type System · 01</div>
+    <h1>Type that<br />reads like a <span class="muted">price tag.</span></h1>
+    <p class="lede">Three families. One job each. Big condensed numerals where money lives, friendly Inter Tight for everything else, monospace where data needs to line up. Quiet, technical, and slightly automotive — like a configurator built by people who care.</p>
+  </section>
+
+  <!-- THE TYPE FAMILIES -->
+  <section>
+    <div class="kicker">02 · Families</div>
+    <h2 class="section-title">Three faces.</h2>
+    <p class="lede-2">A small, deliberate stack — chosen so price, prose and data each get the typography that suits them.</p>
+
+    <!-- BARLOW CONDENSED -->
+    <div class="face">
+      <div class="row">
+        <div>
+          <div class="name">Display · Numerics</div>
+          <div class="face-title">Barlow Condensed</div>
+          <div class="role">For prices, monthly totals, headlines, and any number that has to feel like the answer. Use 400 and 500. Reach for 600 only when something needs to lean automotive.</div>
+          <div class="weights">
+            <div class="weight"><span class="glyph" style="font-weight:300">€487</span><span class="w-label">Light · 300</span></div>
+            <div class="weight"><span class="glyph" style="font-weight:400">€487</span><span class="w-label">Regular · 400</span></div>
+            <div class="weight"><span class="glyph" style="font-weight:500">€487</span><span class="w-label">Medium · 500 ★</span></div>
+            <div class="weight"><span class="glyph" style="font-weight:600">€487</span><span class="w-label">Semi · 600</span></div>
+          </div>
+        </div>
+        <div class="specimen">
+          <div class="spec-display"><span class="currency">€</span>487<span class="sub">/mēn · vidējās izmaksas 5 gados</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTER TIGHT -->
+    <div class="face">
+      <div class="row">
+        <div>
+          <div class="name">UI · Body</div>
+          <div class="face-title">Inter Tight</div>
+          <div class="role">The workhorse. Headlines, labels, descriptions, buttons, microcopy. Use 400 for body, 500 for emphasis, 600 sparingly for buttons and key labels.</div>
+        </div>
+        <div class="specimen spec-ui">
+          <div class="big">Ne tikai cena. Pilnās izmaksas mēnesī.</div>
+          <div class="med">Salīdzini divus jaunus automobiļus — amortizāciju, KASKO un visu pārējo.</div>
+          <div class="body">HonestCost apvieno amortizāciju, KASKO, riepas, apkopi un transporta nodokli vienā mēneša skaitlī. Visi aprēķini notiek tieši tavā pārlūkā — nekādas reģistrācijas, nekāda lieka komunikācija.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DM MONO -->
+    <div class="face">
+      <div class="row">
+        <div>
+          <div class="name">Mono · Data</div>
+          <div class="face-title">DM Mono</div>
+          <div class="role">Anywhere numbers stack in columns and need to line up — breakdown tables, secondary stats, code-like metadata, technical labels. Always tabular-nums.</div>
+        </div>
+        <div class="specimen spec-mono">
+          <table>
+            <thead><tr><th>Kategorija</th><th>Mēnesī</th><th>5 gados</th><th>Δ</th></tr></thead>
+            <tbody>
+              <tr><td>Amortizācija</td><td>€312</td><td>€18 720</td><td class="neg">−€96</td></tr>
+              <tr><td>Degviela</td><td>€72</td><td>€4 320</td><td class="neg">−€13</td></tr>
+              <tr><td>KASKO</td><td>€67</td><td>€4 020</td><td class="neg">−€20</td></tr>
+              <tr><td>Apkope</td><td>€18</td><td>€1 080</td><td>±€0</td></tr>
+              <tr><td>Riepas</td><td>€33</td><td>€1 980</td><td class="pos">+€7</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCALE -->
+  <section>
+    <div class="kicker">03 · Scale</div>
+    <h2 class="section-title">A ladder, not a buffet.</h2>
+    <p class="lede-2">Eight steps cover the whole product. If you need a size that isn't here, you probably don't.</p>
+
+    <div class="scale">
+      <div class="scale-row"><div class="meta"><div class="strong">Display XL</div></div><div class="px">128 / 132 px</div><div class="lh">LH 0.92</div><div class="sample" style="font-family:var(--ff-display);font-weight:500;font-size:128px;line-height:0.92;letter-spacing:-0.04em">€8 640</div></div>
+      <div class="scale-row"><div class="meta"><div class="strong">Display L</div></div><div class="px">88 / 96 px</div><div class="lh">LH 0.95</div><div class="sample" style="font-family:var(--ff-display);font-weight:500;font-size:88px;line-height:0.95;letter-spacing:-0.035em">€487/mēn</div></div>
+      <div class="scale-row"><div class="meta"><div class="strong">Display M</div></div><div class="px">56 / 64 px</div><div class="lh">LH 1.0</div><div class="sample" style="font-family:var(--ff-display);font-weight:500;font-size:56px;line-height:1;letter-spacing:-0.03em">BMW 118i</div></div>
+      <div class="scale-row"><div class="meta"><div class="strong">Heading L</div></div><div class="px">32 px</div><div class="lh">LH 1.1</div><div class="sample" style="font-family:var(--ff-ui);font-weight:600;font-size:32px;line-height:1.1;letter-spacing:-0.025em">Vidējās mēneša izmaksas</div></div>
+      <div class="scale-row"><div class="meta"><div class="strong">Heading M</div></div><div class="px">22 px</div><div class="lh">LH 1.25</div><div class="sample" style="font-family:var(--ff-ui);font-weight:600;font-size:22px;line-height:1.25;letter-spacing:-0.015em">Automobilis A · BMW 118i M Sport</div></div>
+      <div class="scale-row"><div class="meta"><div class="strong">Body</div></div><div class="px">15 px</div><div class="lh">LH 1.5</div><div class="sample" style="font-family:var(--ff-ui);font-size:15px;line-height:1.5">Salīdzini divus jaunus automobiļus, ieskaitot amortizāciju.</div></div>
+      <div class="scale-row"><div class="meta"><div class="strong">Caption</div></div><div class="px">12 px</div><div class="lh">LH 1.4</div><div class="sample" style="font-family:var(--ff-ui);font-size:12px;line-height:1.4;color:var(--ink-2)">Visi aprēķini notiek tavā ierīcē. Bez reģistrācijas.</div></div>
+      <div class="scale-row"><div class="meta"><div class="strong">Mono · Tag</div></div><div class="px">11 px</div><div class="lh">LS 0.14em</div><div class="sample" style="font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3)">01 · konfigurēt</div></div>
+    </div>
+  </section>
+
+  <!-- NUMERIC ANATOMY -->
+  <section>
+    <div class="kicker">04 · Numerals</div>
+    <h2 class="section-title">The hero is a number.</h2>
+    <p class="lede-2">Almost every screen in HonestCost ends in a price. Treat numerals with the same care as headlines — they <em>are</em> the headline.</p>
+
+    <div class="numerics">
+      <div class="num-card">
+        <div class="label">Verdict price · the money shot</div>
+        <div class="price-hero win"><span class="currency">€</span>487<span class="unit">/mēn</span></div>
+        <p style="margin:14px 0 0;color:var(--ink-2);font-size:14px;max-width:520px">Barlow Condensed Medium · −0.045em tracking · LH 0.88 · the winner colour is reserved for the cheaper of the two cars. Never both.</p>
+      </div>
+      <div class="num-card">
+        <div class="label">Tabular numerics · DM Mono</div>
+        <div class="tabnums" style="margin-top:16px">
+          <div class="r"><span>Amortizācija</span><span class="v">€312</span></div>
+          <div class="r"><span>Līzings (procenti)</span><span class="v">€&nbsp;45</span></div>
+          <div class="r"><span>Degviela</span><span class="v">€&nbsp;72</span></div>
+          <div class="r"><span>KASKO</span><span class="v">€&nbsp;67</span></div>
+          <div class="r"><span>Apkope</span><span class="v">€&nbsp;18</span></div>
+          <div class="r" style="border-bottom:none"><span style="color:var(--ink);font-weight:500">KOPĀ</span><span class="v" style="font-weight:500">€487</span></div>
+        </div>
+        <p style="margin:18px 0 0;color:var(--ink-2);font-size:13px">Always `font-variant-numeric: tabular-nums`. Hair-space between currency and value at small sizes, no space at display sizes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RULES -->
+  <section>
+    <div class="kicker">05 · Rules</div>
+    <h2 class="section-title">Do this. Not that.</h2>
+    <p class="lede-2">A handful of guard-rails that keep the type system from drifting into "another fintech dashboard".</p>
+
+    <div class="rules">
+      <div class="rule do">
+        <div class="tag">Do</div>
+        <h4>Pair Condensed display with Tight body.</h4>
+        <p>Barlow Condensed is loud and automotive — let Inter Tight do the calm explaining underneath.</p>
+        <div class="demo">
+          <div style="font-family:var(--ff-display);font-weight:500;font-size:54px;line-height:0.95;letter-spacing:-0.03em">€8 640 ietaupījums</div>
+          <div style="font-family:var(--ff-ui);font-size:14px;color:var(--ink-2);margin-top:6px">salīdzinot ar BMW X1, 5 gadi, 15 000 km/g</div>
+        </div>
+      </div>
+
+      <div class="rule dont">
+        <div class="tag">Don't</div>
+        <h4>Never set body copy in the display face.</h4>
+        <p>Barlow Condensed at body sizes is cramped and shouty. Save it for the things you'd say out loud.</p>
+        <div class="demo">
+          <div style="font-family:var(--ff-display);font-weight:400;font-size:14px;color:var(--ink-2);line-height:1.5">Salīdzini divus jaunus automobiļus, ieskaitot amortizāciju, KASKO un transporta nodokli — viss vienā mēneša skaitlī.</div>
+        </div>
+      </div>
+
+      <div class="rule do">
+        <div class="tag">Do</div>
+        <h4>Use mono for anything that compares.</h4>
+        <p>Tabular numerals in DM Mono. Columns line up, scanning is instant, the eye trusts it more.</p>
+        <div class="demo" style="font-family:var(--ff-mono);font-variant-numeric:tabular-nums;font-size:13px;color:var(--ink-2)">
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:4px 0"><span>BMW 118i</span><span style="color:var(--ink)">€&nbsp;487 /mēn</span></div>
+          <div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:4px 0"><span>BMW X1 xDrive20i</span><span style="color:var(--ink)">€&nbsp;631 /mēn</span></div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:var(--ink)">Δ</span><span style="color:var(--win)">−€&nbsp;144 /mēn</span></div>
+        </div>
+      </div>
+
+      <div class="rule dont">
+        <div class="tag">Don't</div>
+        <h4>Never put numbers in proportional body.</h4>
+        <p>Inter Tight's '1' is narrower than its '8'. Columns will wobble. Eyes will distrust.</p>
+        <div class="demo" style="font-family:var(--ff-ui);font-size:13px;color:var(--ink-2)">
+          <div style="display:flex;justify-content:space-between;padding:4px 0"><span>BMW 118i</span><span style="color:var(--ink)">€487 /mēn</span></div>
+          <div style="display:flex;justify-content:space-between;padding:4px 0"><span>BMW X1 xDrive20i</span><span style="color:var(--ink)">€631 /mēn</span></div>
+        </div>
+      </div>
+
+      <div class="rule do">
+        <div class="tag">Do</div>
+        <h4>Use the mono kicker for technical context.</h4>
+        <p>Section numbers, units, source tags — anything that says "this is reference, not voice".</p>
+        <div class="demo" style="font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3)">04 · numerals · wltp 2026</div>
+      </div>
+
+      <div class="rule dont">
+        <div class="tag">Don't</div>
+        <h4>Don't tint headlines. Ever.</h4>
+        <p>Black ink, full stop. Color belongs on numerical winners, badges, and accents — not on display type.</p>
+        <div class="demo">
+          <div style="font-family:var(--ff-display);font-weight:500;font-size:38px;letter-spacing:-0.025em;background:linear-gradient(90deg,#3344F0,#9A6CFF);-webkit-background-clip:text;background-clip:text;color:transparent">Pilnās izmaksas</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOKENS -->
+  <section>
+    <div class="kicker">06 · Tokens</div>
+    <h2 class="section-title">CSS variables.</h2>
+    <p class="lede-2">Drop these into <code style="font-family:var(--ff-mono);font-size:13px;background:var(--surface);padding:3px 7px;border-radius:5px">:root</code> and you have the whole system.</p>
+
+    <div class="tokens">
+      <div class="tk-row">
+        <span class="tk-name">--ff-display</span>
+        <span class="tk-sample" style="font-family:var(--ff-display);font-size:32px;font-weight:500;letter-spacing:-0.02em">Barlow Condensed</span>
+        <span class="tk-meta">Google Fonts</span>
+        <span class="tk-meta">300 — 700</span>
+      </div>
+      <div class="tk-row">
+        <span class="tk-name">--ff-ui</span>
+        <span class="tk-sample" style="font-family:var(--ff-ui);font-size:24px;font-weight:500;letter-spacing:-0.015em">Inter Tight</span>
+        <span class="tk-meta">Google Fonts</span>
+        <span class="tk-meta">400 — 700</span>
+      </div>
+      <div class="tk-row">
+        <span class="tk-name">--ff-mono</span>
+        <span class="tk-sample" style="font-family:var(--ff-mono);font-size:20px">DM Mono · 0123456789</span>
+        <span class="tk-meta">Google Fonts</span>
+        <span class="tk-meta">400 / 500</span>
+      </div>
+      <div class="tk-row">
+        <span class="tk-name"><span class="strong">--fs-display-xl</span></span>
+        <span class="tk-sample" style="font-family:var(--ff-display);font-size:36px;font-weight:500">128 / 0.92 / −0.04em</span>
+        <span class="tk-meta">Hero verdicts</span>
+        <span class="tk-meta">px / lh / ls</span>
+      </div>
+      <div class="tk-row">
+        <span class="tk-name"><span class="strong">--fs-display-l</span></span>
+        <span class="tk-sample" style="font-family:var(--ff-display);font-size:32px;font-weight:500">88 / 0.95 / −0.035em</span>
+        <span class="tk-meta">Monthly totals</span>
+        <span class="tk-meta">px / lh / ls</span>
+      </div>
+      <div class="tk-row">
+        <span class="tk-name"><span class="strong">--fs-h-l</span></span>
+        <span class="tk-sample" style="font-family:var(--ff-ui);font-size:24px;font-weight:600">32 / 1.1 / −0.025em</span>
+        <span class="tk-meta">Section heads</span>
+        <span class="tk-meta">px / lh / ls</span>
+      </div>
+      <div class="tk-row">
+        <span class="tk-name"><span class="strong">--fs-body</span></span>
+        <span class="tk-sample" style="font-family:var(--ff-ui);font-size:15px">15 / 1.5 / −0.005em</span>
+        <span class="tk-meta">Default copy</span>
+        <span class="tk-meta">px / lh / ls</span>
+      </div>
+      <div class="tk-row">
+        <span class="tk-name"><span class="strong">--fs-kicker</span></span>
+        <span class="tk-sample" style="font-family:var(--ff-mono);font-size:14px;letter-spacing:0.14em;text-transform:uppercase">11 / 1.4 / 0.14em</span>
+        <span class="tk-meta">Mono labels</span>
+        <span class="tk-meta">px / lh / ls</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- IN CONTEXT -->
+  <section style="border-bottom:none">
+    <div class="kicker">07 · In context</div>
+    <h2 class="section-title">Pairing in the wild.</h2>
+    <p class="lede-2">What it looks like when all three families show up at the same time.</p>
+
+    <div class="pairing">
+      <div class="pairing-grid">
+        <div>
+          <div class="pair-eyebrow">02 · spriedums</div>
+          <div class="pair-head">BMW 118i ir lētāks par X1.</div>
+          <p class="pair-body">Salīdzinot 5 gados ar 15 000 km/g, 118i izmaksā €487/mēn pret X1 €631/mēn. Galvenā starpība — mazāka amortizācija un zemāka KASKO bāze.</p>
+        </div>
+        <div class="pair-stat">
+          <div class="l">Ietaupījums · 5 gadi</div>
+          <div class="v win">€8 640</div>
+          <div class="s">€144 starpība katru mēnesi · 60 mēneši kopā</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>HonestCost · Brand Foundations</span>
+    <span>01 — Typography</span>
+    <span>v1.0 · 2026</span>
+  </footer>
+
+</div>
+</body>
+</html>

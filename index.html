@@ -1,41 +1,23 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="lv">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1100">
-
-<!-- ── PRIMARY SEO ─────────────────────────────────────────── -->
-<title>HonestCost — Salīdzini divu jaunu auto pilnās izmaksas mēnesī | Latvija</title>
-<meta name="description" content="Ievadi divus automobiļus un uzzini, kurš faktiski ir lētāks — ieskaitot amortizāciju, KASKO, riepas, apkopi un transporta nodokli. Bezmaksas kalkulators Latvijas tirgum 2026.">
-<meta name="keywords" content="auto izmaksu kalkulators, TCO kalkulators Latvija, automobiļa pilnās izmaksas, KASKO, leasing kalkulators, VW Golf izmaksas, BMW izmaksas, elektroauto izmaksas Latvija">
-<meta name="author" content="HonestCost">
-<link rel="canonical" href="https://honestcost.lv">
-
-<!-- ── OPEN GRAPH (Facebook, LinkedIn, WhatsApp) ───────────── -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://honestcost.lv">
-<meta property="og:title" content="HonestCost — Reālās auto izmaksas mēnesī">
-<meta property="og:description" content="Ne tikai cena. Amortizācija, KASKO, riepas, apkope, nodokļi — viss vienā mēneša skaitlī. Bezmaksas. Latvijas tirgum.">
-<meta property="og:image" content="https://honestcost.lv/og.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:locale" content="lv_LV">
-<meta property="og:site_name" content="HonestCost">
-
-<!-- ── TWITTER CARD ────────────────────────────────────────── -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="HonestCost — Reālās auto izmaksas mēnesī">
-<meta name="twitter:description" content="Ne tikai cena. Amortizācija, KASKO, riepas, apkope, nodokļi — viss vienā mēneša skaitlī.">
-<meta name="twitter:image" content="https://honestcost.lv/og.png">
-
-<!-- ── TECHNICAL ───────────────────────────────────────────── -->
-<meta name="robots" content="index, follow">
-<meta name="theme-color" content="#3344F0">
-
+<title>HonestCost — Pilnās automobiļa izmaksas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&amp;family=Barlow+Condensed:wght@400;500;600;700&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<!-- ─── Analytics · Plausible (privacy-first, no cookies) ─── -->
+<script defer data-domain="honestcost.lv" src="https://plausible.io/js/script.js"></script>
+
+<!-- ─── EmailJS · used by the "save my comparison" form ─── -->
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+
+<!-- ─── 376-car database · populates the car picker dropdowns ─── -->
+<script src="car-db.js"></script>
+
 <style>
 :root {
   --ink: #16181D;
@@ -125,13 +107,6 @@ button { font-family: inherit; cursor: pointer; }
 }
 .site-tagline { font-size: 13px; color: var(--ink-3); margin-top: 4px; }
 .nav-right { display: flex; align-items: center; gap: 10px; }
-.proof-pill {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px 13px; border-radius: 999px;
-  background: var(--win-soft); color: var(--win);
-  font-size: 12px; font-weight: 600; white-space: nowrap;
-}
-.proof-pill svg { opacity: 0.8; }
 .lang-pill {
   padding: 8px 14px; border-radius: 999px; background: var(--bg);
   font-size: 13px; color: var(--ink-2); font-weight: 500;
@@ -544,210 +519,120 @@ select { cursor: pointer; }
   margin-top: 28px; padding: 0 32px;
 }
 
-/* ── CAR SEARCH DB ─────────────────────────────────────── */
-.car-search-wrap { position: relative; margin-bottom: 14px; }
-.car-search-input {
-  width: 100%; box-sizing: border-box;
-  height: 40px; padding: 0 12px 0 36px;
-  border: 1.5px solid var(--line-2); border-radius: 8px;
-  background: var(--surface-alt); font-family: var(--ff-ui);
-  font-size: 14px; color: var(--ink);
-  transition: border-color .15s, background .15s;
+/* ═══════════════════════════════════════════════════════════════
+   CAR PICKER · searchable dropdown that pulls from window.CAR_DB
+   Lives inside the form (one per side A / B). Opens on click,
+   filters as you type, applies the selected car to all fields.
+   ═══════════════════════════════════════════════════════════════ */
+.car-picker { position: relative; margin-bottom: 14px; }
+.car-picker-btn {
+  width: 100%; padding: 10px 14px;
+  border: 1px dashed var(--accent); background: var(--accent-soft);
+  color: var(--accent); border-radius: 12px;
+  font-family: var(--ff-ui); font-size: 13px; font-weight: 500;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background .15s;
 }
-.car-search-input:focus { border-color: var(--accent); background: var(--surface); outline: none; }
-.car-search-icon {
-  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
-  color: var(--ink-3); pointer-events: none;
+.car-picker-btn:hover { background: rgba(51,68,240,.12); }
+.car-picker-dropdown {
+  display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 12px 32px -8px rgba(20,22,28,.18); padding: 8px;
+  z-index: 20; max-height: 380px;
 }
-.car-search-dropdown {
-  position: absolute; top: calc(100% + 4px); left: 0; right: 0;
-  background: var(--surface); border: 1.5px solid var(--line-2);
-  border-radius: 10px; box-shadow: var(--shadow-2);
-  z-index: 200; display: none; max-height: 300px; overflow-y: auto;
+.car-picker-dropdown.open { display: block; }
+.car-picker-search {
+  width: 100%; padding: 9px 12px;
+  border: 1px solid var(--line-2); border-radius: 8px;
+  font-family: var(--ff-ui); font-size: 13px;
+  background: var(--surface-alt); color: var(--ink); margin-bottom: 6px;
 }
-.car-search-dropdown.open { display: block; }
-.car-search-item {
-  padding: 9px 12px; cursor: pointer;
-  display: flex; align-items: center; gap: 8px;
-  border-bottom: 1px solid var(--line); font-size: 13px;
+.car-picker-search:focus { outline: none; border-color: var(--accent); }
+.car-picker-list { max-height: 300px; overflow-y: auto; }
+.car-picker-row {
+  padding: 7px 10px; border-radius: 6px; font-size: 13px; cursor: pointer;
+  display: flex; justify-content: space-between; gap: 8px; align-items: center;
 }
-.car-search-item:last-child { border-bottom: none; }
-.car-search-item:hover, .car-search-item.focused { background: var(--surface-alt); }
-.csi-brand { font-weight: 600; color: var(--ink); min-width: 90px; }
-.csi-model { color: var(--ink-2); flex: 1; }
-.csi-badge {
-  font-size: 11px; font-weight: 500; padding: 2px 7px;
-  border-radius: 4px; background: var(--accent-soft);
-  color: var(--accent); white-space: nowrap;
-}
-.csi-price {
-  font-family: var(--ff-mono); font-size: 12px;
-  color: var(--ink-3); white-space: nowrap;
-}
-.car-search-no-results { padding: 12px 14px; color: var(--ink-3); font-size: 13px; }
-.photo-box.loading::after {
-  content: 'Ielādē foto…'; position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; color: var(--ink-3); background: var(--surface-alt);
-  border-radius: inherit;
-}
+.car-picker-row:hover { background: var(--accent-soft); }
+.car-picker-row .name { color: var(--ink); }
+.car-picker-row .meta { font-family: var(--ff-mono); font-size: 11px; color: var(--ink-3); white-space: nowrap; }
+.car-picker-empty { padding: 14px; text-align: center; color: var(--ink-3); font-size: 12px; }
 
-/* ── AFFILIATE LINKS STRIP ─────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════
+   REVENUE LAYER · affiliate strip / email capture / trust section
+   All sit below the comparison result. No nudging above the fold.
+   ═══════════════════════════════════════════════════════════════ */
+.rev-section { max-width: 1040px; margin: 36px auto 0; padding: 0 28px; }
+
 .aff-strip {
-  margin: 24px 0 8px;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 18px 24px;
-  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  background: var(--surface); border-radius: 18px;
+  box-shadow: 0 1px 2px rgba(20,22,28,.04), 0 8px 24px -8px rgba(20,22,28,.08);
+  padding: 22px 26px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
 }
-.aff-strip-label {
-  font-size: 12px; font-weight: 600; color: var(--ink-3);
-  letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap;
-  flex-shrink: 0;
+.aff-cta {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 16px; background: var(--surface-alt); border-radius: 12px;
+  text-decoration: none; color: var(--ink);
+  transition: background .15s, transform .12s;
 }
-.aff-links { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-.aff-link {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 7px 14px; border-radius: 8px;
-  background: var(--surface-alt); border: 1.5px solid var(--line-2);
-  font-size: 13px; font-weight: 500; color: var(--ink);
-  text-decoration: none; transition: border-color .15s, background .15s;
-  white-space: nowrap;
-}
-.aff-link:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
-.aff-link svg { flex-shrink: 0; opacity: 0.6; }
-.aff-divider { width: 1px; height: 24px; background: var(--line-2); flex-shrink: 0; }
+.aff-cta:hover { background: var(--accent-soft); transform: translateY(-1px); }
+.aff-lbl { font-family: var(--ff-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+.aff-line { font-size: 14px; color: var(--ink); font-weight: 500; }
+.aff-line::after { content: ' →'; color: var(--accent); margin-left: 4px; }
 
-/* ── METHODOLOGY / TRUST SECTION ──────────────────────────── */
-.trust-section {
-  margin: 12px 0 20px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  overflow: hidden;
-  background: var(--surface);
+.email-cap {
+  background: var(--surface); border-radius: 18px;
+  box-shadow: 0 1px 2px rgba(20,22,28,.04), 0 8px 24px -8px rgba(20,22,28,.08);
+  padding: 22px 26px; margin-top: 16px;
 }
-.trust-toggle {
-  width: 100%; display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 22px; background: none; border: none;
-  font-family: var(--ff-ui); font-size: 13px; font-weight: 600;
-  color: var(--ink-2); cursor: pointer; text-align: left;
-  transition: color .15s;
+.email-cap h4 { font-family: var(--ff-display); font-size: 22px; font-weight: 600; margin-bottom: 4px; line-height: 1.1; }
+.email-cap p  { font-size: 13px; color: var(--ink-3); margin-bottom: 12px; }
+.email-cap form { display: flex; gap: 8px; }
+.email-cap input {
+  flex: 1; border: 1px solid var(--line-2); border-radius: 10px;
+  padding: 10px 14px; font-family: var(--ff-ui); font-size: 14px;
+  background: var(--surface-alt); color: var(--ink);
 }
-.trust-toggle:hover { color: var(--ink); }
-.trust-toggle-icon {
-  transition: transform .2s; flex-shrink: 0;
-  color: var(--ink-3);
+.email-cap input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+.email-cap button {
+  background: var(--ink); color: #fff; border: none;
+  padding: 10px 18px; border-radius: 10px;
+  font-family: var(--ff-ui); font-weight: 500; font-size: 14px; cursor: pointer;
+  transition: background .15s;
 }
-.trust-section.open .trust-toggle-icon { transform: rotate(180deg); }
-.trust-body {
-  display: none; padding: 0 22px 20px;
-  border-top: 1px solid var(--line);
+.email-cap button:hover { background: #000; }
+.email-cap .status { font-size: 12px; color: #11A05F; margin-top: 8px; min-height: 14px; }
+
+.trust {
+  background: var(--surface); border-radius: 18px; margin-top: 16px;
+  box-shadow: 0 1px 2px rgba(20,22,28,.04), 0 8px 24px -8px rgba(20,22,28,.08);
 }
-.trust-section.open .trust-body { display: block; }
-.trust-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-  margin-top: 18px;
+.trust summary {
+  padding: 18px 26px; cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  list-style: none;
+  font-family: var(--ff-display); font-size: 22px; font-weight: 600; color: var(--ink);
 }
-.trust-item { display: flex; flex-direction: column; gap: 4px; }
-.trust-item-label {
-  font-size: 11px; font-weight: 600; color: var(--ink-3);
-  letter-spacing: 0.05em; text-transform: uppercase;
+.trust summary::-webkit-details-marker { display: none; }
+.trust summary .chev { color: var(--ink-3); font-family: var(--ff-mono); font-size: 13px; }
+.trust[open] summary .chev { color: var(--accent); }
+.trust-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; padding: 0 26px 22px; }
+.trust-item h5 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.trust-item p  { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; margin-bottom: 6px; }
+.trust-item .src { font-family: var(--ff-mono); font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.04em; }
+.trust-item .src a { color: var(--accent); text-decoration: none; }
+.trust-foot {
+  padding: 14px 26px 20px; font-size: 12px; color: var(--ink-3);
+  border-top: 1px solid var(--line); font-family: var(--ff-mono);
 }
-.trust-item-desc { font-size: 13px; color: var(--ink-2); line-height: 1.55; }
-.trust-item-source {
-  font-size: 11px; color: var(--ink-3);
-  display: inline-flex; align-items: center; gap: 4px; margin-top: 2px;
-}
-.trust-item-source a { color: var(--accent); text-decoration: none; }
-.trust-item-source a:hover { text-decoration: underline; }
-.trust-updated {
-  margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line);
-  font-size: 11px; color: var(--ink-3);
+.trust-foot a { color: var(--accent); text-decoration: none; }
+
+@media (max-width: 768px) {
+  .aff-strip  { grid-template-columns: 1fr; }
+  .trust-grid { grid-template-columns: 1fr; }
 }
 </style>
-
-<!-- ── STRUCTURED DATA ─────────────────────────────────────── -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebApplication",
-      "name": "HonestCost",
-      "url": "https://honestcost.lv",
-      "description": "Bezmaksas automobiļa kopējo izmaksu (TCO) kalkulators Latvijas tirgum. Salīdzini divus jaunus automobiļus pēc visām izmaksām — amortizācija, KASKO, riepas, apkope, transporta nodoklis.",
-      "applicationCategory": "FinanceApplication",
-      "operatingSystem": "Web",
-      "browserRequirements": "Requires JavaScript",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "EUR"
-      },
-      "inLanguage": "lv",
-      "publisher": {
-        "@type": "Organization",
-        "name": "HonestCost",
-        "url": "https://honestcost.lv"
-      }
-    },
-    {
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Kā tiek aprēķināta automobiļa amortizācija?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "HonestCost izmanto salikto procentu amortizācijas modeli, kurā katrs gads piemēro noteiktu vērtības krituma procentu iepriekšējā gada atlikušajai vērtībai. Piemēram, ekonomiskās klases automobilim pirmajā gadā vērtība krīt par 20%, otrajā — par 15%, utt. Elektroautomobiļiem pirmā gada vērtības kritums ir lielāks (30%), jo tirgus ātri mainās."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Vai kalkulators ņem vērā Latvijas transporta nodokli?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Jā. HonestCost izmanto aktuālo Transportlīdzekļa ekspluatācijas nodokļa likmi, kas stājās spēkā 01.01.2025. Nodoklis tiek aprēķināts pēc automobiļa WLTP CO2 emisijām (g/km) atbilstoši 14 pakāpju tabulai — no 0 €/gadā (≤50 g/km) līdz 285 €/gadā (>250 g/km)."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Ko nozīmē 'mēneša izmaksas' šajā kalkulatorā?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Mēneša izmaksas ir visu automobiļa turēšanas izdevumu summa, dalīta ar īpašumtiesību mēnešu skaitu. Tās ietver: ikmēneša lēzinga vai kredīta maksājumu, KASKO apdrošināšanu (aprēķināta uz atlikušo tirgus vērtību), OCTA apdrošināšanu, degvielas vai elektrības izmaksas, ikgadējo apkopi, riepu nomaiņu, remonta rezervi, transporta nodokli un stāvvietas/mazgāšanas izmaksas."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Kā tiek aprēķinātas elektroauto uzlādes izmaksas?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Elektroauto uzlādes izmaksas aprēķina, ņemot vērā WLTP enerģijas patēriņu (kWh/100 km), mājas uzlādes īpatsvaru (noklusējums 66%) un faktisko braukšanas intensitāti. Mājas uzlādes tarifs ir 0,18 €/kWh, publiskās uzlādes tarifs — 0,38 €/kWh. Šīs vērtības var mainīt kalkulatorā."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Vai KASKO apdrošināšanas izmaksas ir precīzas?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "KASKO izmaksas tiek aprēķinātas kā procentuāla daļa no automobiļa atlikušās tirgus vērtības katru gadu. Noklusējums ir 2,5% gadā, kas atbilst vidējam KASKO tarifam pieredzējušam vadītājam Latvijā. KASKO tarifs var atšķirties atkarībā no vadītāja pieredzes, vecuma un apdrošinātāja — ievadiet savu faktisko tarifa likmi precīzākam rezultātam."
-          }
-        },
-        {
-          "@type": "Question",
-          "name": "Ko nozīmē 'remonta rezerve' kalkulatorā?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Remonta rezerve ir aprēķinātās vidējās izmaksas neparedzētiem remontiem ārpus garantijas un apkopes. Tā balstīta uz Latvijas autoservisiem pielāgotiem datiem un pieaug atkarībā no automobiļa klases un riska līmeņa. Ekonomiskās klases automobilim vidēja riska kategorijā tā ir aptuveni 350 €/gadā, premium SUV ar augstu risku — līdz 1500 €/gadā."
-          }
-        }
-      ]
-    }
-  ]
-}
-</script>
 </head>
 <body>
 <div class="page-wrapper">
@@ -762,18 +647,14 @@ select { cursor: pointer; }
     <div class="site-tagline">Salīdzini divu jaunu automobiļu pilnās izmaksas — ne tikai cenu</div>
   </div>
   <div class="nav-right">
-    <span class="proof-pill">
-      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      Jau <strong style="margin:0 2px;">2 847</strong> salīdzinājumi
-    </span>
     <button class="btn-example" id="exampleBtn">
       <i data-lucide="zap" style="width:14px;height:14px;"></i>
       Ielādēt piemēru
     </button>
     <span class="lang-pill">LV</span>
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Mainīt tēmu">
-      <svg class="moon" viewbox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-      <svg class="sun" viewbox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4l1.4-1.4M17 7l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4l1.4-1.4M17 7l1.4-1.4"/></svg>
     </button>
   </div>
 </header>
@@ -822,7 +703,8 @@ select { cursor: pointer; }
     <div class="body">
       <div class="g-section-label">Finansēšana</div>
       <div class="toggle-group">
-        <button class="toggle-btn on" data-fin="leasing">Līzings</button>
+        <button class="toggle-btn on" data-fin="leasing">Finanšu</button>
+        <button class="toggle-btn" data-fin="op_leasing">Operatīvais</button>
         <button class="toggle-btn" data-fin="cash">Skaidra</button>
       </div>
     </div>
@@ -884,6 +766,17 @@ select { cursor: pointer; }
         <span>Foto priekšskatījums</span>
         <img id="phImgA" alt="">
       </div>
+      <!-- CAR PICKER A · click to search the 376-car database -->
+      <div class="car-picker">
+        <button type="button" class="car-picker-btn" id="carPickerBtnA">
+          <i data-lucide="search" style="width:14px;height:14px;"></i>
+          Izvēlēties no datubāzes (376 auto)
+        </button>
+        <div class="car-picker-dropdown" id="carPickerDropA">
+          <input type="text" class="car-picker-search" id="carPickerInputA" placeholder="Meklē: tesla, golf, ioniq…" autocomplete="off">
+          <div class="car-picker-list" id="carPickerListA"></div>
+        </div>
+      </div>
       <div class="field-group">
         <div class="field-label">Auto nosaukums *</div>
         <input type="text" id="nameA" placeholder="piem. BMW 1. sērija 118i M Sport">
@@ -909,7 +802,7 @@ select { cursor: pointer; }
           </div>
           <select id="depCatA">
             <option value="economy">Ekonom klase</option>
-            <option value="mid" selected="">Vidējā klase</option>
+            <option value="mid" selected>Vidējā klase</option>
             <option value="premium">Premium</option>
             <option value="suv_mid">SUV vidējā</option>
             <option value="premium_suv">Premium SUV</option>
@@ -924,8 +817,8 @@ select { cursor: pointer; }
       <div class="sec-title"><i data-lucide="fuel" style="width:11px;height:11px;"></i> Dzinējs</div>
       <div class="field-group">
         <div class="field-label">Degvielas tips *</div>
-        <select id="ftA" onchange="onFuelChange(&#39;A&#39;)">
-          <option value="petrol" selected="">Benzīns</option>
+        <select id="ftA" onchange="onFuelChange('A')">
+          <option value="petrol" selected>Benzīns</option>
           <option value="diesel">Dīzelis</option>
           <option value="mild_hybrid">Viegls hibrīds (MHEV)</option>
           <option value="phev">Spraudņa hibrīds (PHEV)</option>
@@ -950,7 +843,7 @@ select { cursor: pointer; }
         <div class="field-label">Tilpums (cc) *
           <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">OCTA aprēķinam. EV — ievadiet 0.</span></span>
         </div>
-        <input type="number" id="ccA" placeholder="1499" min="0" max="8000" oninput="autoOCTA(&#39;A&#39;)">
+        <input type="number" id="ccA" placeholder="1499" min="0" max="8000" oninput="autoOCTA('A')">
       </div>
 
       <div class="phev-f" id="phevA">
@@ -967,14 +860,14 @@ select { cursor: pointer; }
         <div class="slider-field">
           <div class="field-label">El. braukšanas daļa %</div>
           <div class="slider-row"><span class="range-hint">0%</span><span class="slider-value" id="phevShareDispA">60%</span><span class="range-hint">100%</span></div>
-          <input type="range" id="phevShareA" min="0" max="100" value="60" step="5" oninput="document.getElementById(&#39;phevShareDispA&#39;).textContent=this.value+&#39;%&#39;">
+          <input type="range" id="phevShareA" min="0" max="100" value="60" step="5" oninput="document.getElementById('phevShareDispA').textContent=this.value+'%'">
         </div>
       </div>
       <div class="ev-f" id="evA">
         <div class="slider-field">
           <div class="field-label">Mājas uzlāde %</div>
-          <div class="slider-row"><span class="range-hint">0%</span><span class="slider-value" id="evHomeDispA">66%</span><span class="range-hint">100%</span></div>
-          <input type="range" id="evHomeA" min="0" max="100" value="66" step="5" oninput="document.getElementById(&#39;evHomeDispA&#39;).textContent=this.value+&#39;%&#39;">
+          <div class="slider-row"><span class="range-hint">0%</span><span class="slider-value" id="evHomeDispA">70%</span><span class="range-hint">100%</span></div>
+          <input type="range" id="evHomeA" min="0" max="100" value="70" step="5" oninput="document.getElementById('evHomeDispA').textContent=this.value+'%'">
         </div>
       </div>
     </div>
@@ -988,7 +881,7 @@ select { cursor: pointer; }
         <input type="number" id="wA" value="3" min="1" max="7">
       </div>
       <label class="check-row">
-        <input type="checkbox" id="ewTogA" onchange="toggleEW(&#39;A&#39;)">
+        <input type="checkbox" id="ewTogA" onchange="toggleEW('A')">
         <span>Papildu garantija</span>
         <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Maksas papildu garantija — pagarina segumu pēc standarta perioda.</span></span>
       </label>
@@ -1037,9 +930,9 @@ select { cursor: pointer; }
           <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Aprēķina kā % no pašreizējās vērtības — katru gadu samazinās.</span></span>
         </div>
         <div class="tier-group" id="kaskoA">
-          <button class="tier-btn" onclick="setTier(&#39;kaskoA&#39;,&#39;1.8&#39;,this)">Pamata 1.8%</button>
-          <button class="tier-btn on" onclick="setTier(&#39;kaskoA&#39;,&#39;2.5&#39;,this)">Standarta 2.5%</button>
-          <button class="tier-btn" onclick="setTier(&#39;kaskoA&#39;,&#39;3.5&#39;,this)">Pilnā 3.5%</button>
+          <button class="tier-btn" onclick="setTier('kaskoA','1.8',this)">Pamata 1.8%</button>
+          <button class="tier-btn on" onclick="setTier('kaskoA','2.5',this)">Standarta 2.5%</button>
+          <button class="tier-btn" onclick="setTier('kaskoA','3.5',this)">Pilnā 3.5%</button>
         </div>
       </div>
     </div>
@@ -1051,10 +944,10 @@ select { cursor: pointer; }
           <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Gada riepu izmaksas (komplekts + maiņa).</span></span>
         </div>
         <div class="tier-group" id="tyreA">
-          <button class="tier-btn" onclick="setTier(&#39;tyreA&#39;,&#39;small&#39;,this)">≤16″ · 325€/g</button>
-          <button class="tier-btn on" onclick="setTier(&#39;tyreA&#39;,&#39;mid&#39;,this)">17″ · 390€/g</button>
-          <button class="tier-btn" onclick="setTier(&#39;tyreA&#39;,&#39;large&#39;,this)">18-19″ · 450€/g</button>
-          <button class="tier-btn" onclick="setTier(&#39;tyreA&#39;,&#39;suv&#39;,this)">20″+ · 555€/g</button>
+          <button class="tier-btn" onclick="setTier('tyreA','small',this)">≤16″ · 325€/g</button>
+          <button class="tier-btn on" onclick="setTier('tyreA','mid',this)">17″ · 390€/g</button>
+          <button class="tier-btn" onclick="setTier('tyreA','large',this)">18-19″ · 503€/g</button>
+          <button class="tier-btn" onclick="setTier('tyreA','suv',this)">20″+ · 675€/g</button>
         </div>
       </div>
     </div>
@@ -1066,15 +959,15 @@ select { cursor: pointer; }
           <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Budžets neparedzētiem remontiem PĒC garantijas.</span></span>
         </div>
         <div class="tier-group" id="repairA">
-          <button class="tier-btn" onclick="setTier(&#39;repairA&#39;,&#39;low&#39;,this)">Zems</button>
-          <button class="tier-btn on" onclick="setTier(&#39;repairA&#39;,&#39;med&#39;,this)">Vidējs</button>
-          <button class="tier-btn" onclick="setTier(&#39;repairA&#39;,&#39;high&#39;,this)">Augsts</button>
+          <button class="tier-btn" onclick="setTier('repairA','low',this)">Zems</button>
+          <button class="tier-btn on" onclick="setTier('repairA','med',this)">Vidējs</button>
+          <button class="tier-btn" onclick="setTier('repairA','high',this)">Augsts</button>
         </div>
       </div>
     </div>
 
     <div class="sec">
-      <button class="more-btn" onclick="toggleMore(&#39;A&#39;)">
+      <button class="more-btn" onclick="toggleMore('A')">
         <i data-lucide="chevron-down" id="mchA" class="chevron" style="width:13px;height:13px;"></i>
         Papildu izmaksas
       </button>
@@ -1121,6 +1014,17 @@ select { cursor: pointer; }
         <span>Foto priekšskatījums</span>
         <img id="phImgB" alt="">
       </div>
+      <!-- CAR PICKER B · click to search the 376-car database -->
+      <div class="car-picker">
+        <button type="button" class="car-picker-btn" id="carPickerBtnB">
+          <i data-lucide="search" style="width:14px;height:14px;"></i>
+          Izvēlēties no datubāzes (376 auto)
+        </button>
+        <div class="car-picker-dropdown" id="carPickerDropB">
+          <input type="text" class="car-picker-search" id="carPickerInputB" placeholder="Meklē: tesla, golf, ioniq…" autocomplete="off">
+          <div class="car-picker-list" id="carPickerListB"></div>
+        </div>
+      </div>
       <div class="field-group">
         <div class="field-label">Auto nosaukums *</div>
         <input type="text" id="nameB" placeholder="piem. BMW X1 xDrive20i M Sport">
@@ -1145,7 +1049,7 @@ select { cursor: pointer; }
             <option value="mid">Vidējā klase</option>
             <option value="premium">Premium</option>
             <option value="suv_mid">SUV vidējā</option>
-            <option value="premium_suv" selected="">Premium SUV</option>
+            <option value="premium_suv" selected>Premium SUV</option>
             <option value="ev">Elektriskais</option>
             <option value="phev">PHEV hibrīds</option>
           </select>
@@ -1157,8 +1061,8 @@ select { cursor: pointer; }
       <div class="sec-title"><i data-lucide="fuel" style="width:11px;height:11px;"></i> Dzinējs</div>
       <div class="field-group">
         <div class="field-label">Degvielas tips *</div>
-        <select id="ftB" onchange="onFuelChange(&#39;B&#39;)">
-          <option value="petrol" selected="">Benzīns</option>
+        <select id="ftB" onchange="onFuelChange('B')">
+          <option value="petrol" selected>Benzīns</option>
           <option value="diesel">Dīzelis</option>
           <option value="mild_hybrid">Viegls hibrīds (MHEV)</option>
           <option value="phev">Spraudņa hibrīds (PHEV)</option>
@@ -1177,7 +1081,7 @@ select { cursor: pointer; }
       </div>
       <div class="field-group">
         <div class="field-label">Tilpums (cc) *</div>
-        <input type="number" id="ccB" placeholder="1998" min="0" max="8000" oninput="autoOCTA(&#39;B&#39;)">
+        <input type="number" id="ccB" placeholder="1998" min="0" max="8000" oninput="autoOCTA('B')">
       </div>
       <div class="phev-f" id="phevB">
         <div class="field-row">
@@ -1193,14 +1097,14 @@ select { cursor: pointer; }
         <div class="slider-field">
           <div class="field-label">El. braukšanas daļa %</div>
           <div class="slider-row"><span class="range-hint">0%</span><span class="slider-value" id="phevShareDispB">60%</span><span class="range-hint">100%</span></div>
-          <input type="range" id="phevShareB" min="0" max="100" value="60" step="5" oninput="document.getElementById(&#39;phevShareDispB&#39;).textContent=this.value+&#39;%&#39;">
+          <input type="range" id="phevShareB" min="0" max="100" value="60" step="5" oninput="document.getElementById('phevShareDispB').textContent=this.value+'%'">
         </div>
       </div>
       <div class="ev-f" id="evB">
         <div class="slider-field">
           <div class="field-label">Mājas uzlāde %</div>
-          <div class="slider-row"><span class="range-hint">0%</span><span class="slider-value" id="evHomeDispB">66%</span><span class="range-hint">100%</span></div>
-          <input type="range" id="evHomeB" min="0" max="100" value="66" step="5" oninput="document.getElementById(&#39;evHomeDispB&#39;).textContent=this.value+&#39;%&#39;">
+          <div class="slider-row"><span class="range-hint">0%</span><span class="slider-value" id="evHomeDispB">70%</span><span class="range-hint">100%</span></div>
+          <input type="range" id="evHomeB" min="0" max="100" value="70" step="5" oninput="document.getElementById('evHomeDispB').textContent=this.value+'%'">
         </div>
       </div>
     </div>
@@ -1212,7 +1116,7 @@ select { cursor: pointer; }
         <input type="number" id="wB" value="3" min="1" max="7">
       </div>
       <label class="check-row">
-        <input type="checkbox" id="ewTogB" onchange="toggleEW(&#39;B&#39;)">
+        <input type="checkbox" id="ewTogB" onchange="toggleEW('B')">
         <span>Papildu garantija</span>
       </label>
       <div class="ext-w-f" id="ewB">
@@ -1252,9 +1156,9 @@ select { cursor: pointer; }
       <div class="field-group">
         <div class="field-label">KASKO līmenis</div>
         <div class="tier-group" id="kaskoB">
-          <button class="tier-btn" onclick="setTier(&#39;kaskoB&#39;,&#39;1.8&#39;,this)">Pamata 1.8%</button>
-          <button class="tier-btn on" onclick="setTier(&#39;kaskoB&#39;,&#39;2.5&#39;,this)">Standarta 2.5%</button>
-          <button class="tier-btn" onclick="setTier(&#39;kaskoB&#39;,&#39;3.5&#39;,this)">Pilnā 3.5%</button>
+          <button class="tier-btn" onclick="setTier('kaskoB','1.8',this)">Pamata 1.8%</button>
+          <button class="tier-btn on" onclick="setTier('kaskoB','2.5',this)">Standarta 2.5%</button>
+          <button class="tier-btn" onclick="setTier('kaskoB','3.5',this)">Pilnā 3.5%</button>
         </div>
       </div>
     </div>
@@ -1264,10 +1168,10 @@ select { cursor: pointer; }
       <div class="field-group">
         <div class="field-label">Kategorija *</div>
         <div class="tier-group" id="tyreB">
-          <button class="tier-btn" onclick="setTier(&#39;tyreB&#39;,&#39;small&#39;,this)">≤16″ · 325€/g</button>
-          <button class="tier-btn" onclick="setTier(&#39;tyreB&#39;,&#39;mid&#39;,this)">17″ · 390€/g</button>
-          <button class="tier-btn on" onclick="setTier(&#39;tyreB&#39;,&#39;large&#39;,this)">18-19″ · 450€/g</button>
-          <button class="tier-btn" onclick="setTier(&#39;tyreB&#39;,&#39;suv&#39;,this)">20″+ · 555€/g</button>
+          <button class="tier-btn" onclick="setTier('tyreB','small',this)">≤16″ · 325€/g</button>
+          <button class="tier-btn" onclick="setTier('tyreB','mid',this)">17″ · 390€/g</button>
+          <button class="tier-btn on" onclick="setTier('tyreB','large',this)">18-19″ · 503€/g</button>
+          <button class="tier-btn" onclick="setTier('tyreB','suv',this)">20″+ · 675€/g</button>
         </div>
       </div>
     </div>
@@ -1277,15 +1181,15 @@ select { cursor: pointer; }
       <div class="field-group">
         <div class="field-label">Riska līmenis *</div>
         <div class="tier-group" id="repairB">
-          <button class="tier-btn" onclick="setTier(&#39;repairB&#39;,&#39;low&#39;,this)">Zems</button>
-          <button class="tier-btn on" onclick="setTier(&#39;repairB&#39;,&#39;med&#39;,this)">Vidējs</button>
-          <button class="tier-btn" onclick="setTier(&#39;repairB&#39;,&#39;high&#39;,this)">Augsts</button>
+          <button class="tier-btn" onclick="setTier('repairB','low',this)">Zems</button>
+          <button class="tier-btn on" onclick="setTier('repairB','med',this)">Vidējs</button>
+          <button class="tier-btn" onclick="setTier('repairB','high',this)">Augsts</button>
         </div>
       </div>
     </div>
 
     <div class="sec">
-      <button class="more-btn" onclick="toggleMore(&#39;B&#39;)">
+      <button class="more-btn" onclick="toggleMore('B')">
         <i data-lucide="chevron-down" id="mchB" class="chevron" style="width:13px;height:13px;"></i>
         Papildu izmaksas
       </button>
@@ -1332,10 +1236,7 @@ select { cursor: pointer; }
       Rediģēt
     </button>
     <div class="logo-mark">Honest<span class="logo-dot"></span>Cost</div>
-    <a class="btn-ghost" href="mailto:info@honestcost.lv?subject=Neprecizit%C4%81te%20kalkulatorā&body=Labrīt%2C%0A%0AAtklāju%20iespējamu%20neprecizitāti%3A%0A%0A" style="font-size:12px;text-decoration:none;color:var(--ink-3);display:inline-flex;align-items:center;gap:6px;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      Pamanīji kļūdu?
-    </a>
+    <div style="width:90px;"></div>
   </div>
 
   <div class="adj-bar">
@@ -1364,120 +1265,101 @@ select { cursor: pointer; }
   <div class="two-col" id="resGrid"></div>
   <div class="comp-bar" id="compBar"></div>
 
-  <!-- ── AFFILIATE LINKS STRIP ──────────────────────────────── -->
-  <div class="aff-strip">
-    <span class="aff-strip-label">Nākamais solis</span>
-    <div class="aff-links">
-      <a class="aff-link" href="https://www.octa24.lv/?utm_source=honestcost&utm_medium=referral&utm_campaign=octa_results" target="_blank" rel="noopener">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Salīdzini OCTA cenas
+  <!-- ─── AFFILIATE STRIP · monetization layer 1 ─── -->
+  <div class="rev-section">
+    <div class="aff-strip">
+      <a class="aff-cta" href="https://octa24.lv/?utm_source=honestcost&utm_medium=results&utm_campaign=octa_lookup"
+         target="_blank" rel="noopener sponsored"
+         onclick="plausible('affiliate_click',{props:{dest:'octa24'}})">
+        <span class="aff-lbl">OCTA · reālā cena</span>
+        <span class="aff-line">Salīdzini OCTA dažās minūtēs</span>
       </a>
-      <a class="aff-link" href="https://www.balta.lv/lv/auto-apdrosinasana?utm_source=honestcost&utm_medium=referral&utm_campaign=kasko_results" target="_blank" rel="noopener">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        KASKO — Balta
+      <a class="aff-cta" href="https://www.balta.lv/?utm_source=honestcost&utm_medium=results&utm_campaign=kasko"
+         target="_blank" rel="noopener sponsored"
+         onclick="plausible('affiliate_click',{props:{dest:'kasko_quote'}})">
+        <span class="aff-lbl">KASKO · 3 piedāvājumi</span>
+        <span class="aff-line">Saņem piedāvājumu</span>
       </a>
-      <a class="aff-link" href="https://www.ergo.lv/lv/apdrosinasana/auto/?utm_source=honestcost&utm_medium=referral&utm_campaign=kasko_results" target="_blank" rel="noopener">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        KASKO — ERGO
-      </a>
-      <a class="aff-link" href="https://www.bta.lv/lv/auto/?utm_source=honestcost&utm_medium=referral&utm_campaign=kasko_results" target="_blank" rel="noopener">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        KASKO — BTA
-      </a>
-    </div>
-    <div class="aff-divider"></div>
-    <div class="aff-links">
-      <a class="aff-link" id="affDealerA" href="https://honestcost.lv/?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator_a" target="_blank" rel="noopener" style="display:none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-        <span id="affDealerALabel">Konfigurēt pie dīlera</span>
-      </a>
-      <a class="aff-link" id="affDealerB" href="https://honestcost.lv/?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator_b" target="_blank" rel="noopener" style="display:none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-        <span id="affDealerBLabel">Konfigurēt pie dīlera</span>
+      <a class="aff-cta" href="#" id="affConfig" target="_blank" rel="noopener"
+         onclick="plausible('affiliate_click',{props:{dest:'configurator'}})">
+        <span class="aff-lbl">Konfigurātors</span>
+        <span class="aff-line">Atvērt pie dīlera</span>
       </a>
     </div>
-  </div>
 
-  <!-- ── METHODOLOGY / TRUST ────────────────────────────────── -->
-  <div class="trust-section" id="trustSection">
-    <button class="trust-toggle" onclick="document.getElementById('trustSection').classList.toggle('open')" type="button">
-      <span style="display:flex;align-items:center;gap:8px;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-        Kā mēs aprēķinām? — Datu avoti un metodoloģija
-      </span>
-      <svg class="trust-toggle-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-    <div class="trust-body">
+    <!-- ─── EMAIL CAPTURE ─── -->
+    <div class="email-cap">
+      <h4>Saglabā šo salīdzinājumu</h4>
+      <p>Atsūtām saiti uz e-pastu — vari atvērt vēlāk vai pārsūtīt partnerim.</p>
+      <form id="emailCapForm" onsubmit="sendCap(event)">
+        <input type="email" id="capEmail" placeholder="jusu@epasts.lv" required>
+        <button type="submit">Sūtīt</button>
+      </form>
+      <div class="status" id="emailCapStatus"></div>
+    </div>
+
+    <!-- ─── TRUST SECTION · "Kā mēs aprēķinām" ─── -->
+    <details class="trust" ontoggle="this.open && plausible('trust_opened')">
+      <summary>
+        <span>Kā mēs aprēķinām šos skaitļus</span>
+        <span class="chev">[+]</span>
+      </summary>
       <div class="trust-grid">
         <div class="trust-item">
-          <div class="trust-item-label">Amortizācija</div>
-          <div class="trust-item-desc">Salikto procentu modelis — katrs gads piemēro fiksētu vērtības krituma procentu no iepriekšējā gada tirgus vērtības. Likmes aprēķinātas pēc Latvijas lietoto auto cenu dinamikas 2020–2025.</div>
-          <span class="trust-item-source">
-            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            <a href="https://www.ss.lv/lv/transport/cars/" target="_blank" rel="noopener">ss.lv</a> · <a href="https://www.autopase.lv/" target="_blank" rel="noopener">autopase.lv</a> · tirgus analīze 2026
-          </span>
+          <h5>Līzings (finanšu)</h5>
+          <p>Standarta PMT formula ar atlikušo vērtību. Atlikušais maksā vai pārfinansē termiņa beigās.</p>
+          <div class="src">Avots: <a href="https://www.swedbank.lv/business/finance/leasing" target="_blank" rel="noopener">Swedbank līzinga kalkulators</a> · 2026-Q1</div>
         </div>
         <div class="trust-item">
-          <div class="trust-item-label">Transporta nodoklis (TEN)</div>
-          <div class="trust-item-desc">14 pakāpju WLTP CO₂ tabula saskaņā ar Latvijas Transportlīdzekļa ekspluatācijas nodokļa likumu, kas stājās spēkā 01.01.2025. Elektroauto (0 g/km) — 0 €/gadā.</div>
-          <span class="trust-item-source">
-            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            <a href="https://likumi.lv/ta/id/223536" target="_blank" rel="noopener">likumi.lv/ta/id/223536</a> · spēkā 01.01.2025
-          </span>
+          <h5>Līzings (operatīvais)</h5>
+          <p>Mēnesī = nolietojums + finansēšanas maksa. Termiņa beigās auto atdod lessoram (nepieder klientam).</p>
+          <div class="src">Avots: SEB / Citadele operatīvā līzinga produkti · 2026-Q1</div>
         </div>
         <div class="trust-item">
-          <div class="trust-item-label">KASKO apdrošināšana</div>
-          <div class="trust-item-desc">Aprēķināta kā procentuāla daļa no automobiļa atlikušās tirgus vērtības katru gadu (noklusējums 2,5%). Tarifs samazinās reāllaikā, jo vērtība krīt. Faktiskais tarifs var atšķirties — ievadiet savu.</div>
-          <span class="trust-item-source">
-            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            Balta, ERGO, BTA piedāvājumu analīze · Rīga 2026
-          </span>
+          <h5>KASKO</h5>
+          <p>Aprēķināts uz auto <em>atlikušo tirgus vērtību</em> katrā gadā, ne uz pirkuma cenu — tāpēc samazinās laikā.</p>
+          <div class="src">Avots: BALTA, ERGO, BTA tirgus likmes · 2026-Q1</div>
         </div>
         <div class="trust-item">
-          <div class="trust-item-label">OCTA apdrošināšana</div>
-          <div class="trust-item-desc">Noklusējuma novērtējums pieredzējušam vadītājam (5+ gadi bez avārijām, Rīga). Jauniem vadītājiem un pēc avārijām — ievērojami augstāks. Ievadiet savu faktisko OCTA cenu.</div>
-          <span class="trust-item-source">
-            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            <a href="https://www.octa24.lv/" target="_blank" rel="noopener">octa24.lv</a> · kalkulatora dati 2026
-          </span>
+          <h5>OCTA</h5>
+          <p>Aplēse pēc dzinēja tilpuma. <em>Pieredzējušam Rīgas vadītājam</em> (5+ gadi bez avārijām). Jauniem vadītājiem ievērojami augstāka.</p>
+          <div class="src">Avots: octa24.lv, LTAB tarifi · 2026</div>
         </div>
         <div class="trust-item">
-          <div class="trust-item-label">Riepas</div>
-          <div class="trust-item-desc">Gada riepu izmaksas ietver riepas komplektu un sezonālo nomaiņu 2× gadā. Cenas pēc 8 Rīgas autoservisiem: ≤16″ — 325 €/g, 17″ — 390 €/g, 18–19″ — 450 €/g, 20″+ — 555 €/g.</div>
-          <span class="trust-item-source">
-            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            autodoc.lv · 8 Rīgas autoservisi · 2026
-          </span>
+          <h5>Amortizācija</h5>
+          <p>5 segmenti ar atšķirīgām likmēm (economy / mid / premium / SUV / EV / PHEV). Salīdzināts ar ss.lv tirgus datiem.</p>
+          <div class="src">Avots: ss.lv resale data 24-mēnešu scrape · 2026</div>
         </div>
         <div class="trust-item">
-          <div class="trust-item-label">Degviela un elektrība</div>
-          <div class="trust-item-desc">Benzīns 1,75 €/L · Dīzelis 1,70 €/L · Mājas uzlāde 0,18 €/kWh · Publiskā uzlāde 0,38 €/kWh. EV noklusējums: 66% mājas uzlāde. Cenas mainās — ievadiet aktuālās.</div>
-          <span class="trust-item-source">
-            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            <a href="https://www.eleport.lv/" target="_blank" rel="noopener">Eleport</a> · <a href="https://www.circlek.lv/" target="_blank" rel="noopener">Circle K</a> · degvielas cenu monitorings 2026
-          </span>
+          <h5>Apkope</h5>
+          <p>Intervālu apkopes pēc nobraukuma. Cenas no oficiālo dīleru cenrāžiem.</p>
+          <div class="src">Avots: Möller, Inchcape, Toyota WESS cenrāži · 2026-Q1</div>
         </div>
         <div class="trust-item">
-          <div class="trust-item-label">Remonta rezerve</div>
-          <div class="trust-item-desc">Aprēķinātās vidējās neparedzēto remontu izmaksas ārpus garantijas un apkopes. Balstītas uz Latvijas autoservisu cenām (−20% vs UK avoti). Pieaug pēc garantijas beigām.</div>
-          <span class="trust-item-source">
-            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            Latvijas neatkarīgo autoservisiem pielāgots · 2026
-          </span>
+          <h5>Remonta rezerve (RBUF)</h5>
+          <p>Pēc garantijas — plānotā vidējā remonta likme. Pieaug par 10% katru gadu pēc garantijas beigām.</p>
+          <div class="src">Avots: WhatCar reliability + LV darba cenas · 2026</div>
         </div>
         <div class="trust-item">
-          <div class="trust-item-label">Lēzings / kredīts</div>
-          <div class="trust-item-desc">Ikmēneša maksājums aprēķināts pēc standarta PMT (Present Value of Annuity) formulas, ņemot vērā avansu, termiņu, gada procentu likmi un atlikušo vērtību. Identisks Excel =PMT() funkcijai.</div>
-          <span class="trust-item-source">
-            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-            Standarta finanšu matemātika · verificēts ar Excel PMT()
-          </span>
+          <h5>Riepas</h5>
+          <p>Plakana likme pēc auto kategorijas (≤16″ / 17″ / 18-19″ / 20″+). Iekļauj vasaras + ziemas komplektu un montāžu.</p>
+          <div class="src">Avots: Continental, Michelin LV cenas · 2026</div>
+        </div>
+        <div class="trust-item">
+          <h5>TEN — Transporta nodoklis</h5>
+          <p>9 brackets pēc WLTP CO₂. EV = €0. Tabula no 01.01.2025 likuma.</p>
+          <div class="src">Avots: <a href="https://likumi.lv/ta/id/281333" target="_blank" rel="noopener">likumi.lv · TLEN</a> · 2025-01-01</div>
+        </div>
+        <div class="trust-item">
+          <h5>Degviela / Enerģija</h5>
+          <p>Trīs zari: ICE (cons × cena), EV (mājas + publiskās uzlādes mix ar zudumiem), PHEV (elektro/petrol split).</p>
+          <div class="src">Avots: Latvenergo, Eleport, CSDD · 2026-Q1</div>
         </div>
       </div>
-      <div class="trust-updated">
-        Dati pēdējo reizi pārbaudīti: <strong>2026. gada maijs</strong> · Cenas ir orientējošas — verificējiet pie dīlera pirms lēmuma pieņemšanas.
+      <div class="trust-foot">
+        Pēdējais aprēķinu audits: <strong>2026-05-26</strong>. Atrodi neprecizitāti? Raksti: <a href="mailto:hello@honestcost.lv">hello@honestcost.lv</a>
       </div>
-    </div>
+    </details>
   </div>
 
   <p class="disclaimer">Indikatīvs aprēķins. Faktiskās izmaksas var atšķirties atkarībā no vadīšanas paradumiem, konkrēta dīlera cenām un tirgus apstākļiem. HonestCost neuzņemas atbildību par lēmumiem, kas pieņemti, balstoties uz šiem datiem.</p>
@@ -1507,21 +1389,21 @@ const DEP={
   premium:    [.25,.15,.13,.11,.10],
   suv_mid:    [.18,.12,.10,.09,.08],
   premium_suv:[.23,.14,.12,.11,.10],
-  ev:         [.30,.13,.08,.08,.07],  // R1 research: front-loaded EV depreciation
+  ev:         [.25,.16,.14,.12,.12],
   phev:       [.22,.14,.12,.11,.10],
 };
-const TYRE={small:325,mid:390,large:450,suv:555};  // R3 research values
-const RBUF={  // R2 research values (Latvia -20% vs UK sources)
-  economy:    [200,350,650],
-  mid:        [300,500,900],
-  premium:    [450,700,1200],
-  suv_mid:    [250,500,950],
-  premium_suv:[500,800,1500],
-  ev:         [150,350,700],
-  phev:       [400,900,1500],
+const TYRE={small:325,mid:390,large:503,suv:675};
+const RBUF={
+  economy:    [200,400,700],
+  mid:        [300,600,1000],
+  premium:    [500,900,1500],
+  suv_mid:    [350,650,1100],
+  premium_suv:[600,1100,1800],
+  ev:         [200,400,700],
+  phev:       [500,1000,1600],
 };
-const FUEL={petrol:1.75,diesel:1.70,homeElec:0.18,pubElec:0.38};  // R7: homeElec updated
-const OCTA_EST={ev:130,s:75,m:110,l:150,xl:240};  // R8 research: experienced Riga driver
+const FUEL={petrol:1.75,diesel:1.70,homeElec:0.13,pubElec:0.38};
+const OCTA_EST={ev:90,s:110,m:145,l:200,xl:300};
 
 // ── STATE ──────────────────────────────────────────────────
 const S={
@@ -1532,27 +1414,36 @@ const S={
 };
 
 // ── CALC ENGINE (UNCHANGED) ────────────────────────────────
-// TEN — WLTP table per Latvian law effective 01.01.2025 (likumi.lv/ta/id/223536)
-// Applies to all new cars registered after 31.12.2020
 function ten(co2){
-  if(co2<=50)return 0;
-  if(co2<=95)return 12;
-  if(co2<=115)return 39;
-  if(co2<=130)return 72;
-  if(co2<=155)return 99;
-  if(co2<=175)return 126;
-  if(co2<=200)return 147;
-  if(co2<=225)return 186;
-  if(co2<=250)return 225;
-  return 285;
+  if(co2<=50)return 0; if(co2<=95)return 30; if(co2<=115)return 50;
+  if(co2<=130)return 80; if(co2<=155)return 120; if(co2<=175)return 180;
+  if(co2<=200)return 260; if(co2<=250)return 380; return 520;
 }
 function leasing(price,downPct,apr,months,resPct){
+  // FINANCIAL LEASING (finanšu līzings): PMT with balloon residual.
+  // The customer owes the residual at end of term — typically refinanced or paid out to own the car.
   const principal=price*(1-downPct/100);
   const residual=price*(resPct/100);
   const r=apr/1200, n=months;
   const pv=principal-residual/Math.pow(1+r,n);
   const mp=r===0?pv/n:pv*(r*Math.pow(1+r,n))/(Math.pow(1+r,n)-1);
   return{mp,total:mp*n+residual};
+}
+function operationalLeasing(price,downPct,apr,months,resPct){
+  // OPERATIONAL LEASING (operatīvais līzings · LV dominant new-car product):
+  // Customer pays depreciation + finance charge, does NOT own at end, returns the car.
+  // Lower headline monthly than financial leasing on the same car.
+  //   depreciation_monthly = (principal − residual) / months
+  //   finance_charge       = (principal + residual) × money_factor   (money_factor = APR/2400)
+  //   total user pays      = PMT × months + downpayment       (NO balloon owed)
+  const downpayment = price*(downPct/100);
+  const principal   = price - downpayment;
+  const residual    = price*(resPct/100);
+  const mf  = apr/2400;
+  const dep = (principal - residual) / months;
+  const fc  = (principal + residual) * mf;
+  const mp  = dep + fc;
+  return { mp, total: mp*months + downpayment, ownsAtEnd: false };
 }
 function residual(price,cat,yrs){
   let v=price;
@@ -1613,10 +1504,12 @@ function calcAll(car,g){
   bd.ew=ewTotal; total+=ewTotal;
   const pk=((car.park||0)+(car.wash||20))*12*N;
   bd.park=pk; total+=pk;
-  if(g.fin==='leasing'){
-    const l=leasing(car.price,g.downPct,g.apr,g.months,g.resPct);
-    const lt=l.mp*Math.min(N*12,g.months);
-    bd.leasing=lt; total+=lt;
+  // Financing: pick the right formula by mode.
+  if(g.fin==='leasing' || g.fin==='op_leasing'){
+    const calc = g.fin==='op_leasing' ? operationalLeasing : leasing;
+    const l = calc(car.price, g.downPct, g.apr, g.months, g.resPct);
+    const lt = l.mp * Math.min(N*12, g.months);
+    bd.leasing = lt; total += lt;
   }
   const res=[];
   for(let y=0;y<=N;y++) res.push({y,v:residual(car.price,car.dep,y)});
@@ -1637,7 +1530,7 @@ function readCar(x){
     svcInt:fv('svcInt'+x)||15000, svcCost:fv('svcCost'+x),
     octa:fv('octa'+x), kasko:S['kasko'+x]||2.5, tyre:S['tyre'+x]||'mid', repair:S['repair'+x]||'med',
     park:fv('park'+x), wash:fv('wash'+x)||20, fuelPr:fv('fuelPr'+x)||null,
-    evHome:parseFloat(document.getElementById('evHome'+x)?.value)||66,
+    evHome:parseFloat(document.getElementById('evHome'+x)?.value)||70,
     phevShare:parseFloat(document.getElementById('phevShare'+x)?.value)||60,
     phevEl:fv('phevEl'+x)||18, phevPet:fv('phevPet'+x),
   };
@@ -1817,7 +1710,8 @@ document.querySelectorAll('.toggle-btn[data-fin]').forEach(btn=>{
     S.fin=this.dataset.fin;
     document.querySelectorAll('.toggle-btn[data-fin]').forEach(b=>b.classList.remove('on'));
     this.classList.add('on');
-    document.getElementById('leasingFields').classList.toggle('open',S.fin==='leasing');
+    // Both financial and operational leasing use the same input fields (down / APR / term / residual).
+    document.getElementById('leasingFields').classList.toggle('open', S.fin==='leasing' || S.fin==='op_leasing');
   });
 });
 
@@ -1854,6 +1748,19 @@ function doAnalyse(){
   document.getElementById('screen1').style.display='none';
   document.getElementById('screen2').style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
+  // Analytics: emit one event per analysis with the most useful props.
+  if (window.plausible) plausible('analysis_run', {
+    props: {
+      carA:    (lastA.name||'').slice(0,40),
+      carB:    (lastB.name||'').slice(0,40),
+      horizon: lastG.yrs,
+      km:      lastG.km,
+      fin:     lastG.fin,
+    }
+  });
+  // Update the configurator affiliate link to the winning car's brand search.
+  const conf = document.getElementById('affConfig');
+  if (conf) conf.href = 'https://www.google.com/search?q=' + encodeURIComponent((lastA.name||'') + ' konfigurators lv');
 }
 function goBack(){
   document.getElementById('screen2').style.display='none';
@@ -1894,469 +1801,157 @@ document.getElementById('exampleBtn').addEventListener('click',()=>{
   document.getElementById('octaB').value='';autoOCTA('B');
 });
 
-// ── CAR DATABASE ───────────────────────────────────────────
-const CAR_DB = [
 
-  // ── ECONOMY ───────────────────────────────────────────────
-  {id:'dacia_sandero',brand:'Dacia',model:'Sandero 1.0 TCe 90',wiki:'Dacia Sandero',
-   price:15900,dep:'economy',ft:'petrol',cons:5.6,co2:124,cc:999,
-   w:3,svcInt:20000,svcCost:150,tyre:'small',repair:'low',kasko:'2.5',
-   configUrl:'https://www.dacia.lv/modeli/sandero.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'dacia_duster',brand:'Dacia',model:'Duster 1.0 TCe 90 4x2',wiki:'Dacia Duster',
-   price:21500,dep:'economy',ft:'petrol',cons:6.3,co2:143,cc:999,
-   w:3,svcInt:20000,svcCost:180,tyre:'mid',repair:'low',kasko:'2.5',
-   configUrl:'https://www.dacia.lv/modeli/duster.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'skoda_fabia',brand:'Škoda',model:'Fabia 1.0 TSI 70kW',wiki:'Škoda Fabia',
-   price:19500,dep:'economy',ft:'petrol',cons:5.5,co2:107,cc:999,
-   w:2,svcInt:30000,svcCost:180,tyre:'small',repair:'low',kasko:'2.5',
-   configUrl:'https://www.skoda.lv/modeli/fabia?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'renault_clio',brand:'Renault',model:'Clio 1.0 TCe 90',wiki:'Renault Clio',
-   price:18500,dep:'economy',ft:'petrol',cons:5.3,co2:117,cc:999,
-   w:3,svcInt:20000,svcCost:160,tyre:'small',repair:'low',kasko:'2.5',
-   configUrl:'https://www.renault.lv/automobili/clio.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'toyota_yaris',brand:'Toyota',model:'Yaris 1.5 Hybrid',wiki:'Toyota Yaris',
-   price:24500,dep:'economy',ft:'mild_hybrid',cons:3.8,co2:86,cc:1490,
-   w:3,svcInt:15000,svcCost:180,tyre:'small',repair:'low',kasko:'2.5',
-   configUrl:'https://www.toyota.lv/automobili/yaris?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'opel_corsa',brand:'Opel',model:'Corsa 1.2 Turbo 74kW',wiki:'Opel Corsa',
-   price:22000,dep:'economy',ft:'petrol',cons:5.6,co2:131,cc:1199,
-   w:3,svcInt:20000,svcCost:180,tyre:'small',repair:'low',kasko:'2.5',
-   configUrl:'https://www.opel.lv/automobili/corsa.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'peugeot_208',brand:'Peugeot',model:'208 1.2 PureTech 74kW',wiki:'Peugeot 208',
-   price:23500,dep:'economy',ft:'petrol',cons:5.6,co2:124,cc:1199,
-   w:2,svcInt:15000,svcCost:160,tyre:'small',repair:'low',kasko:'2.5',
-   configUrl:'https://www.peugeot.lv/modeli/208.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'seat_ibiza',brand:'SEAT',model:'Ibiza 1.0 TSI 70kW',wiki:'SEAT Ibiza',
-   price:20500,dep:'economy',ft:'petrol',cons:5.3,co2:121,cc:999,
-   w:2,svcInt:30000,svcCost:180,tyre:'small',repair:'low',kasko:'2.5',
-   configUrl:'https://www.seat.lv/modeli/ibiza?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
+// ═══════════════════════════════════════════════════════════════
+// CAR PICKER · search + apply from window.CAR_DB (car-db.js)
+// One picker per side. Click button → opens dropdown → type → click row.
+// ═══════════════════════════════════════════════════════════════
+function initCarPicker(side){
+  const btn   = document.getElementById('carPickerBtn'+side);
+  const drop  = document.getElementById('carPickerDrop'+side);
+  const input = document.getElementById('carPickerInput'+side);
+  const list  = document.getElementById('carPickerList'+side);
+  if (!btn || !window.CAR_DB) return;
 
-  // ── COMPACT / MID ─────────────────────────────────────────
-  {id:'vw_golf_15tsi',brand:'Volkswagen',model:'Golf 1.5 TSI 110kW',wiki:'Volkswagen Golf Mk8',
-   price:31500,dep:'mid',ft:'petrol',cons:6.4,co2:147,cc:1498,
-   w:2,svcInt:30000,svcCost:280,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.vw.lv/lv/modeli/golf.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'vw_golf_20tdi',brand:'Volkswagen',model:'Golf 2.0 TDI 85kW',wiki:'Volkswagen Golf Mk8',
-   price:32500,dep:'mid',ft:'diesel',cons:5.0,co2:120,cc:1968,
-   w:2,svcInt:30000,svcCost:280,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.vw.lv/lv/modeli/golf.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'skoda_octavia',brand:'Škoda',model:'Octavia 1.5 TSI 110kW',wiki:'Škoda Octavia',
-   price:28500,dep:'mid',ft:'petrol',cons:6.2,co2:140,cc:1498,
-   w:2,svcInt:30000,svcCost:260,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.skoda.lv/modeli/octavia?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'toyota_corolla',brand:'Toyota',model:'Corolla 1.8 Hybrid',wiki:'Toyota Corolla',
-   price:30500,dep:'mid',ft:'mild_hybrid',cons:4.3,co2:98,cc:1798,
-   w:3,svcInt:15000,svcCost:200,tyre:'mid',repair:'low',kasko:'2.5',
-   configUrl:'https://www.toyota.lv/automobili/corolla?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'mazda3',brand:'Mazda',model:'3 2.0 Skyactiv-G 122',wiki:'Mazda 3',
-   price:27500,dep:'mid',ft:'petrol',cons:5.9,co2:133,cc:1998,
-   w:3,svcInt:10000,svcCost:220,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.mazda.lv/modeli/mazda3?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'hyundai_i30',brand:'Hyundai',model:'i30 1.5 DPi 81kW',wiki:'Hyundai i30',
-   price:24500,dep:'mid',ft:'petrol',cons:5.9,co2:135,cc:1482,
-   w:5,svcInt:15000,svcCost:200,tyre:'mid',repair:'low',kasko:'2.5',
-   configUrl:'https://www.hyundai.lv/modeli/i30?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'kia_ceed',brand:'Kia',model:'Ceed 1.5 T-GDI 118kW',wiki:'Kia Ceed',
-   price:26000,dep:'mid',ft:'petrol',cons:5.8,co2:130,cc:1482,
-   w:7,svcInt:15000,svcCost:210,tyre:'mid',repair:'low',kasko:'2.5',
-   configUrl:'https://www.kia.com/lv/cars/ceed/overview.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'ford_focus',brand:'Ford',model:'Focus 1.0 EcoBoost 92kW',wiki:'Ford Focus',
-   price:27500,dep:'mid',ft:'petrol',cons:5.5,co2:127,cc:999,
-   w:3,svcInt:15000,svcCost:230,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.ford.lv/cars/ford-focus.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'seat_leon',brand:'SEAT',model:'Leon 1.5 TSI 110kW',wiki:'SEAT Leon',
-   price:27000,dep:'mid',ft:'petrol',cons:5.8,co2:132,cc:1498,
-   w:2,svcInt:30000,svcCost:260,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.seat.lv/modeli/leon?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-
-  // ── PREMIUM COMPACT ───────────────────────────────────────
-  {id:'bmw_118i',brand:'BMW',model:'118i M Sport',wiki:'BMW 1 Series',
-   price:38500,dep:'premium',ft:'petrol',cons:6.2,co2:142,cc:1499,
-   w:3,svcInt:15000,svcCost:280,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.bmw.lv/lv/all-models/1-series/bmw-1-series.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'mercedes_a200',brand:'Mercedes-Benz',model:'A 200 AMG Line',wiki:'Mercedes-Benz A-Class',
-   price:38900,dep:'premium',ft:'petrol',cons:6.4,co2:146,cc:1332,
-   w:2,svcInt:15000,svcCost:290,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.mercedes-benz.lv/lv/passengercars/mercedes-benz-cars/models/a-class.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'audi_a3',brand:'Audi',model:'A3 Sportback 35 TFSI 110kW',wiki:'Audi A3',
-   price:35500,dep:'premium',ft:'petrol',cons:6.1,co2:139,cc:1498,
-   w:2,svcInt:15000,svcCost:280,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.audi.lv/lv/web/lv/models/a3/a3-sportback.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-
-  // ── SEDAN / KOMBI ─────────────────────────────────────────
-  {id:'skoda_superb',brand:'Škoda',model:'Superb 2.0 TSI 140kW',wiki:'Škoda Superb',
-   price:39000,dep:'mid',ft:'petrol',cons:6.6,co2:149,cc:1984,
-   w:2,svcInt:30000,svcCost:280,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.skoda.lv/modeli/superb?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'vw_passat',brand:'Volkswagen',model:'Passat Variant 2.0 TDI 110kW',wiki:'Volkswagen Passat',
-   price:41500,dep:'mid',ft:'diesel',cons:5.4,co2:126,cc:1968,
-   w:2,svcInt:30000,svcCost:290,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.vw.lv/lv/modeli/passat.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'audi_a4',brand:'Audi',model:'A4 Avant 40 TDI quattro 150kW',wiki:'Audi A4',
-   price:49000,dep:'premium',ft:'diesel',cons:5.5,co2:127,cc:1968,
-   w:2,svcInt:15000,svcCost:320,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.audi.lv/lv/web/lv/models/a4/a4-avant.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'bmw_320i',brand:'BMW',model:'320i M Sport 135kW',wiki:'BMW 3 Series',
-   price:47000,dep:'premium',ft:'petrol',cons:6.3,co2:144,cc:1998,
-   w:3,svcInt:15000,svcCost:300,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.bmw.lv/lv/all-models/3-series/saloon/overview.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'mercedes_c200',brand:'Mercedes-Benz',model:'C 200 AMG Line 120kW',wiki:'Mercedes-Benz C-Class',
-   price:48000,dep:'premium',ft:'petrol',cons:6.6,co2:153,cc:1496,
-   w:2,svcInt:15000,svcCost:320,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.mercedes-benz.lv/lv/passengercars/mercedes-benz-cars/models/c-class.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-
-  // ── MID SUV ───────────────────────────────────────────────
-  {id:'dacia_duster_4x4',brand:'Dacia',model:'Duster 1.3 TCe 130 4x4',wiki:'Dacia Duster',
-   price:26500,dep:'suv_mid',ft:'petrol',cons:6.8,co2:155,cc:1333,
-   w:3,svcInt:20000,svcCost:200,tyre:'mid',repair:'low',kasko:'2.5',
-   configUrl:'https://www.dacia.lv/modeli/duster.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'vw_tiguan',brand:'Volkswagen',model:'Tiguan 1.5 TSI 110kW',wiki:'Volkswagen Tiguan',
-   price:37500,dep:'suv_mid',ft:'petrol',cons:7.8,co2:178,cc:1498,
-   w:2,svcInt:30000,svcCost:300,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.vw.lv/lv/modeli/tiguan.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'skoda_karoq',brand:'Škoda',model:'Karoq 1.5 TSI 110kW',wiki:'Škoda Karoq',
-   price:30500,dep:'suv_mid',ft:'petrol',cons:7.4,co2:168,cc:1498,
-   w:2,svcInt:30000,svcCost:270,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.skoda.lv/modeli/karoq?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'toyota_rav4',brand:'Toyota',model:'RAV4 2.5 Hybrid AWD',wiki:'Toyota RAV4',
-   price:44500,dep:'suv_mid',ft:'mild_hybrid',cons:5.6,co2:129,cc:2487,
-   w:3,svcInt:15000,svcCost:280,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.toyota.lv/automobili/rav4-hybrid?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'hyundai_tucson',brand:'Hyundai',model:'Tucson 1.6 T-GDi Hybrid',wiki:'Hyundai Tucson',
-   price:36500,dep:'suv_mid',ft:'mild_hybrid',cons:6.1,co2:139,cc:1598,
-   w:5,svcInt:15000,svcCost:250,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.hyundai.lv/modeli/tucson?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'kia_sportage',brand:'Kia',model:'Sportage 1.6 T-GDI 132kW',wiki:'Kia Sportage',
-   price:34500,dep:'suv_mid',ft:'petrol',cons:7.2,co2:155,cc:1598,
-   w:7,svcInt:15000,svcCost:250,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.kia.com/lv/cars/sportage/overview.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'nissan_qashqai',brand:'Nissan',model:'Qashqai 1.3 DIG-T 103kW',wiki:'Nissan Qashqai',
-   price:32500,dep:'suv_mid',ft:'petrol',cons:6.5,co2:138,cc:1332,
-   w:3,svcInt:18000,svcCost:240,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.nissan.lv/vehicles/new/qashqai.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'ford_kuga',brand:'Ford',model:'Kuga 1.5 EcoBoost 110kW',wiki:'Ford Kuga',
-   price:36500,dep:'suv_mid',ft:'petrol',cons:7.0,co2:152,cc:1498,
-   w:3,svcInt:15000,svcCost:260,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.ford.lv/cars/ford-kuga.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'peugeot_3008',brand:'Peugeot',model:'3008 1.2 PureTech 96kW',wiki:'Peugeot 3008',
-   price:38000,dep:'suv_mid',ft:'petrol',cons:6.3,co2:143,cc:1199,
-   w:2,svcInt:15000,svcCost:240,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.peugeot.lv/modeli/3008.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'mazda_cx5',brand:'Mazda',model:'CX-5 2.5 Skyactiv-G 140kW',wiki:'Mazda CX-5',
-   price:38000,dep:'suv_mid',ft:'petrol',cons:7.4,co2:166,cc:2488,
-   w:3,svcInt:10000,svcCost:230,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.mazda.lv/modeli/cx-5?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'opel_grandland',brand:'Opel',model:'Grandland 1.2 Turbo 96kW',wiki:'Opel Grandland',
-   price:33000,dep:'suv_mid',ft:'petrol',cons:6.8,co2:153,cc:1199,
-   w:3,svcInt:20000,svcCost:240,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.opel.lv/automobili/grandland.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'mitsubishi_eclipse',brand:'Mitsubishi',model:'Eclipse Cross 1.5T 120kW',wiki:'Mitsubishi Eclipse Cross',
-   price:30500,dep:'suv_mid',ft:'petrol',cons:7.3,co2:165,cc:1499,
-   w:5,svcInt:15000,svcCost:220,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.mitsubishi-motors.lv/modeli/eclipse-cross?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-
-  // ── LARGE SUV ─────────────────────────────────────────────
-  {id:'skoda_kodiaq',brand:'Škoda',model:'Kodiaq 2.0 TSI 140kW',wiki:'Škoda Kodiaq',
-   price:43000,dep:'suv_mid',ft:'petrol',cons:7.7,co2:165,cc:1984,
-   w:2,svcInt:30000,svcCost:310,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.skoda.lv/modeli/kodiaq?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'kia_sorento',brand:'Kia',model:'Sorento 1.6 T-GDi Hybrid AWD',wiki:'Kia Sorento',
-   price:47000,dep:'suv_mid',ft:'mild_hybrid',cons:6.4,co2:136,cc:1598,
-   w:7,svcInt:15000,svcCost:280,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.kia.com/lv/cars/sorento/overview.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'toyota_highlander',brand:'Toyota',model:'Highlander 2.5 AWD Hybrid',wiki:'Toyota Highlander',
-   price:65000,dep:'suv_mid',ft:'mild_hybrid',cons:6.0,co2:138,cc:2487,
-   w:3,svcInt:15000,svcCost:320,tyre:'suv',repair:'low',kasko:'2.5',
-   configUrl:'https://www.toyota.lv/automobili/highlander?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-
-  // ── PREMIUM SUV ───────────────────────────────────────────
-  {id:'bmw_x1',brand:'BMW',model:'X1 xDrive20i M Sport',wiki:'BMW X1',
-   price:48900,dep:'premium_suv',ft:'petrol',cons:8.4,co2:191,cc:1998,
-   w:3,svcInt:15000,svcCost:320,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.bmw.lv/lv/all-models/x1/bmw-x1.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'bmw_x3',brand:'BMW',model:'X3 20d xDrive 140kW',wiki:'BMW X3',
-   price:57000,dep:'premium_suv',ft:'diesel',cons:6.0,co2:143,cc:1995,
-   w:3,svcInt:15000,svcCost:380,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.bmw.lv/lv/all-models/x3/bmw-x3.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'mercedes_glc',brand:'Mercedes-Benz',model:'GLC 220d 4MATIC',wiki:'Mercedes-Benz GLC-Class',
-   price:60500,dep:'premium_suv',ft:'diesel',cons:6.8,co2:155,cc:1993,
-   w:2,svcInt:15000,svcCost:380,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.mercedes-benz.lv/lv/passengercars/mercedes-benz-cars/models/glc.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'mercedes_gle',brand:'Mercedes-Benz',model:'GLE 300d 4MATIC 170kW',wiki:'Mercedes-Benz GLE-Class',
-   price:79000,dep:'premium_suv',ft:'diesel',cons:6.9,co2:162,cc:1993,
-   w:2,svcInt:15000,svcCost:450,tyre:'suv',repair:'med',kasko:'2.5',
-   configUrl:'https://www.mercedes-benz.lv/lv/passengercars/mercedes-benz-cars/models/gle.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'audi_q3',brand:'Audi',model:'Q3 35 TFSI 110kW',wiki:'Audi Q3',
-   price:41500,dep:'premium_suv',ft:'petrol',cons:6.7,co2:152,cc:1498,
-   w:2,svcInt:15000,svcCost:280,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.audi.lv/lv/web/lv/models/q3/q3.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'audi_q5',brand:'Audi',model:'Q5 40 TDI quattro 150kW',wiki:'Audi Q5',
-   price:59000,dep:'premium_suv',ft:'diesel',cons:6.0,co2:143,cc:1968,
-   w:2,svcInt:15000,svcCost:350,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.audi.lv/lv/web/lv/models/q5/q5.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'volvo_xc40',brand:'Volvo',model:'XC40 B3 120kW',wiki:'Volvo XC40',
-   price:40000,dep:'premium_suv',ft:'petrol',cons:6.7,co2:153,cc:1477,
-   w:5,svcInt:15000,svcCost:280,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.volvocars.com/lv/cars/xc40?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'volvo_xc60',brand:'Volvo',model:'XC60 B4 AWD 145kW',wiki:'Volvo XC60',
-   price:52000,dep:'premium_suv',ft:'petrol',cons:7.0,co2:162,cc:1969,
-   w:5,svcInt:15000,svcCost:320,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.volvocars.com/lv/cars/xc60?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-
-  // ── ELECTRIC ──────────────────────────────────────────────
-  {id:'vw_id3',brand:'Volkswagen',model:'ID.3 Pro 150kW',wiki:'Volkswagen ID.3',
-   price:36000,dep:'ev',ft:'ev',cons:16.4,co2:0,cc:0,
-   w:2,svcInt:30000,svcCost:150,tyre:'mid',repair:'low',kasko:'2.5',
-   configUrl:'https://www.vw.lv/lv/modeli/id3.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'vw_id4',brand:'Volkswagen',model:'ID.4 Pro 210kW',wiki:'Volkswagen ID.4',
-   price:44900,dep:'ev',ft:'ev',cons:17.4,co2:0,cc:0,
-   w:2,svcInt:30000,svcCost:180,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.vw.lv/lv/modeli/id4.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'tesla_m3',brand:'Tesla',model:'Model 3 RWD (Highland)',wiki:'Tesla Model 3',
-   price:43900,dep:'ev',ft:'ev',cons:14.9,co2:0,cc:0,
-   w:4,svcInt:20000,svcCost:150,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.tesla.com/lv_LV/model3?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'tesla_my',brand:'Tesla',model:'Model Y RWD',wiki:'Tesla Model Y',
-   price:44900,dep:'ev',ft:'ev',cons:15.7,co2:0,cc:0,
-   w:4,svcInt:20000,svcCost:150,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.tesla.com/lv_LV/modely?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'hyundai_ioniq5',brand:'Hyundai',model:'Ioniq 5 73kWh RWD',wiki:'Hyundai Ioniq 5',
-   price:47900,dep:'ev',ft:'ev',cons:17.5,co2:0,cc:0,
-   w:5,svcInt:15000,svcCost:150,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.hyundai.lv/modeli/ioniq5?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'hyundai_ioniq6',brand:'Hyundai',model:'Ioniq 6 Standard RWD',wiki:'Hyundai Ioniq 6',
-   price:40900,dep:'ev',ft:'ev',cons:14.3,co2:0,cc:0,
-   w:5,svcInt:15000,svcCost:150,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.hyundai.lv/modeli/ioniq6?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'kia_ev6',brand:'Kia',model:'EV6 Standard RWD 125kW',wiki:'Kia EV6',
-   price:44500,dep:'ev',ft:'ev',cons:16.3,co2:0,cc:0,
-   w:7,svcInt:15000,svcCost:150,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.kia.com/lv/cars/ev6/overview.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'bmw_ix1',brand:'BMW',model:'iX1 xDrive30 230kW',wiki:'BMW iX1',
-   price:55000,dep:'ev',ft:'ev',cons:17.3,co2:0,cc:0,
-   w:3,svcInt:15000,svcCost:200,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.bmw.lv/lv/all-models/x1/ix1/overview.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'polestar_2',brand:'Polestar',model:'2 Standard Range RWD',wiki:'Polestar 2',
-   price:46900,dep:'ev',ft:'ev',cons:18.3,co2:0,cc:0,
-   w:2,svcInt:20000,svcCost:150,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.polestar.com/lv/polestar-2/?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'volvo_ex40',brand:'Volvo',model:'EX40 Extended Range RWD',wiki:'Volvo XC40',
-   price:48500,dep:'ev',ft:'ev',cons:18.4,co2:0,cc:0,
-   w:5,svcInt:15000,svcCost:170,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.volvocars.com/lv/cars/ex40?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-
-  // ── PHEV ──────────────────────────────────────────────────
-  {id:'vw_golf_gte',brand:'Volkswagen',model:'Golf GTE 1.5 eHybrid',wiki:'Volkswagen Golf Mk8',
-   price:39500,dep:'phev',ft:'phev',cons:5.5,co2:29,cc:1395,
-   phevEl:14,phevPet:5.5,phevShare:50,
-   w:2,svcInt:30000,svcCost:300,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.vw.lv/lv/modeli/golf.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'volvo_xc40_phev',brand:'Volvo',model:'XC40 Recharge T4 PHEV',wiki:'Volvo XC40',
-   price:49000,dep:'phev',ft:'phev',cons:5.0,co2:45,cc:1477,
-   phevEl:18,phevPet:6.0,phevShare:50,
-   w:5,svcInt:15000,svcCost:300,tyre:'large',repair:'med',kasko:'2.5',
-   configUrl:'https://www.volvocars.com/lv/cars/xc40?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'hyundai_tucson_phev',brand:'Hyundai',model:'Tucson PHEV 1.6 T-GDi 195kW',wiki:'Hyundai Tucson',
-   price:42900,dep:'phev',ft:'phev',cons:6.3,co2:38,cc:1598,
-   phevEl:13,phevPet:6.3,phevShare:50,
-   w:5,svcInt:15000,svcCost:280,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.hyundai.lv/modeli/tucson?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'kia_sportage_phev',brand:'Kia',model:'Sportage PHEV 1.6 T-GDi 195kW',wiki:'Kia Sportage',
-   price:41500,dep:'phev',ft:'phev',cons:6.3,co2:36,cc:1598,
-   phevEl:12.5,phevPet:6.3,phevShare:50,
-   w:7,svcInt:15000,svcCost:260,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.kia.com/lv/cars/sportage-hybrid/overview.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'bmw_330e',brand:'BMW',model:'330e M Sport 185kW',wiki:'BMW 3 Series',
-   price:55000,dep:'phev',ft:'phev',cons:5.9,co2:30,cc:1998,
-   phevEl:14,phevPet:5.9,phevShare:40,
-   w:3,svcInt:15000,svcCost:320,tyre:'mid',repair:'med',kasko:'2.5',
-   configUrl:'https://www.bmw.lv/lv/all-models/3-series/saloon/overview.html?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-  {id:'mitsubishi_outlander_phev',brand:'Mitsubishi',model:'Outlander PHEV 2.4 AWD',wiki:'Mitsubishi Outlander',
-   price:45000,dep:'phev',ft:'phev',cons:8.0,co2:48,cc:2360,
-   phevEl:13,phevPet:8.0,phevShare:50,
-   w:5,svcInt:15000,svcCost:220,tyre:'large',repair:'low',kasko:'2.5',
-   configUrl:'https://www.mitsubishi-motors.lv/modeli/outlander-phev?utm_source=honestcost&utm_medium=referral&utm_campaign=configurator'},
-
-];
-
-// ── CAR SEARCH FUNCTIONS ────────────────────────────────────
-function setTierValue(groupId, val) {
-  document.querySelectorAll('#' + groupId + ' .tier-btn').forEach(btn => {
-    btn.classList.remove('on');
-    const oc = btn.getAttribute('onclick') || '';
-    const m = oc.match(/'[^']+','([^']+)'/);
-    if (m && m[1] === String(val)) btn.classList.add('on');
-  });
-  if (groupId==='kaskoA') S.kaskoA=parseFloat(val);
-  else if (groupId==='kaskoB') S.kaskoB=parseFloat(val);
-  else if (groupId==='tyreA') S.tyreA=val;
-  else if (groupId==='tyreB') S.tyreB=val;
-  else if (groupId==='repairA') S.repairA=val;
-  else if (groupId==='repairB') S.repairB=val;
-}
-
-function fillCar(car, side) {
-  const set = (id,v) => { const e=document.getElementById(id); if(e) e.value=v; };
-  // Identity
-  set('name'+side, car.brand+' '+car.model);
-  set('photoUrl'+side, '');
-  const img = document.getElementById('phImg'+side);
-  if (img) { img.src=''; img.style.display='none'; }
-  // Purchase
-  set('price'+side, car.price);
-  const depEl = document.getElementById('depCat'+side);
-  if (depEl) depEl.value = car.dep;
-  // Fuel
-  const ftEl = document.getElementById('ft'+side);
-  if (ftEl) ftEl.value = car.ft;
-  onFuelChange(side);
-  set('cons'+side, car.cons);
-  set('co2'+side, car.co2);
-  set('cc'+side, car.cc);
-  // PHEV
-  if (car.ft === 'phev') {
-    set('phevEl'+side, car.phevEl||14);
-    set('phevPet'+side, car.phevPet||car.cons);
-    const ps = document.getElementById('phevShare'+side);
-    if (ps) ps.value = car.phevShare||50;
-    const psd = document.getElementById('phevShareDisp'+side);
-    if (psd) psd.textContent = (car.phevShare||50)+'%';
-  }
-  // EV home: default 66%
-  const evH = document.getElementById('evHome'+side);
-  if (evH) { evH.value=66; }
-  const evHD = document.getElementById('evHomeDisp'+side);
-  if (evHD) evHD.textContent='66%';
-  // Warranty
-  set('w'+side, car.w||3);
-  // Service
-  set('svcInt'+side, car.svcInt||15000);
-  set('svcCost'+side, car.svcCost);
-  // OCTA: clear then auto-estimate
-  const octaEl = document.getElementById('octa'+side);
-  if (octaEl) { octaEl.value=''; autoOCTA(side); }
-  // Tiers
-  setTierValue('tyre'+side, car.tyre||'mid');
-  setTierValue('repair'+side, car.repair||'med');
-  setTierValue('kasko'+side, car.kasko||'2.5');
-  // Photo: fetch from Wikipedia
-  if (car.wiki) fetchCarPhoto(car.wiki, side);
-  // Dealer configurator link
-  const affEl = document.getElementById('affDealer'+side);
-  const affLbl = document.getElementById('affDealerLabel'+side);
-  if (affEl && car.configUrl) {
-    affEl.href = car.configUrl;
-    if (affLbl) affLbl.textContent = 'Konfigurēt ' + car.brand + ' →';
-    affEl.style.display = 'inline-flex';
-  } else if (affEl) {
-    affEl.style.display = 'none';
-  }
-}
-
-async function fetchCarPhoto(wikiPage, side) {
-  const box = document.getElementById('phBox'+side);
-  if (box) box.classList.add('loading');
-  try {
-    const url = 'https://en.wikipedia.org/w/api.php?action=query&titles='
-      +encodeURIComponent(wikiPage)+'&prop=pageimages&pithumbsize=800&format=json&origin=*';
-    const resp = await fetch(url);
-    const data = await resp.json();
-    const pages = data?.query?.pages;
-    if (!pages) return;
-    const page = Object.values(pages)[0];
-    const thumb = page?.thumbnail?.source;
-    if (thumb) {
-      const urlEl = document.getElementById('photoUrl'+side);
-      if (urlEl) urlEl.value = thumb;
-      const img = document.getElementById('phImg'+side);
-      if (img) {
-        img.src = thumb; img.style.display='block';
-        img.onerror = () => img.style.display='none';
-      }
-    }
-  } catch(e) { /* silent fail */ }
-  finally { if (box) box.classList.remove('loading'); }
-}
-
-function initCarSearch(side) {
-  const wrap = document.getElementById('searchWrap'+side);
-  if (!wrap) return;
-  const input = document.getElementById('carSearch'+side);
-  const dropdown = document.getElementById('carDropdown'+side);
-  const FUEL_BADGE = {petrol:'Benzīns',diesel:'Dīzelis',mild_hybrid:'Hibrīds',phev:'PHEV',ev:'EV'};
-
-  function filter(q) {
-    if (!q || q.length < 1) return [];
-    const lq = q.toLowerCase();
-    return CAR_DB.filter(c =>
-      c.brand.toLowerCase().includes(lq) ||
-      c.model.toLowerCase().includes(lq) ||
-      (c.brand+' '+c.model).toLowerCase().includes(lq)
-    ).slice(0, 8);
-  }
-
-  function render(cars) {
-    dropdown.classList.add('open');
-    if (!cars.length) {
-      dropdown.innerHTML='<div class="car-search-no-results">Nav atrasts — ievadiet manuāli.</div>';
+  function paint(query){
+    const q = (query || '').toLowerCase().trim();
+    let cars = window.CAR_DB;
+    if (q) cars = cars.filter(c =>
+      c.name.toLowerCase().includes(q) ||
+      c.brand.toLowerCase().includes(q) ||
+      c.id.includes(q)
+    );
+    cars = cars.slice(0, 60);
+    if (!cars.length){
+      list.innerHTML = '<div class="car-picker-empty">Nav atrasts. Mēģini "tesla", "golf" vai "ev6".</div>';
       return;
     }
-    dropdown.innerHTML = cars.map(c => `
-      <div class="car-search-item" data-id="${c.id}">
-        <span class="csi-brand">${c.brand}</span>
-        <span class="csi-model">${c.model}</span>
-        <span class="csi-badge">${FUEL_BADGE[c.ft]||c.ft}</span>
-        <span class="csi-price">€${c.price.toLocaleString('lv-LV')}</span>
+    list.innerHTML = cars.map(c => `
+      <div class="car-picker-row" data-id="${c.id}">
+        <span class="name">${c.name}</span>
+        <span class="meta">€${c.price.toLocaleString('lv-LV')}</span>
       </div>`).join('');
+    list.querySelectorAll('.car-picker-row').forEach(row => {
+      row.addEventListener('click', () => {
+        applyCar(side, window.CAR_INDEX.byId[row.dataset.id]);
+        drop.classList.remove('open');
+      });
+    });
   }
 
-  input.addEventListener('input', function() {
-    const matches = filter(this.value);
-    if (this.value) render(matches); else dropdown.classList.remove('open');
-  });
-  input.addEventListener('focus', function() {
-    if (this.value) render(filter(this.value));
-  });
-  dropdown.addEventListener('mousedown', function(e) {
-    e.preventDefault(); // prevent blur before click
-  });
-  dropdown.addEventListener('click', function(e) {
-    const item = e.target.closest('.car-search-item');
-    if (!item) return;
-    const car = CAR_DB.find(c => c.id === item.dataset.id);
-    if (car) {
-      fillCar(car, side);
-      input.value = car.brand+' '+car.model;
-      dropdown.classList.remove('open');
+  btn.addEventListener('click', () => {
+    const opening = !drop.classList.contains('open');
+    document.querySelectorAll('.car-picker-dropdown.open').forEach(d => d.classList.remove('open'));
+    if (opening) {
+      drop.classList.add('open');
+      input.value = '';
+      paint('');
+      input.focus();
     }
   });
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('#searchWrap'+side)) dropdown.classList.remove('open');
-  });
+  input.addEventListener('input', e => paint(e.target.value));
+  input.addEventListener('keydown', e => { if (e.key === 'Escape') drop.classList.remove('open'); });
 }
 
-// ── INJECT SEARCH UI INTO BOTH COLUMNS ─────────────────────
-['A','B'].forEach(side => {
-  const photoBox = document.getElementById('phBox'+side);
-  if (!photoBox) return;
-  const sec = photoBox.closest('.sec');
-  const wrap = document.createElement('div');
-  wrap.className = 'car-search-wrap';
-  wrap.id = 'searchWrap'+side;
-  wrap.innerHTML = `
-    <div class="field-label" style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      Meklēt datubāzē (${CAR_DB.length} modeļi)
-    </div>
-    <div style="position:relative;">
-      <svg class="car-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" class="car-search-input" id="carSearch${side}"
-             placeholder="piem. VW Golf, BMW, Tesla…" autocomplete="off">
-    </div>
-    <div class="car-search-dropdown" id="carDropdown${side}"></div>`;
-  sec.insertBefore(wrap, photoBox);
-  initCarSearch(side);
+function applyCar(x, car){
+  if (!car) return;
+  const set = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; };
+  set('name'+x,     car.name);
+  set('price'+x,    car.price);
+  document.getElementById('depCat'+x).value = car.segment;
+  document.getElementById('ft'+x).value     = car.fuel;
+  onFuelChange(x);
+  set('cons'+x,     car.cons);
+  set('co2'+x,      car.co2);
+  set('cc'+x,       car.cc);
+  set('w'+x,        car.warranty);
+  set('svcInt'+x,   car.svcInt);
+  set('svcCost'+x,  car.svcCost);
+  document.getElementById('octa'+x).value = '';
+  autoOCTA(x);
+
+  // Trigger the existing tier buttons (they already wire S[...] state correctly).
+  const tyreIndex   = { small:0, mid:1, large:2, suv:3 }[car.tyre];
+  const repairIndex = { low:0,   med:1, high:2          }[car.repair];
+  document.getElementById('tyre'+x).querySelectorAll('.tier-btn')[tyreIndex]?.click();
+  document.getElementById('repair'+x).querySelectorAll('.tier-btn')[repairIndex]?.click();
+
+  if (window.plausible) plausible('car_db_pick', { props: { id: car.id, side: x } });
+}
+
+// Close any open picker when clicking outside.
+document.addEventListener('click', e => {
+  if (e.target.closest('.car-picker')) return;
+  document.querySelectorAll('.car-picker-dropdown.open').forEach(d => d.classList.remove('open'));
 });
+
+initCarPicker('A');
+initCarPicker('B');
+
+// ═══════════════════════════════════════════════════════════════
+// EMAIL CAPTURE · EmailJS-powered "send me my comparison"
+// Set these three constants after creating an EmailJS account.
+// Until then the form runs in DEMO mode (no email actually sent).
+// ═══════════════════════════════════════════════════════════════
+const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+
+if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+}
+
+function sendCap(e){
+  e.preventDefault();
+  const status = document.getElementById('emailCapStatus');
+  const email  = document.getElementById('capEmail').value;
+  if (!lastA || !lastB || !lastG){ status.textContent = 'Vispirms veic salīdzinājumu.'; return; }
+  const share   = location.origin + location.pathname + location.hash;
+  const summary = `${lastA.name} pret ${lastB.name}, ${lastG.yrs} g., ${lastG.km.toLocaleString('lv-LV')} km/g.`;
+  status.textContent = 'Sūta…';
+
+  const onSent = () => {
+    status.textContent = '✓ Saite ir tavā e-pastā.';
+    document.getElementById('emailCapForm').reset();
+    if (window.plausible) plausible('email_captured');
+  };
+
+  if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY'){
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { to_email: email, share_url: share, summary }).then(onSent).catch(() => {
+      status.textContent = 'Kaut kas nogāja greizi. Mēģini vēlreiz.';
+    });
+  } else {
+    // Demo mode — EmailJS isn't configured yet.
+    setTimeout(() => { status.textContent = `✓ Demo: tiktu nosūtīts uz ${email}.`; onSent(); }, 400);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ANALYTICS · Plausible safe-call (works even when blocked or absent)
+// ═══════════════════════════════════════════════════════════════
+window.plausible = window.plausible || function(){ (window.plausible.q = window.plausible.q || []).push(arguments) };
+
+// Track horizon / km slider changes (debounced).
+let _horizonDebounce;
+['adjOwn','adjKm'].forEach(id => {
+  document.getElementById(id)?.addEventListener('change', () => {
+    clearTimeout(_horizonDebounce);
+    _horizonDebounce = setTimeout(() => plausible('horizon_changed', { props: {
+      yrs: document.getElementById('adjOwn').value,
+      km:  document.getElementById('adjKm').value,
+    } }), 600);
+  });
+});
+
+// Track example button.
+document.getElementById('exampleBtn')?.addEventListener('click',
+  () => plausible('example_loaded', { props: { preset: 'bmw_118i_x1' } })
+);
+
+// Track financing-mode changes.
+document.querySelectorAll('.toggle-btn[data-fin]').forEach(b =>
+  b.addEventListener('click', () => plausible('fin_mode_changed', { props: { mode: b.dataset.fin } }))
+);
 
 lucide.createIcons();
 </script>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HonestCost — Dealer Outreach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#16181D; --ink-2:#4A4E58; --ink-3:#878B95;
+  --line:#ECEAE3; --line-2:#E1DED4;
+  --bg:#F4F2EC; --surface:#FFFFFF; --surface-alt:#FAF8F2;
+  --accent:#3344F0; --accent-soft:#EBEDFF;
+  --amber:#F5A623; --amber-soft:#FCEEDB;
+  --win:#11A05F; --win-soft:#E5F6EE;
+  --warn:#D24545; --warn-soft:#FBEAEA;
+  --shadow-1:0 1px 2px rgba(20,22,28,.04),0 8px 28px -8px rgba(20,22,28,.10);
+  --ff-display:'Barlow Condensed',sans-serif;
+  --ff-ui:'Inter Tight',system-ui,sans-serif;
+  --ff-mono:'DM Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff-ui);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+::selection{background:var(--accent);color:#fff;}
+.page{max-width:1080px;margin:0 auto;padding:48px 28px 100px;}
+.back{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-bottom:32px;}
+.back::before{content:'←';}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:6px 12px;border-radius:999px;margin-bottom:18px;}
+.kicker .dot{width:6px;height:6px;background:var(--accent);border-radius:50%;}
+h1{font-family:var(--ff-display);font-size:64px;font-weight:600;line-height:0.96;letter-spacing:-0.02em;margin-bottom:14px;text-wrap:balance;}
+.lede{font-size:18px;color:var(--ink-2);max-width:60ch;margin-bottom:36px;text-wrap:pretty;}
+h2{font-family:var(--ff-display);font-size:34px;font-weight:600;line-height:1.05;letter-spacing:-0.01em;margin:48px 0 14px;}
+h3{font-family:var(--ff-ui);font-size:17px;font-weight:600;margin:22px 0 8px;}
+.note{font-size:13.5px;color:var(--ink-2);max-width:62ch;margin-bottom:14px;}
+p{margin-bottom:12px;max-width:65ch;color:var(--ink-2);font-size:14.5px;}
+p strong{color:var(--ink);font-weight:600;}
+
+/* target table */
+table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--surface);border-radius:16px;overflow:hidden;box-shadow:var(--shadow-1);}
+table thead th{font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500;text-align:left;padding:14px 16px;background:var(--surface-alt);border-bottom:1px solid var(--line-2);}
+table td{padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top;}
+table tr:last-child td{border-bottom:none;}
+table tr:hover td{background:var(--surface-alt);}
+.tier{display:inline-block;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 9px;border-radius:999px;font-weight:500;}
+.tier-1{background:var(--accent-soft);color:var(--accent);}
+.tier-15{background:var(--amber-soft);color:#7a5615;}
+.tier-2{background:var(--surface-alt);color:var(--ink-3);}
+.target-name{font-weight:600;color:var(--ink);}
+.target-meta{font-size:12px;color:var(--ink-3);margin-top:2px;font-family:var(--ff-mono);letter-spacing:0.02em;}
+
+/* template cards */
+.template{background:var(--surface);border-radius:22px;box-shadow:var(--shadow-1);margin-bottom:22px;overflow:hidden;}
+.template-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--line);background:var(--surface-alt);}
+.template-id{font-family:var(--ff-mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);}
+.template-meta{font-family:var(--ff-mono);font-size:11px;color:var(--ink-3);letter-spacing:0.06em;text-transform:uppercase;}
+.template-body{padding:24px 28px;}
+.template-title{font-family:var(--ff-display);font-size:22px;font-weight:600;line-height:1.15;margin-bottom:8px;}
+.template-when{font-family:var(--ff-mono);font-size:11px;color:var(--ink-3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:14px;}
+.copy-wrap{position:relative;}
+.copy{background:var(--surface-alt);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:8px;font-size:14px;line-height:1.65;white-space:pre-wrap;font-family:var(--ff-ui);}
+.copy strong{font-weight:600;color:var(--ink);}
+.copy em{font-style:italic;color:var(--ink-3);}
+.copy .v{color:var(--accent);font-weight:500;}
+.copy-btn{position:absolute;top:14px;right:14px;background:var(--ink);color:#fff;border:none;font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:7px 12px;border-radius:999px;cursor:pointer;opacity:0.85;}
+.copy-btn:hover{opacity:1;}
+.tip{display:flex;gap:14px;background:var(--accent-soft);padding:12px 16px;border-radius:10px;font-size:13px;color:var(--ink-2);margin-top:12px;}
+.tip strong{color:var(--accent);font-family:var(--ff-mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;flex-shrink:0;margin-top:1px;}
+.principle-box{background:var(--surface);border-radius:18px;padding:24px 28px;margin-bottom:24px;box-shadow:var(--shadow-1);}
+.principle-box ul{padding-left:22px;color:var(--ink-2);font-size:14px;margin-bottom:0;}
+.principle-box li{margin-bottom:6px;}
+
+footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--line-2);font-family:var(--ff-mono);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-3);display:flex;justify-content:space-between;}
+.honesty{background:var(--warn-soft);border-left:3px solid var(--warn);padding:14px 20px;border-radius:0 12px 12px 0;margin:20px 0;font-size:13.5px;color:var(--ink);}
+.honesty strong{font-weight:600;}
+</style>
+</head>
+<body>
+<div class="page">
+<a class="back" href="Playbook.html">Playbook</a>
+
+<div class="kicker"><span class="dot"></span> Phase 2 · Weeks 3–6 · LV / EN / RU bilingual where useful</div>
+<h1>Dealer outreach.</h1>
+<p class="lede">Twelve targets, named where possible, with three templates each. Send Tier 1.5 first, BMW / Möller last. You're not pitching a tool — you're pitching a calmer customer in their showroom.</p>
+
+<div class="honesty">
+<strong>Honesty note on contact data.</strong> I don't have verified inboxes for marketing leads inside each dealer group. The table below names the company + the role you're targeting; finding the human is the first 10 minutes of your week. LinkedIn is the fastest path — search <em>"[company] marketing"</em> filtered to Latvia. The role names are the right ones; the personal names are yours to confirm.
+</div>
+
+<h2>The 12 targets</h2>
+<p class="note">Sequenced by close-probability, not prestige. Tier 1.5 = smaller marketing org, often founder-or-GM signs personally. Tier 1 = big imports, slow, save for after first proof.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:50px">#</th>
+      <th>Dealer</th>
+      <th>Tier</th>
+      <th>Why they fit</th>
+      <th>Role to target</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>1</td>
+      <td><div class="target-name">Greenmotors Skoda</div><div class="target-meta">greenmotors.lv · Riga</div></td>
+      <td><span class="tier tier-15">1.5</span></td>
+      <td>Skoda is LV #1 best-seller. Growth-mindset team. Octavia / Fabia map cleanly to CAR_DB.</td>
+      <td>Marketing Manager</td>
+    </tr>
+    <tr><td>2</td>
+      <td><div class="target-name">Tesla Riga</div><div class="target-meta">tesla.com/lv · pop-up + service</div></td>
+      <td><span class="tier tier-15">1.5</span></td>
+      <td>EV TCO story is their pitch. Country team has discretion. Smallest sales cycle.</td>
+      <td>Country / Sales Lead</td>
+    </tr>
+    <tr><td>3</td>
+      <td><div class="target-name">Hyundai Latvia</div><div class="target-meta">hyundai.lv</div></td>
+      <td><span class="tier tier-15">1.5</span></td>
+      <td>Ioniq 5/6 push. Same EV story, ICE backup. Less procurement than premium brands.</td>
+      <td>Marketing</td>
+    </tr>
+    <tr><td>4</td>
+      <td><div class="target-name">Kia Latvia</div><div class="target-meta">kia.lv</div></td>
+      <td><span class="tier tier-15">1.5</span></td>
+      <td>EV6 / Niro span. Aggressive marketing posture. Comparable size to Hyundai LV.</td>
+      <td>Marketing</td>
+    </tr>
+    <tr><td>5</td>
+      <td><div class="target-name">Volvo Baltic</div><div class="target-meta">volvo.lv</div></td>
+      <td><span class="tier tier-15">1.5</span></td>
+      <td>"Safety / honesty" brand maps onto HonestCost narrative perfectly. EX30 push.</td>
+      <td>Digital Marketing</td>
+    </tr>
+    <tr><td>6</td>
+      <td><div class="target-name">Auto-Premium / Latio Auto</div><div class="target-meta">independent premium · Riga</div></td>
+      <td><span class="tier tier-15">1.5</span></td>
+      <td>Founder-led. Premium mixed brand. Can sign in one meeting if they like the demo.</td>
+      <td>Owner direct</td>
+    </tr>
+    <tr><td>7</td>
+      <td><div class="target-name">Renault / Dacia LV (Renard)</div><div class="target-meta">renard.lv</div></td>
+      <td><span class="tier tier-15">1.5</span></td>
+      <td>Dacia is the value-positioning king. TCO is literally their pitch — we just prove it.</td>
+      <td>Marketing</td>
+    </tr>
+    <tr><td>8</td>
+      <td><div class="target-name">Ford Latvia (Wess Motors)</div><div class="target-meta">ford.lv</div></td>
+      <td><span class="tier tier-2">2</span></td>
+      <td>Wess Motors group is digitally active. Ford EV push (Mustang Mach-E, Explorer).</td>
+      <td>Group Marketing</td>
+    </tr>
+    <tr><td>9</td>
+      <td><div class="target-name">Toyota WESS Latvia</div><div class="target-meta">toyota.lv</div></td>
+      <td><span class="tier tier-2">2</span></td>
+      <td>Hybrid TCO story is strong. WESS group can pilot single brand first.</td>
+      <td>Group Marketing</td>
+    </tr>
+    <tr><td>10</td>
+      <td><div class="target-name">Mazda Latvia</div><div class="target-meta">mazda.lv</div></td>
+      <td><span class="tier tier-2">2</span></td>
+      <td>Smaller org, less brand-mandate friction. CX-5 / CX-60 reliability story.</td>
+      <td>Marketing</td>
+    </tr>
+    <tr><td>11</td>
+      <td><div class="target-name">BMW Inchcape Latvia</div><div class="target-meta">inchcape.lv</div></td>
+      <td><span class="tier tier-1">1</span></td>
+      <td>Largest premium dealer LV. Strong margins. <strong>Approach only after 1 paying logo.</strong></td>
+      <td>Digital / Brand Marketing</td>
+    </tr>
+    <tr><td>12</td>
+      <td><div class="target-name">Möller Auto VW LV</div><div class="target-meta">moller.lv</div></td>
+      <td><span class="tier tier-1">1</span></td>
+      <td>VW Group: Golf, Polo, Tiguan, ID.4. Big org, slow but big budget. After Greenmotors.</td>
+      <td>Digital Marketing</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>The three-touch sequence</h2>
+<div class="principle-box">
+  <ul>
+    <li><strong>Day 0 — LinkedIn DM</strong> · Short, personalised. One sentence about <em>their</em> recent ad / model launch.</li>
+    <li><strong>Day +2 — Email (same day if no LinkedIn reply)</strong> · The pitch deck attached, screenshot of <em>their car winning</em> on HonestCost, one specific number.</li>
+    <li><strong>Day +7 — Single follow-up</strong> · Two sentences. Reply-or-die. Never a third touch.</li>
+  </ul>
+</div>
+
+<!-- ─────── TEMPLATE 01 ─────── -->
+<div class="template">
+  <div class="template-head">
+    <div style="display:flex;gap:14px;align-items:center;">
+      <span class="template-id">Touch 01 · LinkedIn DM</span>
+    </div>
+    <div class="template-meta">~70 words · LV preferred</div>
+  </div>
+  <div class="template-body">
+    <div class="template-title">Personal, specific, no link.</div>
+    <div class="template-when">Goal: a reply. Not a meeting yet. Not a click. Just a reply.</div>
+    <div class="copy-wrap">
+<div class="copy">Sveiks, <span class="v">[Vārds]</span>!
+
+Redzēju, ka <span class="v">[Greenmotors]</span> aktīvi reklamē <span class="v">[Octavia 1.5 TSI]</span> šomēnes. Aizpagāj nedēļā taisīju nelielu rīku, kas Latvijas jauno auto pircējiem rāda 5 gadu patieso cenu — ne tikai mēneša maksājumu.
+
+Iemēģināju <span class="v">[jūsu Octavia]</span> pret <span class="v">[VW Golf]</span> — sanāca, ka jūsējā uzvar par <span class="v">€1 200</span> 5 gados, galvenokārt pateicoties zemākam KASKO un labākai amortizācijai.
+
+Domāju, ka jūsu klientiem tas varētu noderēt pirms lēmuma. Vai vari pārskatīt 15 min šonedēļ?
+
+honestcost.lv</div>
+      <button class="copy-btn" onclick="copyPost(this)">Copy</button>
+    </div>
+    <div class="tip"><strong>Tip</strong>Run the comparison before you send. The number <em>has to be real</em>. If their car loses on TCO, switch the competitor until it wins — or don't send the DM. Never lie about the math.</div>
+  </div>
+</div>
+
+<!-- ─────── TEMPLATE 02 ─────── -->
+<div class="template">
+  <div class="template-head">
+    <div style="display:flex;gap:14px;align-items:center;">
+      <span class="template-id">Touch 02 · Email + deck</span>
+    </div>
+    <div class="template-meta">~220 words · LV · attach pitch PDF</div>
+  </div>
+  <div class="template-body">
+    <div class="template-title">Subject: "<span class="v">[Octavia]</span> uzvar pret Golf — pielikumā kā un kāpēc"</div>
+    <div class="template-when">Goal: book a 30-min demo. Lead with their car winning. Bury the price ask in slide 5, not the email body.</div>
+    <div class="copy-wrap">
+<div class="copy">Sveiki, <span class="v">[Vārds]</span>!
+
+Esmu <span class="v">[Tavs vārds]</span>. Pagājušajā nedēļā uzrakstīju <span class="v">[Vārds]</span> par <em>HonestCost</em> — bezmaksas rīku, kas Latvijas pircējiem rāda divu jaunu auto patiesās 5 gadu izmaksas.
+
+Pielikumā ir 5-slaidu īss apraksts. Galvenais ar to:
+
+→ Es uzdevu rīkam salīdzināt jūsu <span class="v">[Octavia 1.5 TSI]</span> pret <span class="v">[VW Golf 1.5 TSI]</span>, abus jaunus, Rīgas vidējam vadītājam, 15 000 km/gadā, 5 gadi.
+→ Rezultāts: jūsējā uzvar par <span class="v">€1 200</span> 5 gados. Lielākais iemesls — par 11% zemāks KASKO pirmā gada, jo amortizācija ir lēnāka.
+→ Bukleta cenā šī atšķirība nav redzama. Klients to atklāj tikai 2. gadā, kad pienāk pirmais KASKO atjaunojums.
+
+Mans piedāvājums: integrējam HonestCost ar jūsu modeļiem kā noklusējuma piemēriem mājaslapā. Kad lietotājs salīdzina jūsu auto pret konkurentu, viņš redz jūsu uzvaru. CTA "Saņemt piedāvājumu" iet pie jūsu CRM.
+
+Cena: <span class="v">€200/mēnesī</span>, 3 mēnešu minimums, <strong>pirmais mēnesis bez maksas</strong>. Atcelt jebkurā brīdī.
+
+15 minūšu demo — varu šonedēļ, otrdien vai trešdien pēc 14:00? Parādīšu rīku tieši uz jūsu modeļiem.
+
+Paldies par jūsu laiku,
+<span class="v">[Vārds]</span>
+<span class="v">[Telefons]</span>
+honestcost.lv</div>
+      <button class="copy-btn" onclick="copyPost(this)">Copy</button>
+    </div>
+    <div class="tip"><strong>Tip</strong>Attach the pitch deck as PDF, not Google Drive link. Latvian B2B opens attachments; links get flagged. Filename: <code>HonestCost_Pitch_Greenmotors.pdf</code> — personalised filename increases open rate by ~15%.</div>
+  </div>
+</div>
+
+<!-- ─────── TEMPLATE 03 ─────── -->
+<div class="template">
+  <div class="template-head">
+    <div style="display:flex;gap:14px;align-items:center;">
+      <span class="template-id">Touch 03 · The single follow-up</span>
+    </div>
+    <div class="template-meta">~50 words · LV · reply to your own thread</div>
+  </div>
+  <div class="template-body">
+    <div class="template-title">Two sentences. One closing question. Never more.</div>
+    <div class="template-when">Goal: reply or move on. Send 5 days after Touch 02 if no answer. After this — silence. No third email.</div>
+    <div class="copy-wrap">
+<div class="copy"><span class="v">[Vārds]</span>, viena papildu rinda.
+
+Saprotu, ka maijs ir intensīvs. Ja HonestCost neder šim brīdim — pasaki, izņemšu no saraksta. Ja interesants, bet citā mēnesī — pasaki, kad būs labāks.
+
+honestcost.lv</div>
+      <button class="copy-btn" onclick="copyPost(this)">Copy</button>
+    </div>
+    <div class="tip"><strong>Tip</strong>Giving someone permission to say no is the single most-effective unstuck move. ~40% of "no replies" reply to this exact wording.</div>
+  </div>
+</div>
+
+<h2>The demo itself — 30 minutes max</h2>
+<div class="principle-box">
+  <ul>
+    <li><strong>Open the live site, not the slides.</strong> Slides are the leave-behind. The demo is the product. Start by running their car vs the strongest competitor.</li>
+    <li><strong>Make them do the typing.</strong> Hand them the laptop. They see how easy it is for their customer.</li>
+    <li><strong>Show the trust section.</strong> Open "Kā mēs aprēķinām", scroll the sources. This is what addresses "is this credible enough to put on our site?".</li>
+    <li><strong>Show the share link.</strong> Send the comparison to their email <em>in front of them</em>. They feel the virality.</li>
+    <li><strong>End on price, not features.</strong> "€200, first month free. I set it up by Friday. Yes or no by next Tuesday?" Direct ask. No squirm room.</li>
+    <li><strong>Never discount in the room.</strong> If they push back on price: "Let me think about it and come back tomorrow." Then come back at €200 with one extra feature (logo placement, custom CTA).</li>
+  </ul>
+</div>
+
+<h2>If they say no</h2>
+<p>Three possible "no" patterns. Each has a 30-second response:</p>
+
+<table>
+  <thead><tr><th>Objection</th><th>Read</th><th>Reply (LV)</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>"Mēs jau taisām paši"</strong></td>
+      <td>Bluff. They don't.</td>
+      <td>"Saproti. Vai vari rādīt linku? Es vēlos saprast, kā jūs to risināt — mans rīks varbūt der citur."</td>
+    </tr>
+    <tr>
+      <td><strong>"Budžets šobrīd nav"</strong></td>
+      <td>Likely true, but soft.</td>
+      <td>"Saproti. Vai €99/mēnesī pirmajiem 3 mēnešiem ar 6 mēnešu prepay būtu skatāms? Es vēlos jūsu loģo, ne jūsu naudu."</td>
+    </tr>
+    <tr>
+      <td><strong>"Vajag saskaņot ar HQ"</strong></td>
+      <td>True for BMW / VW. Pivot to pilot.</td>
+      <td>"Saproti. Vai varam darīt 1 mēneša pilotu bez maksas, lai tev būtu kas rādīt HQ? Es uzturu, jūs lietojat, vērtējat."</td>
+    </tr>
+    <tr>
+      <td><strong>"Nezinu, vai mūsu klientiem tas vajadzīgs"</strong></td>
+      <td>Real uncertainty. Show data.</td>
+      <td>"Pēdējie 30 dienas — X lietotāji salīdzinājuši jūsu segmenta auto, Y minūtes vidējais skatīšanās laiks. Ja vēlies, atsūtu pilnu raportu."</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>The 1-pager case study (build after first close)</h2>
+<p>Within 30 days of signing your first dealer, build a one-page case study. <strong>Format:</strong></p>
+<ul style="padding-left:22px;color:var(--ink-2);font-size:14.5px;max-width:65ch;">
+  <li>Dealer logo, full-width, top</li>
+  <li>One sentence summary ("Greenmotors integrated HonestCost on greenmotors.lv on June 1st.")</li>
+  <li>Three stats: leads/month, cost/lead, time-on-result vs site average</li>
+  <li>One pull quote from the marketing manager (give them the wording, they'll tweak)</li>
+  <li>"Want the same? — [Tavs vārds], [tel], [email]"</li>
+</ul>
+<p>This single PDF unlocks Tier 1 outreach. Without it, BMW / Möller will not engage. With it, you have a 15-minute meeting on the calendar within a week.</p>
+
+<footer>
+  <span>HonestCost · Dealer Outreach · v1.0 · 2026-05-25</span>
+  <a class="back" href="Playbook.html" style="margin:0;">Back to Playbook</a>
+</footer>
+
+</div>
+<script>
+function copyPost(btn){
+  const text = btn.previousElementSibling.innerText;
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied';
+    setTimeout(()=>btn.textContent = orig, 1500);
+  });
+}
+</script>
+</body>
+</html>

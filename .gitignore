@@ -1,2 +1,12 @@
 .claude/
 progress.md
+*.zip
+*.bak
+.image-slots.state.json
+*_check.png
+*_light.png
+*_topL.png
+0[0-9]-_themes.png
+_build/
+HonestCost_DS_Extract/
+uploads/
