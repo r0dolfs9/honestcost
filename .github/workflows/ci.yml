@@ -20,8 +20,12 @@ jobs:
         run: |
           node --check test-calc.js
           node --check test_scenarios.js
+          node --check test-ui-helpers.js
+          node --check test-static-pages.js
 
       - name: Run calc tests
         run: |
           node test-calc.js
           node test_scenarios.js
+          node test-ui-helpers.js
+          node test-static-pages.js

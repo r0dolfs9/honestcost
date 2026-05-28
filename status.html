@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HonestCost status</title>
+<meta name="description" content="HonestCost servisa statusa lapa ar tikai apstiprinātu informāciju.">
+<meta property="og:title" content="HonestCost statuss">
+<meta property="og:description" content="Faktisks HonestCost servisa statuss bez izdomātiem uptime solījumiem.">
+<meta property="og:image" content="https://honestcost.lv/og-image.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://honestcost.lv/og-image.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#16181d;--muted:#676b75;--line:#e7e2d7;--bg:#f4f2ec;--surface:#fff;--accent:#3344f0;--amber:#f5a623;--ok:#11a05f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter Tight',system-ui,sans-serif;line-height:1.55}.wrap{max-width:920px;margin:0 auto;padding:28px 24px 72px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:48px}.logo{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:600;color:var(--ink);text-decoration:none}.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--amber);margin:0 2px 5px}.nav{display:flex;gap:10px}.nav a{color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 13px;font-size:13px}.hero{margin-bottom:28px}.eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}h1{font-size:52px;line-height:1;margin:0 0 12px;letter-spacing:-.03em}p{margin:0;color:var(--muted);font-size:16px}.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;margin-top:16px}.status-row{display:flex;gap:14px;align-items:flex-start}.status-dot{width:12px;height:12px;border-radius:50%;background:var(--ok);margin-top:6px;box-shadow:0 0 0 5px rgba(17,160,95,.12)}h2{font-size:20px;margin:0 0 8px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.metric{background:#faf8f2;border:1px solid var(--line);border-radius:14px;padding:16px}.label{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);margin-bottom:6px}.value{font-size:18px;font-weight:600}.note{font-size:13px;color:var(--muted);margin-top:8px}.foot{margin-top:30px;font-size:13px;color:var(--muted)}@media(max-width:720px){.top,.grid{display:block}.nav{margin-top:14px}.nav a{display:inline-flex;margin:0 6px 6px 0}h1{font-size:40px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="top">
+    <a class="logo" href="/">Honest<span class="dot"></span>Cost</a>
+    <nav class="nav">
+      <a href="/">Kalkulators</a>
+      <a href="/faq.html">Metodoloģija</a>
+    </nav>
+  </div>
+
+  <section class="hero">
+    <div class="eyebrow">Statuss</div>
+    <h1>Servisa statuss bez izdomātiem uptime solījumiem.</h1>
+    <p>Šī lapa rāda tikai to, ko var apstiprināt no pašreizējā projekta stāvokļa. Automātisks ārējais monitorings vēl nav pieslēgts.</p>
+  </section>
+
+  <section class="card">
+    <div class="status-row">
+      <span class="status-dot" aria-hidden="true"></span>
+      <div>
+        <h2>Publiskais kalkulators: lokāli pārbaudīts</h2>
+        <p>Automātiskie aprēķinu testi lokālajā repozitorijā iziet veiksmīgi. Tas nav tas pats, kas nepārtraukts pieejamības monitorings produkcijā.</p>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="metric">
+        <div class="label">Pēdējā lokālā pārbaude</div>
+        <div class="value">2026-05-27</div>
+        <div class="note">`test-calc.js`, `test_scenarios.js`, `test-ui-helpers.js`.</div>
+      </div>
+      <div class="metric">
+        <div class="label">Ārējais monitorings</div>
+        <div class="value">Nav apstiprināts</div>
+        <div class="note">Nav repo pierādījumu par Sentry, UptimeRobot vai līdzīgu monitoringu.</div>
+      </div>
+      <div class="metric">
+        <div class="label">E-pasta nosūtīšana</div>
+        <div class="value">Demo režīms, kamēr nav atslēgu</div>
+        <div class="note">EmailJS konstantes vēl ir placeholder vērtības.</div>
+      </div>
+      <div class="metric">
+        <div class="label">Auto datubāze</div>
+        <div class="value">Ielādējas pēc pieprasījuma</div>
+        <div class="note">`car-db.js` tiek ielādēts, kad lietotājs pirmoreiz atver auto izvēlni.</div>
+      </div>
+    </div>
+  </section>
+
+  <p class="foot">Ja pamani kļūdu vai nepieejamību, raksti uz <a href="mailto:hello@honestcost.lv">hello@honestcost.lv</a>.</p>
+</main>
+</body>
+</html>
