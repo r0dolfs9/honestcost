@@ -1,18 +1,23 @@
 # HonestCost Project Status
 
-Last updated: 2026-05-26
+Last updated: 2026-05-28
 
 ## Product
 
 - Main app file: `index.html`
-- Car database: `car-db.js`
-- Current local app status: redesign files are present locally.
-- Current deployment status: unknown from local files alone.
+- Car database: `car-db.js`, lazy-loaded when the picker is first opened.
+- Static pages: `faq.html` and `status.html`.
+- Social preview asset: `og-image.png`.
+- Current local app status: main branch is clean after push.
+- Current GitHub status: commit `a122c6a feat: add saved scenarios and static pages` was pushed to `origin/main`.
+- Current deployment status: GitHub push confirmed; live site/GitHub Pages result still needs browser verification.
 
 ## Verification
 
 - `test-calc.js` exists and tests the production calc engine extracted from `index.html`.
 - `test_scenarios.js` exists and covers seven scenario comparisons.
+- `test-ui-helpers.js` exists and covers UI helper behavior for images, debug mode, and saved scenarios.
+- `test-static-pages.js` exists and checks FAQ/status/sitemap/OG metadata smoke cases.
 - GitHub Actions workflow exists at `.github/workflows/ci.yml`.
 
 ## Legal / company
@@ -29,6 +34,7 @@ Last updated: 2026-05-26
 - Sentry status: not confirmed.
 - UptimeRobot status: not confirmed.
 - MailerLite/Zapier backup status: not confirmed.
+- EmailJS status: placeholder keys; demo behavior only.
 - Staging environment status: not confirmed.
 - CSP/security header status: not confirmed.
 

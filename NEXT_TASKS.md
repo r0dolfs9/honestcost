@@ -1,6 +1,6 @@
 # HonestCost Next Tasks
 
-Generated 2026-05-26 from `EXECUTION_PLAN.md`, `LEGAL_TASKS.md`, `BUSINESS_TASKS.md`, `OPERATIONS_TASKS.md`, and the current local repo state.
+Updated 2026-05-28 from `EXECUTION_PLAN.md`, `LEGAL_TASKS.md`, `BUSINESS_TASKS.md`, `OPERATIONS_TASKS.md`, and the current local repo state.
 
 ## Already handled locally
 
@@ -9,6 +9,16 @@ Generated 2026-05-26 from `EXECUTION_PLAN.md`, `LEGAL_TASKS.md`, `BUSINESS_TASKS
 - Added `HANDOVER.md` with factual repo structure, verification commands, and deployment cautions.
 - Added `LESSONS.md` with one factual entry and a reusable lesson template.
 - Added `PROJECT_STATUS.md` with unknown external/business/legal states explicitly marked as unknown.
+- Fixed long car-name wrapping in the verdict bar.
+- Added designed fallback car visuals and better real-image sizing.
+- Added debug output behind `?debug=1` for intermediate calc values.
+- Added localStorage saved scenarios with save/load/delete controls.
+- Added print/PDF stylesheet and result-screen print action.
+- Changed `car-db.js` to lazy-load when the car picker first opens.
+- Added factual `faq.html` methodology page and `status.html` page.
+- Regenerated `og-image.png` and added Open Graph / Twitter metadata.
+- Added `test-ui-helpers.js` and `test-static-pages.js`; CI runs both.
+- Pushed commit `a122c6a feat: add saved scenarios and static pages` to `origin/main`.
 
 ## Your tasks: need money, accounts, legal authority, or your decisions
 
@@ -35,21 +45,16 @@ Count: 18
 
 ## Codex tasks possible later without money or external accounts
 
-Count: 13
+Count: 7
 
 - Add a proprietary `LICENSE` file once the copyright holder name is confirmed.
 - Add copyright headers once the holder/entity name is confirmed.
 - Add a static `sikdatnes.html` cookie/tracking page after wording is approved.
 - Add a static `accessibility.html` statement after an actual audit result exists.
-- Add a static `status.html` page that avoids unverified uptime claims.
 - Add URL-param feature flags for local/staging testing.
 - Add CSP meta policy after mapping all current inline/external scripts.
-- Add FAQ page using only verified methodology and product facts.
-- Lazy-load `car-db.js` when the picker first opens.
-- Add a print stylesheet for result pages.
-- Add localStorage saved scenarios.
-- Add debug output behind `?debug=1` for intermediate calc values.
-- Improve long car-name wrapping in the verdict bar.
+- Do browser QA on the deployed site: car picker lazy-load, saved scenarios, print/PDF, FAQ/status pages, OG metadata.
+- Start the larger mobile/responsive pass after browser QA.
 
 ## Blocked to avoid fabrication
 
