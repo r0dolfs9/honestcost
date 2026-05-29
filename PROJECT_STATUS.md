@@ -10,7 +10,7 @@ Last updated: 2026-05-28
 - Social preview asset: `og-image.png`.
 - Current local app status: main branch is clean after push.
 - Current GitHub status: commit `a122c6a feat: add saved scenarios and static pages` was pushed to `origin/main`.
-- Current deployment status: GitHub push confirmed; live site/GitHub Pages result still needs browser verification.
+- Current deployment status: GitHub Pages subpath `https://r0dolfs9.github.io/honestcost/` returns `200 OK`; `honestcost.lv` and `www.honestcost.lv` do not resolve as of 2026-05-28.
 
 ## Verification
 
@@ -49,5 +49,6 @@ Last updated: 2026-05-28
 
 ## Next source of truth
 
-- Use `NEXT_TASKS.md` for grouped next actions.
+- Open `00_HONESTCOST_ROADMAP.md` first for the command-center roadmap.
+- Use `NEXT_TASKS.md` for the ordered staged task queue.
 - Use `EXECUTION_PLAN.md` for the full 90-day sequencing.

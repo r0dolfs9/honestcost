@@ -17,11 +17,13 @@ assert.ok(og.size > 50000, 'og-image.png should be a real generated PNG asset');
 assert.match(status, /<title>HonestCost status<\/title>/);
 assert.match(status, /Nav apstiprināts/);
 assert.doesNotMatch(status, /99\.9|24\/7|all systems operational/i);
+assert.doesNotMatch(status, /href="\/(?:faq\.html)?"/, 'status links should work from the GitHub Pages subpath');
 
 assert.match(faq, /HonestCost metodoloģija/);
 assert.match(faq, /localStorage/);
 assert.match(faq, /print izkārtojumu/);
 assert.doesNotMatch(faq, /neatkarīgi auditēti|sertificēts/i);
+assert.doesNotMatch(faq, /href="\/(?:status\.html)?"/, 'FAQ links should work from the GitHub Pages subpath');
 
 assert.match(sitemap, /https:\/\/honestcost\.lv\/status\.html/);
 assert.match(sitemap, /https:\/\/honestcost\.lv\/faq\.html/);
