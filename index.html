@@ -903,10 +903,6 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
     <div class="site-tagline">Salīdzini divu jaunu automobiļu pilnās izmaksas — ne tikai cenu</div>
   </div>
   <div class="nav-right">
-    <button class="btn-example" id="exampleBtn">
-      <i data-lucide="zap" style="width:14px;height:14px;"></i>
-      Ielādēt piemēru
-    </button>
     <span class="lang-pill">LV</span>
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Mainīt tēmu">
       <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -2259,31 +2255,6 @@ function onAdj(){
   renderResults(lastA,lastB,ag);
 }
 
-// Example data (BMW 1-Series vs X1)
-document.getElementById('exampleBtn').addEventListener('click',()=>{
-  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v;};
-  set('slOwn',5);document.getElementById('dispOwn').textContent='5 gadi';
-  set('slKm',15000);document.getElementById('dispKm').textContent='15 000 km/g';
-  set('nameA','BMW 1. sērija 118i M Sport');
-  S.brandA='BMW';S.bodyA='hatch';
-  set('priceA',38500);
-  document.getElementById('depCatA').value='premium';
-  document.getElementById('ftA').value='petrol';onFuelChange('A');
-  set('consA',6.2);set('co2A',142);set('ccA',1499);
-  set('wA',3);set('svcIntA',15000);set('svcCostA',280);
-  document.getElementById('octaA').value='';autoOCTA('A');
-  set('nameB','BMW X1 xDrive20i M Sport');
-  S.brandB='BMW';S.bodyB='suv';
-  set('priceB',48900);
-  document.getElementById('depCatB').value='premium_suv';
-  document.getElementById('ftB').value='petrol';onFuelChange('B');
-  set('consB',8.4);set('co2B',191);set('ccB',1998);
-  set('wB',3);set('svcIntB',15000);set('svcCostB',320);
-  document.getElementById('octaB').value='';autoOCTA('B');
-  setPhotoPreview('A',previewCarFromFields('A'));
-  setPhotoPreview('B',previewCarFromFields('B'));
-});
-
 
 // ═══════════════════════════════════════════════════════════════
 // CAR PICKER · search + apply from window.CAR_DB (car-db.js)
@@ -2454,11 +2425,6 @@ let _horizonDebounce;
     } }), 600);
   });
 });
-
-// Track example button.
-document.getElementById('exampleBtn')?.addEventListener('click',
-  () => plausible('example_loaded', { props: { preset: 'bmw_118i_x1' } })
-);
 
 // Track financing-mode changes.
 document.querySelectorAll('.toggle-btn[data-fin]').forEach(b =>
