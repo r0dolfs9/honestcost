@@ -20,6 +20,13 @@
 
     * { box-sizing: border-box; }
 
+    html { scroll-behavior: smooth; }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
     body {
       min-height: 100vh;
       margin: 0;
@@ -115,6 +122,16 @@
       background: var(--panel);
       overflow: hidden;
       box-shadow: 0 0 0 1px rgba(0,0,0,.55), 0 0 34px rgba(184,255,34,.08);
+      display: block;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .card:hover,
+    .card:focus-visible {
+      transform: translateY(-5px);
+      border-color: var(--green);
+      box-shadow: 0 0 0 1px rgba(0,0,0,.55), 0 0 42px rgba(184,255,34,.18);
+      outline: none;
     }
 
     .card.amber { border-color: rgba(255,208,41,.55); }
@@ -306,10 +323,197 @@
 
     .test span { color: var(--green); }
 
+    .guide {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 18px;
+      margin-top: 30px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(184,255,34,.25);
+    }
+
+    .detail {
+      scroll-margin-top: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(6, 12, 10, .9);
+    }
+
+    .detail:nth-child(2) { border-color: rgba(255,208,41,.36); }
+    .detail:nth-child(3) { border-color: rgba(79,195,255,.38); }
+
+    .detail-head {
+      display: grid;
+      grid-template-columns: 92px 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 18px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      background: linear-gradient(90deg, rgba(184,255,34,.16), rgba(255,255,255,.015));
+    }
+
+    .detail:nth-child(2) .detail-head {
+      background: linear-gradient(90deg, rgba(255,208,41,.16), rgba(255,255,255,.015));
+    }
+
+    .detail:nth-child(3) .detail-head {
+      background: linear-gradient(90deg, rgba(79,195,255,.16), rgba(255,255,255,.015));
+    }
+
+    .detail-num {
+      display: grid;
+      place-items: center;
+      min-height: 70px;
+      border: 1px solid var(--green);
+      border-radius: 10px;
+      color: var(--green);
+      font-family: "DM Mono", monospace;
+      font-size: 36px;
+      font-weight: 700;
+    }
+
+    .detail:nth-child(2) .detail-num { color: var(--amber); border-color: var(--amber); }
+    .detail:nth-child(3) .detail-num { color: var(--blue); border-color: var(--blue); }
+
+    .detail h2 {
+      margin: 0;
+      font-family: "Barlow Condensed", Impact, sans-serif;
+      font-size: clamp(46px, 6vw, 84px);
+      line-height: .82;
+      text-transform: uppercase;
+    }
+
+    .detail-kicker {
+      color: var(--muted);
+      font-size: 18px;
+      font-weight: 760;
+      max-width: 48ch;
+    }
+
+    .detail-body {
+      display: grid;
+      grid-template-columns: minmax(0, .82fr) minmax(320px, .48fr);
+      gap: 18px;
+      padding: 18px;
+    }
+
+    .explain,
+    .toolbox {
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px;
+      padding: 20px;
+      background: rgba(255,255,255,.035);
+    }
+
+    .toolbox {
+      background: rgba(0,0,0,.2);
+    }
+
+    .explain h3,
+    .toolbox h3 {
+      margin: 0 0 14px;
+      font-size: 26px;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .explain p {
+      margin: 0 0 18px;
+      color: var(--white);
+      font-size: 21px;
+      line-height: 1.22;
+      font-weight: 780;
+    }
+
+    .mini-steps,
+    .tool-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .mini-steps li {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: start;
+      color: #efe7d7;
+      font-size: 17px;
+      line-height: 1.28;
+    }
+
+    .mini-steps b {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #071007;
+      font-family: "DM Mono", monospace;
+      font-size: 13px;
+    }
+
+    .detail:nth-child(2) .mini-steps b { background: var(--amber); }
+    .detail:nth-child(3) .mini-steps b { background: var(--blue); }
+
+    .tool-list a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 13px 14px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 9px;
+      background: rgba(255,255,255,.04);
+      font-weight: 850;
+      transition: border-color .18s ease, transform .18s ease, background .18s ease;
+    }
+
+    .tool-list a:hover,
+    .tool-list a:focus-visible {
+      transform: translateX(4px);
+      border-color: var(--green);
+      background: rgba(184,255,34,.08);
+      outline: none;
+    }
+
+    .tool-list small {
+      color: var(--muted);
+      font-family: "DM Mono", monospace;
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .next-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 18px;
+      min-height: 44px;
+      padding: 0 16px;
+      border-radius: 8px;
+      color: #071007;
+      background: var(--green);
+      font-size: 16px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .detail:nth-child(2) .next-link { background: var(--amber); }
+    .detail:nth-child(3) .next-link { background: var(--blue); }
+
     @media (max-width: 1050px) {
       header { grid-template-columns: 1fr; }
       .icon-box { display: none; }
       .steps, .modes { grid-template-columns: 1fr 1fr; }
+      .detail-head,
+      .detail-body { grid-template-columns: 1fr; }
+      .detail-num { width: 92px; }
     }
 
     @media (max-width: 720px) {
@@ -323,7 +527,7 @@
   </style>
 </head>
 <body>
-  <main class="poster">
+  <main class="poster" id="top">
     <header>
       <div class="icon-box">▶</div>
       <div>
@@ -334,40 +538,40 @@
     </header>
 
     <section class="steps" aria-label="Main AI video pipeline">
-      <article class="card">
+      <a class="card" href="#step-script">
         <div class="card-head"><div class="num">1</div><div>Script</div></div>
         <div class="card-body">
           <div class="glyph">✎</div>
           <p class="bodyline">Prompt <span class="arrow">→</span> Script</p>
         </div>
-      </article>
+      </a>
 
-      <article class="card amber">
+      <a class="card amber" href="#step-voice">
         <div class="card-head"><div class="num">2</div><div>Voice</div></div>
         <div class="card-body">
           <div class="glyph">≋</div>
           <div class="tool">ElevenLabs</div>
           <p class="bodyline">Script <span class="arrow">→</span> Audio</p>
         </div>
-      </article>
+      </a>
 
-      <article class="card blue">
+      <a class="card blue" href="#step-avatar">
         <div class="card-head"><div class="num">3</div><div>Avatar</div></div>
         <div class="card-body">
           <div class="glyph">◉</div>
           <div class="tool">Tavus / AKOOL</div>
           <p class="bodyline">Audio <span class="arrow">→</span> Lip-sync</p>
         </div>
-      </article>
+      </a>
 
-      <article class="card">
+      <a class="card" href="#step-edit">
         <div class="card-head"><div class="num">4</div><div>Edit/Post</div></div>
         <div class="card-body">
           <div class="glyph">▣</div>
           <div class="tool">CapCut</div>
           <p class="bodyline">B-roll <span class="arrow">→</span> Captions <span class="arrow">→</span> Post</p>
         </div>
-      </article>
+      </a>
     </section>
 
     <section class="flow" aria-label="Full production flow">
@@ -415,6 +619,134 @@
     </section>
 
     <div class="test">Test <span>EN + LV</span> before choosing the stack</div>
+
+    <section class="guide" aria-label="Detailed step-by-step guide">
+      <article class="detail" id="step-script">
+        <div class="detail-head">
+          <div class="detail-num">01</div>
+          <div>
+            <h2>Script</h2>
+            <div class="detail-kicker">Turn a rough idea into a short video script that works in English and Latvian before you generate anything.</div>
+          </div>
+          <a class="next-link" href="#step-voice">Next: Voice</a>
+        </div>
+        <div class="detail-body">
+          <div class="explain">
+            <h3>What this step is</h3>
+            <p>The script is the control layer. If the script is too long, too formal, or auto-translated badly, every later tool will look fake.</p>
+            <ul class="mini-steps">
+              <li><b>1</b><span>Write one hook, one proof point, and one takeaway. Keep it 15-35 seconds.</span></li>
+              <li><b>2</b><span>Create both EN and LV versions manually. Do not rely on auto-translation for Latvian final copy.</span></li>
+              <li><b>3</b><span>Read the Latvian version out loud. Replace formal words with words you would actually say.</span></li>
+              <li><b>4</b><span>Mark where B-roll cuts happen: avatar for hook, screen/product proof for the middle, avatar for final line.</span></li>
+            </ul>
+          </div>
+          <aside class="toolbox">
+            <h3>Helpful links</h3>
+            <ul class="tool-list">
+              <li><a href="https://chat.openai.com/" target="_blank" rel="noopener"><span>ChatGPT</span><small>script drafts</small></a></li>
+              <li><a href="https://www.deepl.com/translator" target="_blank" rel="noopener"><span>DeepL</span><small>translation check</small></a></li>
+              <li><a href="https://docs.google.com/" target="_blank" rel="noopener"><span>Google Docs</span><small>script bank</small></a></li>
+            </ul>
+          </aside>
+        </div>
+      </article>
+
+      <article class="detail" id="step-voice">
+        <div class="detail-head">
+          <div class="detail-num">02</div>
+          <div>
+            <h2>Voice</h2>
+            <div class="detail-kicker">Generate the audio outside the avatar tool when Latvian quality matters. This is the fix for weird accent drift.</div>
+          </div>
+          <a class="next-link" href="#step-avatar">Next: Avatar</a>
+        </div>
+        <div class="detail-body">
+          <div class="explain">
+            <h3>How to complete it</h3>
+            <p>Use the best voice model first, then pass the finished audio into the avatar/lip-sync tool. Voice quality comes before face animation.</p>
+            <ul class="mini-steps">
+              <li><b>1</b><span>Clone your voice with clean samples, including Latvian if you want Latvian output.</span></li>
+              <li><b>2</b><span>Generate the same 15-second test in English and Latvian.</span></li>
+              <li><b>3</b><span>Listen for accent, rhythm, stress, and hard Latvian words like “salīdzinājums” and “apdrošināšana”.</span></li>
+              <li><b>4</b><span>Export final audio as a clean file. Do not use avatar-tool translation if it makes the accent worse.</span></li>
+            </ul>
+          </div>
+          <aside class="toolbox">
+            <h3>Helpful links</h3>
+            <ul class="tool-list">
+              <li><a href="https://elevenlabs.io/" target="_blank" rel="noopener"><span>ElevenLabs</span><small>voice + LV test</small></a></li>
+              <li><a href="https://www.descript.com/" target="_blank" rel="noopener"><span>Descript</span><small>cleanup/edit</small></a></li>
+              <li><a href="https://www.audacityteam.org/" target="_blank" rel="noopener"><span>Audacity</span><small>free cleanup</small></a></li>
+            </ul>
+          </aside>
+        </div>
+      </article>
+
+      <article class="detail" id="step-avatar">
+        <div class="detail-head">
+          <div class="detail-num">03</div>
+          <div>
+            <h2>Avatar</h2>
+            <div class="detail-kicker">Pick the face layer: your own avatar for trust, or a generic actor for ad testing. Feed it finished audio.</div>
+          </div>
+          <a class="next-link" href="#step-edit">Next: Edit/Post</a>
+        </div>
+        <div class="detail-body">
+          <div class="explain">
+            <h3>How to complete it</h3>
+            <p>The avatar should not carry the whole video. It should deliver short human beats while B-roll does the proof.</p>
+            <ul class="mini-steps">
+              <li><b>1</b><span>Create a consented avatar from your own clean footage, or choose a generic actor for non-personal UGC ads.</span></li>
+              <li><b>2</b><span>Upload the finished audio from the voice step and generate lip-sync in 9:16.</span></li>
+              <li><b>3</b><span>Keep avatar clips short: 3-5 seconds before cutting to product or scene footage.</span></li>
+              <li><b>4</b><span>Export separate A-roll clips so editing stays flexible.</span></li>
+            </ul>
+          </div>
+          <aside class="toolbox">
+            <h3>Helpful links</h3>
+            <ul class="tool-list">
+              <li><a href="https://www.tavus.io/" target="_blank" rel="noopener"><span>Tavus</span><small>personal avatar</small></a></li>
+              <li><a href="https://akool.com/" target="_blank" rel="noopener"><span>AKOOL</span><small>avatar + lip-sync</small></a></li>
+              <li><a href="https://www.heygen.com/" target="_blank" rel="noopener"><span>HeyGen</span><small>fast avatar tests</small></a></li>
+              <li><a href="https://www.synthesia.io/" target="_blank" rel="noopener"><span>Synthesia</span><small>polished explainers</small></a></li>
+            </ul>
+          </aside>
+        </div>
+      </article>
+
+      <article class="detail" id="step-edit">
+        <div class="detail-head">
+          <div class="detail-num">04</div>
+          <div>
+            <h2>Edit/Post</h2>
+            <div class="detail-kicker">Make it feel real: add B-roll, captions, jump cuts, product proof, and a simple posting loop.</div>
+          </div>
+          <a class="next-link" href="#top">Back to top</a>
+        </div>
+        <div class="detail-body">
+          <div class="explain">
+            <h3>How to complete it</h3>
+            <p>This is where synthetic output becomes usable content. B-roll hides avatar stiffness and captions make it native to TikTok/Reels.</p>
+            <ul class="mini-steps">
+              <li><b>1</b><span>Drop avatar A-roll into the timeline, then cut away to proof every few seconds.</span></li>
+              <li><b>2</b><span>Add product screen recordings, generated scenes, app footage, or lifestyle B-roll.</span></li>
+              <li><b>3</b><span>Burn in captions manually for English and Latvian. Check line breaks on phone size.</span></li>
+              <li><b>4</b><span>Export 9:16, post, then turn comments into the next script.</span></li>
+            </ul>
+          </div>
+          <aside class="toolbox">
+            <h3>Helpful links</h3>
+            <ul class="tool-list">
+              <li><a href="https://www.capcut.com/" target="_blank" rel="noopener"><span>CapCut</span><small>edit + captions</small></a></li>
+              <li><a href="https://runwayml.com/" target="_blank" rel="noopener"><span>Runway</span><small>prompt video</small></a></li>
+              <li><a href="https://pika.art/" target="_blank" rel="noopener"><span>Pika</span><small>quick scenes</small></a></li>
+              <li><a href="https://lumalabs.ai/dream-machine" target="_blank" rel="noopener"><span>Luma Dream Machine</span><small>cinematic B-roll</small></a></li>
+            </ul>
+          </aside>
+        </div>
+      </article>
+    </section>
   </main>
 </body>
 </html>
