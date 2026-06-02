@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Personal Brand UGC Avatar Workflow</title>
+  <link rel="stylesheet" href="../../fonts.css">
+  <style>
+    :root {
+      --coal: #0b0c0b;
+      --ink: #151511;
+      --ash: #20221f;
+      --paper: #f4efe4;
+      --muted: #aaa391;
+      --line: rgba(244, 239, 228, .16);
+      --soft-line: rgba(244, 239, 228, .09);
+      --green: #c8ff44;
+      --amber: #ffb347;
+      --blue: #7ca7ff;
+      --red: #ff675d;
+      --white: #fffaf0;
+      --shadow: 0 28px 90px rgba(0, 0, 0, .38);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--coal);
+    }
+
+    body {
+      margin: 0;
+      color: var(--white);
+      font-family: "Inter Tight", "Segoe UI", sans-serif;
+      background:
+        linear-gradient(90deg, rgba(244,239,228,.035) 1px, transparent 1px) 0 0 / 56px 56px,
+        linear-gradient(rgba(244,239,228,.025) 1px, transparent 1px) 0 0 / 56px 56px,
+        radial-gradient(circle at 12% 12%, rgba(200,255,68,.12), transparent 28%),
+        radial-gradient(circle at 88% 8%, rgba(124,167,255,.11), transparent 24%),
+        linear-gradient(180deg, #0b0c0b 0%, #11120f 48%, #080807 100%);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      opacity: .16;
+      mix-blend-mode: screen;
+      background-image:
+        linear-gradient(115deg, transparent 0 20%, rgba(255,255,255,.06) 21%, transparent 22% 100%),
+        repeating-linear-gradient(0deg, rgba(255,255,255,.12) 0 1px, transparent 1px 5px);
+      z-index: 5;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .shell {
+      width: min(1180px, calc(100% - 36px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      backdrop-filter: blur(18px);
+      background: rgba(11, 12, 11, .72);
+      border-bottom: 1px solid var(--soft-line);
+    }
+
+    .nav {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 850;
+      letter-spacing: 0;
+    }
+
+    .mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      color: var(--coal);
+      background: var(--green);
+      font-family: "DM Mono", monospace;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 6px;
+      box-shadow: 0 0 24px rgba(200,255,68,.28);
+    }
+
+    .navlinks {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .navlinks a {
+      padding: 10px 12px;
+      border-radius: 6px;
+    }
+
+    .navlinks a:hover {
+      color: var(--white);
+      background: rgba(244,239,228,.08);
+    }
+
+    .hero {
+      min-height: calc(100vh - 72px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(340px, .72fr);
+      gap: 42px;
+      align-items: center;
+      padding: 58px 0 34px;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 850px;
+      font-family: "Barlow Condensed", Impact, sans-serif;
+      font-size: clamp(70px, 12vw, 166px);
+      line-height: .82;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .hero p {
+      margin: 28px 0 0;
+      max-width: 650px;
+      color: #ddd5c2;
+      font-size: clamp(19px, 2.1vw, 26px);
+      line-height: 1.18;
+      font-weight: 520;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .button {
+      border: 1px solid var(--line);
+      background: rgba(244,239,228,.08);
+      color: var(--white);
+      height: 46px;
+      padding: 0 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-radius: 7px;
+      font-weight: 780;
+      font-size: 15px;
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(200,255,68,.7);
+      background: rgba(200,255,68,.11);
+    }
+
+    .button.primary {
+      color: var(--coal);
+      background: var(--green);
+      border-color: var(--green);
+      box-shadow: 0 18px 40px rgba(200,255,68,.18);
+    }
+
+    .video-card {
+      position: relative;
+      justify-self: center;
+      width: min(100%, 390px);
+      aspect-ratio: 9 / 16;
+      border: 1px solid rgba(244,239,228,.18);
+      border-radius: 10px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0)),
+        #171914;
+      box-shadow: var(--shadow);
+    }
+
+    .video-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 22%, #f5c9aa 0 13%, transparent 14%),
+        radial-gradient(circle at 50% 36%, #1a1a17 0 17%, transparent 18%),
+        linear-gradient(150deg, #33433d 0%, #121411 54%, #080908 100%);
+      opacity: .9;
+    }
+
+    .video-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 36%, rgba(0,0,0,.82) 100%);
+    }
+
+    .video-ui {
+      position: absolute;
+      inset: 16px;
+      z-index: 1;
+      display: grid;
+      align-content: space-between;
+    }
+
+    .recording {
+      justify-self: start;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 999px;
+      background: rgba(0,0,0,.34);
+      color: #fff7e9;
+      font-family: "DM Mono", monospace;
+      font-size: 12px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 0 6px rgba(255,103,93,.16);
+    }
+
+    .caption-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .caption-line {
+      padding: 12px;
+      border-radius: 8px;
+      color: var(--coal);
+      background: rgba(255,250,240,.9);
+      font-weight: 850;
+      font-size: 20px;
+      line-height: 1.02;
+    }
+
+    .overlay-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .mini-panel {
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(244,239,228,.12);
+      border: 1px solid rgba(244,239,228,.16);
+      backdrop-filter: blur(14px);
+      font-size: 12px;
+      color: #efe8d9;
+    }
+
+    .mini-panel strong {
+      display: block;
+      color: var(--green);
+      font-family: "DM Mono", monospace;
+      font-size: 18px;
+      margin-top: 4px;
+    }
+
+    .section {
+      padding: 86px 0;
+      border-top: 1px solid var(--soft-line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, .72fr) minmax(280px, .48fr);
+      gap: 32px;
+      align-items: end;
+      margin-bottom: 34px;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: "Barlow Condensed", Impact, sans-serif;
+      font-size: clamp(46px, 7vw, 94px);
+      line-height: .9;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .pipeline {
+      display: grid;
+      gap: 12px;
+      counter-reset: step;
+    }
+
+    .step {
+      counter-increment: step;
+      display: grid;
+      grid-template-columns: 86px minmax(0, .72fr) minmax(260px, .55fr);
+      gap: 20px;
+      align-items: stretch;
+      min-height: 148px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(244,239,228,.055);
+      overflow: hidden;
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      border-right: 1px solid var(--soft-line);
+      color: var(--green);
+      font-family: "DM Mono", monospace;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .step-number::before {
+      content: counter(step, decimal-leading-zero);
+    }
+
+    .step-main {
+      padding: 24px 0;
+    }
+
+    .step-main h3 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      line-height: .98;
+      letter-spacing: 0;
+    }
+
+    .step-main p {
+      margin: 0;
+      color: #d8cfbd;
+      font-size: 17px;
+      line-height: 1.36;
+    }
+
+    .step-output {
+      padding: 18px;
+      display: grid;
+      align-content: center;
+      background: rgba(0,0,0,.24);
+      border-left: 1px solid var(--soft-line);
+    }
+
+    .step-output span {
+      color: var(--muted);
+      font-family: "DM Mono", monospace;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .step-output strong {
+      margin-top: 8px;
+      color: var(--white);
+      font-size: 18px;
+      line-height: 1.22;
+    }
+
+    .formats {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .format {
+      appearance: none;
+      min-height: 218px;
+      padding: 18px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(244,239,228,.08), rgba(244,239,228,.035));
+      color: var(--white);
+      font: inherit;
+      text-align: left;
+      display: grid;
+      align-content: space-between;
+      cursor: pointer;
+      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+    }
+
+    .format:hover,
+    .format.active {
+      transform: translateY(-4px);
+      border-color: rgba(200,255,68,.72);
+      background: linear-gradient(180deg, rgba(200,255,68,.12), rgba(244,239,228,.04));
+    }
+
+    .format h3 {
+      margin: 0;
+      font-size: 23px;
+      line-height: 1;
+    }
+
+    .format p {
+      margin: 12px 0 0;
+      color: var(--muted);
+      line-height: 1.28;
+    }
+
+    .format code,
+    .script code {
+      font-family: "DM Mono", monospace;
+      color: var(--green);
+      font-size: 12px;
+    }
+
+    .script-lab {
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(330px, .55fr);
+      gap: 16px;
+    }
+
+    .script {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #10120f;
+      padding: 22px;
+    }
+
+    .script-row {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr);
+      gap: 18px;
+      padding: 18px 0;
+      border-top: 1px solid var(--soft-line);
+    }
+
+    .script-row:first-child { border-top: 0; padding-top: 0; }
+
+    .time {
+      color: var(--green);
+      font-family: "DM Mono", monospace;
+      font-size: 13px;
+    }
+
+    .script-row strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 18px;
+    }
+
+    .script-row p {
+      margin: 0;
+      color: #d8cfbd;
+      line-height: 1.35;
+    }
+
+    .side-note {
+      border: 1px solid rgba(255,179,71,.35);
+      border-radius: 10px;
+      background: rgba(255,179,71,.08);
+      padding: 22px;
+    }
+
+    .side-note h3 {
+      margin: 0 0 14px;
+      font-size: 26px;
+    }
+
+    .side-note ul,
+    .checklist {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .side-note li,
+    .checklist li {
+      display: grid;
+      grid-template-columns: 20px minmax(0, 1fr);
+      gap: 10px;
+      color: #e6dccb;
+      line-height: 1.32;
+    }
+
+    .side-note li::before,
+    .checklist li::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      margin-top: 6px;
+      background: var(--amber);
+      border-radius: 2px;
+    }
+
+    .boards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .board {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 24px;
+      background: rgba(244,239,228,.055);
+    }
+
+    .board h3 {
+      margin: 0 0 18px;
+      font-size: 28px;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .day {
+      min-height: 190px;
+      padding: 16px;
+      border-right: 1px solid var(--soft-line);
+      background: rgba(244,239,228,.052);
+    }
+
+    .day:last-child { border-right: 0; }
+
+    .day span {
+      display: block;
+      color: var(--green);
+      font-family: "DM Mono", monospace;
+      font-size: 12px;
+      margin-bottom: 18px;
+    }
+
+    .day strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.05;
+      margin-bottom: 8px;
+    }
+
+    .day p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.25;
+    }
+
+    .gate {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .score {
+      min-height: 330px;
+      border-radius: 10px;
+      border: 1px solid rgba(200,255,68,.5);
+      background:
+        linear-gradient(180deg, rgba(200,255,68,.12), rgba(200,255,68,.025)),
+        rgba(244,239,228,.04);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 28px;
+    }
+
+    .score strong {
+      display: block;
+      font-family: "Barlow Condensed", Impact, sans-serif;
+      font-size: 128px;
+      line-height: .8;
+      color: var(--green);
+    }
+
+    .score span {
+      color: #e8ddc9;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    footer {
+      padding: 44px 0 64px;
+      color: var(--muted);
+      border-top: 1px solid var(--soft-line);
+    }
+
+    .footer-grid {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .section-head,
+      .script-lab,
+      .boards,
+      .gate {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: auto;
+      }
+
+      .formats,
+      .calendar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .step {
+        grid-template-columns: 68px minmax(0, 1fr);
+      }
+
+      .step-output {
+        grid-column: 1 / -1;
+        border-left: 0;
+        border-top: 1px solid var(--soft-line);
+      }
+    }
+
+    @media (max-width: 620px) {
+      .shell {
+        width: min(100% - 24px, 1180px);
+      }
+
+      .nav {
+        height: auto;
+        padding: 14px 0;
+      }
+
+      .navlinks {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 36px;
+      }
+
+      h1 {
+        font-size: 72px;
+      }
+
+      .formats,
+      .calendar {
+        grid-template-columns: 1fr;
+      }
+
+      .day {
+        min-height: 142px;
+        border-right: 0;
+        border-bottom: 1px solid var(--soft-line);
+      }
+
+      .day:last-child {
+        border-bottom: 0;
+      }
+
+      .step {
+        grid-template-columns: 1fr;
+      }
+
+      .step-number {
+        min-height: 58px;
+        border-right: 0;
+        border-bottom: 1px solid var(--soft-line);
+        place-items: center start;
+        padding-left: 20px;
+      }
+
+      .step-main {
+        padding: 20px;
+      }
+
+      .script-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .footer-grid {
+        display: grid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="shell nav" aria-label="Workflow navigation">
+      <a class="brand" href="#top">
+        <span class="mark">HC</span>
+        <span>HonestCost Creator OS</span>
+      </a>
+      <div class="navlinks">
+        <a href="#pipeline">Pipeline</a>
+        <a href="#formats">Formats</a>
+        <a href="#script">Script</a>
+        <a href="#calendar">Calendar</a>
+        <a href="#quality">Quality</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="shell hero">
+      <div>
+        <h1>Personal Brand UGC Avatar Workflow</h1>
+        <p>A practical operating system for turning your own consented avatar into daily UGC videos: real scripts, real product proof, fast edits, trust guardrails, and a repeatable posting rhythm.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#pipeline">Start the workflow</a>
+          <a class="button" href="#script">Use the script frame</a>
+        </div>
+      </div>
+
+      <aside class="video-card" aria-label="Vertical UGC video preview panel">
+        <div class="video-ui">
+          <div class="recording"><span class="dot"></span><span>REC · 00:24</span></div>
+          <div class="caption-stack">
+            <div class="overlay-row">
+              <div class="mini-panel">Hook health<strong>2 sec</strong></div>
+              <div class="mini-panel">B-roll cuts<strong>7</strong></div>
+            </div>
+            <div class="caption-line">Pag... kā šis auto beigās sanāk dārgāks mēnesī?</div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="pipeline" class="shell section">
+      <div class="section-head">
+        <h2>The pipeline</h2>
+        <p>Use the avatar for the face and the product footage for credibility. The avatar should never carry the whole video alone; cut away constantly to proof.</p>
+      </div>
+
+      <div class="pipeline">
+        <article class="step">
+          <div class="step-number"></div>
+          <div class="step-main">
+            <h3>Build the face</h3>
+            <p>Record clear consented footage of yourself in natural light: neutral delivery, skeptical reaction, confident explanation, and a short launch-style ending.</p>
+          </div>
+          <div class="step-output"><span>Output</span><strong>Reusable avatar with your actual identity and consent flow complete.</strong></div>
+        </article>
+
+        <article class="step">
+          <div class="step-number"></div>
+          <div class="step-main">
+            <h3>Define repeatable formats</h3>
+            <p>Create series that users recognize: surprising cost comparisons, hidden ownership costs, launch teasers, buyer checklists, and comment-driven car battles.</p>
+          </div>
+          <div class="step-output"><span>Output</span><strong>Five recurring video templates you can post without reinventing the idea.</strong></div>
+        </article>
+
+        <article class="step">
+          <div class="step-number"></div>
+          <div class="step-main">
+            <h3>Write like a human</h3>
+            <p>Use short spoken Latvian. Start with a real reaction, reveal the product proof, give one takeaway, and end before it starts sounding like an ad.</p>
+          </div>
+          <div class="step-output"><span>Output</span><strong>15-35 second scripts with a skeptical hook and one clear point.</strong></div>
+        </article>
+
+        <article class="step">
+          <div class="step-number"></div>
+          <div class="step-main">
+            <h3>Generate A-roll</h3>
+            <p>Generate only the talking-head parts with your avatar. Keep each A-roll section short so small synthetic stiffness never gets time to become obvious.</p>
+          </div>
+          <div class="step-output"><span>Output</span><strong>Avatar clips that feel like intros, reactions, and transitions.</strong></div>
+        </article>
+
+        <article class="step">
+          <div class="step-number"></div>
+          <div class="step-main">
+            <h3>Cut to proof</h3>
+            <p>Use HonestCost screen recordings as the credibility layer: two cars side by side, monthly result, saved scenario, methodology, and quick feature flashes.</p>
+          </div>
+          <div class="step-output"><span>Output</span><strong>Product B-roll that makes the video feel discovered, not manufactured.</strong></div>
+        </article>
+
+        <article class="step">
+          <div class="step-number"></div>
+          <div class="step-main">
+            <h3>Caption everything</h3>
+            <p>Burn in Latvian captions with strong line breaks. Most viewers watch muted, and captions make the performance feel intentional and native.</p>
+          </div>
+          <div class="step-output"><span>Output</span><strong>Readable vertical edit with captions, punch-ins, and quick text hits.</strong></div>
+        </article>
+
+        <article class="step">
+          <div class="step-number"></div>
+          <div class="step-main">
+            <h3>Post today</h3>
+            <p>Publish the strongest short version first. Then turn comments into the next comparison, because user requests are the easiest content engine.</p>
+          </div>
+          <div class="step-output"><span>Output</span><strong>One daily post plus a feedback loop for tomorrow's script.</strong></div>
+        </article>
+
+        <article class="step">
+          <div class="step-number"></div>
+          <div class="step-main">
+            <h3>Keep trust intact</h3>
+            <p>Use your own avatar, do the platform consent step, avoid fake claims, and keep a light AI-assisted disclosure in the profile, caption, or about copy.</p>
+          </div>
+          <div class="step-output"><span>Output</span><strong>A scalable personal brand that does not depend on misleading people.</strong></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="formats" class="shell section">
+      <div class="section-head">
+        <h2>Content formats</h2>
+        <p>Rotate these five formats. Each one has a different job, so your feed feels varied while the production process stays repetitive.</p>
+      </div>
+
+      <div class="formats" role="list">
+        <button class="format active" type="button" data-script="comparison">
+          <div>
+            <code>FORMAT 01</code>
+            <h3>Pag, kā tas sanāk?</h3>
+            <p>Use surprise when a cheaper-looking car becomes more expensive monthly.</p>
+          </div>
+        </button>
+        <button class="format" type="button" data-script="hidden">
+          <div>
+            <code>FORMAT 02</code>
+            <h3>Auto cena nav viss</h3>
+            <p>Explain one hidden cost: KASKO, depreciation, fuel, tax, or servicing.</p>
+          </div>
+        </button>
+        <button class="format" type="button" data-script="before">
+          <div>
+            <code>FORMAT 03</code>
+            <h3>Pirms pērc</h3>
+            <p>Give one buyer checklist item people should check before signing.</p>
+          </div>
+        </button>
+        <button class="format" type="button" data-script="battle">
+          <div>
+            <code>FORMAT 04</code>
+            <h3>Two-car battle</h3>
+            <p>Compare two requested cars and let the monthly result carry the drama.</p>
+          </div>
+        </button>
+        <button class="format" type="button" data-script="launch">
+          <div>
+            <code>FORMAT 05</code>
+            <h3>Launch teaser</h3>
+            <p>Use trailer pacing: short hook, quick product proof, DRĪZUMĀ ending.</p>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <section id="script" class="shell section">
+      <div class="section-head">
+        <h2>Script machine</h2>
+        <p>The rule: one video, one thought. If the script needs a second explanation, that second explanation becomes tomorrow's post.</p>
+      </div>
+
+      <div class="script-lab">
+        <div class="script" id="scriptCard" aria-live="polite">
+          <div class="script-row">
+            <div class="time">0-2s</div>
+            <div><strong>Hook</strong><p>Pag, šis mani pārsteidza. Šis auto izskatās lētāks, bet mēnesī aina mainās.</p></div>
+          </div>
+          <div class="script-row">
+            <div class="time">2-8s</div>
+            <div><strong>Situation</strong><p>Es ieliku abus variantus HonestCost, lai salīdzinātu ne tikai cenu, bet arī uzturēšanu.</p></div>
+          </div>
+          <div class="script-row">
+            <div class="time">8-18s</div>
+            <div><strong>Proof</strong><p>Degviela, KASKO, nodoklis, serviss un vērtības kritums saliekas vienā mēneša skaitlī.</p></div>
+          </div>
+          <div class="script-row">
+            <div class="time">18-24s</div>
+            <div><strong>Takeaway</strong><p>Pirms pērc auto, paskaties pilno mēneša cenu, ne tikai ciparu sludinājumā.</p></div>
+          </div>
+        </div>
+
+        <aside class="side-note">
+          <h3>Human rules</h3>
+          <ul>
+            <li>Say less than you want. Cut every sentence that sounds like a pitch deck.</li>
+            <li>Start with surprise, not a brand intro.</li>
+            <li>Cut to screen proof before second 8.</li>
+            <li>Keep avatar shots under 5 seconds at a time.</li>
+            <li>Use light disclosure in your profile or captions. Trust compounds.</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="shell section">
+      <div class="section-head">
+        <h2>Production board</h2>
+        <p>The avatar is the presenter; the screen recording is the evidence. You need both to make it feel like UGC rather than synthetic promo.</p>
+      </div>
+
+      <div class="boards">
+        <article class="board">
+          <h3>A-roll</h3>
+          <ul class="checklist">
+            <li>Generate avatar hook from your approved digital twin.</li>
+            <li>Pick a Latvian voice style close to how you actually speak.</li>
+            <li>Use skeptical, casual delivery with short pauses.</li>
+            <li>Export clean vertical clips for editing.</li>
+          </ul>
+        </article>
+        <article class="board">
+          <h3>B-roll</h3>
+          <ul class="checklist">
+            <li>Record HonestCost two-car comparison.</li>
+            <li>Zoom into the monthly total.</li>
+            <li>Flash cost categories and assumptions.</li>
+            <li>Show saved scenario or methodology for trust.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="calendar" class="shell section">
+      <div class="section-head">
+        <h2>7-day launch calendar</h2>
+        <p>Start with the useful shock, then build the audience through comparisons and requests. The call-to-action is usually a comment prompt, not a sales pitch.</p>
+      </div>
+
+      <div class="calendar">
+        <article class="day"><span>DAY 01</span><strong>Cena salonā nav viss</strong><p>First reveal. Show the idea, end with DRĪZUMĀ.</p></article>
+        <article class="day"><span>DAY 02</span><strong>Two-car comparison</strong><p>Pick two familiar Latvian-market cars.</p></article>
+        <article class="day"><span>DAY 03</span><strong>Depreciation shock</strong><p>Explain value loss with one simple example.</p></article>
+        <article class="day"><span>DAY 04</span><strong>KASKO reality</strong><p>Show why monthly cost changes after insurance.</p></article>
+        <article class="day"><span>DAY 05</span><strong>Buyer checklist</strong><p>One thing to check before signing.</p></article>
+        <article class="day"><span>DAY 06</span><strong>Feature demo</strong><p>Saved scenario, car picker, assumptions.</p></article>
+        <article class="day"><span>DAY 07</span><strong>Comment bait</strong><p>Ask: “Kurus divus auto salīdzināt?”</p></article>
+      </div>
+    </section>
+
+    <section id="quality" class="shell section">
+      <div class="section-head">
+        <h2>Quality gate</h2>
+        <p>Before posting, run the edit through this gate. If it fails two or more checks, rewrite or shorten it before publishing.</p>
+      </div>
+
+      <div class="gate">
+        <div class="score">
+          <div>
+            <strong>8/8</strong>
+            <span>post-ready checks</span>
+          </div>
+        </div>
+        <article class="board">
+          <h3>Trust guardrails</h3>
+          <ul class="checklist">
+            <li>The avatar is yours and consent is complete.</li>
+            <li>Hook lands in the first two seconds.</li>
+            <li>HonestCost UI appears before second eight.</li>
+            <li>Avatar shot never runs too long without B-roll.</li>
+            <li>Captions are readable on a phone.</li>
+            <li>No fake partnerships, legal claims, or verified-data claims.</li>
+            <li>There is one clear takeaway.</li>
+            <li>There is a comment prompt or next action.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-grid">
+      <span>HonestCost Creator OS</span>
+      <span>Your avatar. Your product proof. Your trust to protect.</span>
+    </div>
+  </footer>
+
+  <script>
+    const scripts = {
+      comparison: [
+        ["0-2s", "Hook", "Pag, šis mani pārsteidza. Šis auto izskatās lētāks, bet mēnesī aina mainās."],
+        ["2-8s", "Situation", "Es ieliku abus variantus HonestCost, lai salīdzinātu ne tikai cenu, bet arī uzturēšanu."],
+        ["8-18s", "Proof", "Degviela, KASKO, nodoklis, serviss un vērtības kritums saliekas vienā mēneša skaitlī."],
+        ["18-24s", "Takeaway", "Pirms pērc auto, paskaties pilno mēneša cenu, ne tikai ciparu sludinājumā."]
+      ],
+      hidden: [
+        ["0-2s", "Hook", "Viena lieta, ko cilvēki bieži neierēķina auto cenā: vērtības kritums."],
+        ["2-8s", "Situation", "Tu vari nopirkt auto lētāk, bet pēc pāris gadiem starpība var pazust atlikušajā vērtībā."],
+        ["8-18s", "Proof", "HonestCost saliek šo kopā ar degvielu, KASKO, servisu un nodokļiem, nevis rāda tikai sākuma cenu."],
+        ["18-24s", "Takeaway", "Cena sludinājumā ir tikai sākums. Mēneša realitāte ir svarīgāka."]
+      ],
+      before: [
+        ["0-2s", "Hook", "Pirms pērc auto, izdari šo vienu pārbaudi."],
+        ["2-8s", "Situation", "Paņem divus variantus un salīdzini tos pēc pilnām mēneša izmaksām, ne tikai pēc cenas."],
+        ["8-18s", "Proof", "Ieliec degvielu, KASKO, nodokli, servisu un vērtības kritumu. Tad lēmums kļūst daudz skaidrāks."],
+        ["18-24s", "Takeaway", "Ja skaitļi joprojām izskatās labi, tad auto tiešām ir labs kandidāts."]
+      ],
+      battle: [
+        ["0-2s", "Hook", "Labi, salīdzinām šos divus: kurš mēnesī sanāk gudrāks?"],
+        ["2-8s", "Situation", "Es neņemšu tikai sludinājuma cenu. Ielikšu abus HonestCost un paskatīšos pilno bildi."],
+        ["8-18s", "Proof", "Te parādās degviela, apdrošināšana, nodoklis, serviss un vērtības kritums. Tagad salīdzinājums ir godīgāks."],
+        ["18-24s", "Takeaway", "Iemet komentārā nākamos divus auto, kurus salīdzināt."]
+      ],
+      launch: [
+        ["0-2s", "Hook", "Auto cena beidzot dabūs realitātes pārbaudi."],
+        ["2-8s", "Situation", "HonestCost salīdzina divus auto pēc pilnām mēneša izmaksām, ne tikai pēc sākuma cenas."],
+        ["8-18s", "Proof", "Degviela, KASKO, nodoklis, serviss, vērtības kritums un pieņēmumi vienā salīdzinājumā."],
+        ["18-24s", "Takeaway", "Pirms pērc auto, uzzini tā patieso cenu. HonestCost. Drīzumā."]
+      ]
+    };
+
+    const buttons = document.querySelectorAll(".format");
+    const card = document.getElementById("scriptCard");
+
+    function renderScript(key) {
+      card.innerHTML = scripts[key].map(([time, title, copy], index) => `
+        <div class="script-row">
+          <div class="time">${time}</div>
+          <div><strong>${title}</strong><p>${copy}</p></div>
+        </div>
+      `).join("");
+      buttons.forEach(button => button.classList.toggle("active", button.dataset.script === key));
+    }
+
+    buttons.forEach(button => {
+      button.addEventListener("click", () => renderScript(button.dataset.script));
+    });
+  </script>
+</body>
+</html>
