@@ -312,19 +312,163 @@
 
     .repeat span:last-child { color: var(--green); }
 
+    .brief,
+    .sprint {
+      margin: 0 28px 28px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(3, 12, 10, .9);
+      padding: 24px;
+    }
+
+    .brief-head,
+    .sprint-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    .brief h2,
+    .sprint h2 {
+      margin: 0;
+      font-family: "Barlow Condensed", Impact, sans-serif;
+      font-size: clamp(48px, 6vw, 92px);
+      line-height: .86;
+      text-transform: uppercase;
+    }
+
+    .brief p,
+    .sprint p {
+      margin: 8px 0 0;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 19px;
+      line-height: 1.25;
+      font-weight: 650;
+    }
+
+    .copy-button {
+      min-height: 48px;
+      border: 1px solid var(--green);
+      border-radius: 9px;
+      background: var(--green);
+      color: #06100c;
+      padding: 0 18px;
+      font: inherit;
+      font-weight: 950;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .brief-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      min-height: 178px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+      background: rgba(255,255,255,.035);
+      padding: 16px;
+    }
+
+    .field label {
+      display: block;
+      color: var(--green);
+      font-family: "DM Mono", monospace;
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .field textarea {
+      width: 100%;
+      min-height: 112px;
+      resize: vertical;
+      border: 0;
+      outline: 0;
+      color: var(--white);
+      background: transparent;
+      font: inherit;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .field textarea::placeholder {
+      color: rgba(184,195,173,.58);
+    }
+
+    .sprint-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .day-card {
+      min-height: 190px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+      background: rgba(255,255,255,.035);
+      padding: 16px;
+    }
+
+    .day-card strong {
+      display: block;
+      color: var(--amber);
+      font-family: "DM Mono", monospace;
+      font-size: 13px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .day-card h3 {
+      margin: 0 0 10px;
+      color: var(--white);
+      font-size: 25px;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .day-card p {
+      margin: 0;
+      color: #e7eedc;
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    .codex-output {
+      margin-top: 16px;
+      border: 1px solid var(--blue-line);
+      border-radius: 12px;
+      background: rgba(53,184,255,.075);
+      padding: 16px;
+      color: #d9f1ff;
+      font-family: "DM Mono", monospace;
+      font-size: 13px;
+      line-height: 1.35;
+      white-space: pre-wrap;
+      min-height: 92px;
+    }
+
     @media (max-width: 1100px) {
       .hero, .match-flow, .lower { grid-template-columns: 1fr; }
-      .modules, .guard-grid { grid-template-columns: 1fr 1fr; }
+      .modules, .guard-grid, .brief-grid, .sprint-grid { grid-template-columns: 1fr 1fr; }
+      .brief-head, .sprint-head { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 650px) {
       .page { width: calc(100% - 14px); margin: 7px auto; }
-      .modules, .guard-grid { grid-template-columns: 1fr; padding: 16px; }
+      .modules, .guard-grid, .brief-grid, .sprint-grid { grid-template-columns: 1fr; padding: 16px; }
       .hero, .match-flow, .lower { padding: 16px; }
       h1 { font-size: 72px; }
       .pitch { min-height: 320px; }
       .command { position: relative; width: auto; right: auto; top: auto; margin: 16px; }
       .repeat { display: grid; margin: 0 16px 16px; font-size: 28px; }
+      .brief, .sprint { margin: 0 16px 16px; padding: 16px; }
     }
   </style>
 </head>
@@ -349,7 +493,7 @@
     </section>
 
     <section class="modules" aria-label="Core workflow modules">
-      <article class="module">
+      <a class="module" href="#brief-identity">
         <div class="number">01</div>
         <div>
           <h2>Identity</h2>
@@ -359,8 +503,8 @@
             <li>Creator rules</li>
           </ul>
         </div>
-      </article>
-      <article class="module blue">
+      </a>
+      <a class="module blue" href="#brief-data">
         <div class="number">02</div>
         <div>
           <h2>Data</h2>
@@ -370,8 +514,8 @@
             <li>Odds context</li>
           </ul>
         </div>
-      </article>
-      <article class="module amber">
+      </a>
+      <a class="module amber" href="#brief-script">
         <div class="number">03</div>
         <div>
           <h2>Script</h2>
@@ -381,8 +525,8 @@
             <li>CTA and disclaimer</li>
           </ul>
         </div>
-      </article>
-      <article class="module blue">
+      </a>
+      <a class="module blue" href="#brief-video">
         <div class="number">04</div>
         <div>
           <h2>Video</h2>
@@ -392,8 +536,8 @@
             <li>Captions</li>
           </ul>
         </div>
-      </article>
-      <article class="module">
+      </a>
+      <a class="module" href="#brief-publish">
         <div class="number">05</div>
         <div>
           <h2>Publish</h2>
@@ -403,7 +547,7 @@
             <li>Engage and iterate</li>
           </ul>
         </div>
-      </article>
+      </a>
     </section>
 
     <section class="match-flow" aria-label="Match-day content workflow">
@@ -460,6 +604,151 @@
       <span>Analyze. Create. Publish. Repeat.</span>
       <span>Every match. Every day.</span>
     </section>
+
+    <section class="brief" aria-label="Codex build brief">
+      <div class="brief-head">
+        <div>
+          <h2>Codex Build Brief</h2>
+          <p>Fill these boxes with your decisions. Later, send this HTML back to Codex and ask it to turn the filled brief into a full build plan, workflow, automations, scripts, templates, and production checklist.</p>
+        </div>
+        <button class="copy-button" type="button" id="copyBrief">Copy Codex prompt</button>
+      </div>
+
+      <div class="brief-grid">
+        <div class="field" id="brief-identity">
+          <label for="identityInput">01 Identity / Persona</label>
+          <textarea id="identityInput" data-brief-field placeholder="Example: A sharp but friendly football analyst avatar, 25-35, energetic, speaks English first, maybe Latvian clips later, no fake insider claims."></textarea>
+        </div>
+
+        <div class="field" id="brief-data">
+          <label for="dataInput">02 Data / Research Sources</label>
+          <textarea id="dataInput" data-brief-field placeholder="Example: Official fixtures, team news, injury reports, recent form, odds movement for context only, no guaranteed picks."></textarea>
+        </div>
+
+        <div class="field" id="brief-script">
+          <label for="scriptInput">03 Script / Content Formats</label>
+          <textarea id="scriptInput" data-brief-field placeholder="Example: pre-match 30s picks-with-context, live momentum takes, post-match recap, underdog angle, stats explainer, comment-driven match requests."></textarea>
+        </div>
+
+        <div class="field" id="brief-video">
+          <label for="videoInput">04 Video / Avatar / Voice Stack</label>
+          <textarea id="videoInput" data-brief-field placeholder="Example: ElevenLabs voice, Tavus or AKOOL avatar, CapCut edit, pitch graphics, captions, 9:16 TikTok/Reels/Shorts output."></textarea>
+        </div>
+
+        <div class="field" id="brief-publish">
+          <label for="publishInput">05 Publish / Platforms / Schedule</label>
+          <textarea id="publishInput" data-brief-field placeholder="Example: TikTok, Instagram Reels, YouTube Shorts. 2 posts per match day: pre-match and post-match. Extra live clips for big games."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="guardrailsInput">06 Legal / Responsible Betting Guardrails</label>
+          <textarea id="guardrailsInput" data-brief-field placeholder="Example: 18+ only, check jurisdiction, no guaranteed wins, no pressure language, responsible gambling line, no affiliate links until compliance is checked."></textarea>
+        </div>
+      </div>
+
+      <pre class="codex-output" id="codexOutput">Fill the brief fields, then press "Copy Codex prompt".</pre>
+    </section>
+
+    <section class="sprint" aria-label="Setup sprint before June 7 2026">
+      <div class="sprint-head">
+        <div>
+          <h2>Setup Sprint: June 2-7, 2026</h2>
+          <p>Goal: by Sunday, June 7, 2026, have the first version ready to build: persona locked, tool stack chosen, content formats drafted, compliance guardrails written, and a Codex-ready brief filled.</p>
+        </div>
+      </div>
+
+      <div class="sprint-grid">
+        <article class="day-card">
+          <strong>June 2</strong>
+          <h3>Frame it</h3>
+          <p>Fill the persona, target audience, content modes, and responsible-betting rules.</p>
+        </article>
+        <article class="day-card">
+          <strong>June 3</strong>
+          <h3>Test voice</h3>
+          <p>Run English and Latvian voice tests. Decide if Latvian is included now or later.</p>
+        </article>
+        <article class="day-card">
+          <strong>June 4</strong>
+          <h3>Pick avatar</h3>
+          <p>Compare avatar tools with the same 15-second script and choose the best one.</p>
+        </article>
+        <article class="day-card">
+          <strong>June 5</strong>
+          <h3>Build formats</h3>
+          <p>Create 5 repeatable formats: pre-match, live, recap, stat explainer, comment request.</p>
+        </article>
+        <article class="day-card">
+          <strong>June 6-7</strong>
+          <h3>Codex plan</h3>
+          <p>Send the filled HTML to Codex and ask it to make the full implementation plan.</p>
+        </article>
+      </div>
+    </section>
   </main>
+
+  <script>
+    const fields = Array.from(document.querySelectorAll("[data-brief-field]"));
+    const output = document.getElementById("codexOutput");
+    const copyButton = document.getElementById("copyBrief");
+    const storageKey = "football-influencer-os-brief-v1";
+
+    function loadBrief() {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      fields.forEach(field => {
+        if (saved[field.id]) field.value = saved[field.id];
+      });
+    }
+
+    function saveBrief() {
+      const data = {};
+      fields.forEach(field => { data[field.id] = field.value; });
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    }
+
+    function buildPrompt() {
+      const lines = [
+        "Build an automated football influencer workflow for the World Cup content sprint.",
+        "Use this filled brief as the source of truth. Create a detailed Codex implementation plan covering tooling, content templates, avatar/voice generation, data sources, publishing process, compliance checks, and a June 7, 2026 readiness path.",
+        "",
+        "IDENTITY / PERSONA:",
+        document.getElementById("identityInput").value || "[not filled]",
+        "",
+        "DATA / RESEARCH SOURCES:",
+        document.getElementById("dataInput").value || "[not filled]",
+        "",
+        "SCRIPT / CONTENT FORMATS:",
+        document.getElementById("scriptInput").value || "[not filled]",
+        "",
+        "VIDEO / AVATAR / VOICE STACK:",
+        document.getElementById("videoInput").value || "[not filled]",
+        "",
+        "PUBLISH / PLATFORMS / SCHEDULE:",
+        document.getElementById("publishInput").value || "[not filled]",
+        "",
+        "LEGAL / RESPONSIBLE BETTING GUARDRAILS:",
+        document.getElementById("guardrailsInput").value || "[not filled]"
+      ];
+      return lines.join("\n");
+    }
+
+    fields.forEach(field => field.addEventListener("input", saveBrief));
+
+    copyButton.addEventListener("click", async () => {
+      saveBrief();
+      const prompt = buildPrompt();
+      output.textContent = prompt;
+      try {
+        await navigator.clipboard.writeText(prompt);
+        copyButton.textContent = "Copied";
+        setTimeout(() => { copyButton.textContent = "Copy Codex prompt"; }, 1400);
+      } catch {
+        copyButton.textContent = "Prompt ready below";
+        setTimeout(() => { copyButton.textContent = "Copy Codex prompt"; }, 1600);
+      }
+    });
+
+    loadBrief();
+  </script>
 </body>
 </html>
