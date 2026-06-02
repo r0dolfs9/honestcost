@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Video Stack Cheat Sheet</title>
+  <link rel="stylesheet" href="../../fonts.css">
+  <style>
+    :root {
+      --bg: #050706;
+      --panel: rgba(10, 18, 16, .86);
+      --line: rgba(194, 255, 48, .42);
+      --green: #b8ff22;
+      --amber: #ffd029;
+      --blue: #4fc3ff;
+      --white: #fff7e9;
+      --muted: #b9b49f;
+      --shadow: 0 28px 90px rgba(0,0,0,.46);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      font-family: "Inter Tight", "Segoe UI", sans-serif;
+      background:
+        linear-gradient(90deg, rgba(184,255,34,.05) 1px, transparent 1px) 0 0 / 52px 52px,
+        linear-gradient(rgba(184,255,34,.035) 1px, transparent 1px) 0 0 / 52px 52px,
+        radial-gradient(circle at 20% 12%, rgba(184,255,34,.17), transparent 28%),
+        radial-gradient(circle at 78% 24%, rgba(79,195,255,.15), transparent 28%),
+        var(--bg);
+    }
+
+    .poster {
+      width: min(1480px, calc(100% - 28px));
+      min-height: min(900px, calc(100vh - 28px));
+      padding: clamp(22px, 3vw, 44px);
+      border: 1px solid rgba(184,255,34,.32);
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015));
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .poster::before {
+      content: "";
+      position: absolute;
+      inset: 14px;
+      border: 1px solid rgba(184,255,34,.18);
+      pointer-events: none;
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 120px 1fr 120px;
+      gap: 20px;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .icon-box {
+      height: 92px;
+      border: 2px solid var(--green);
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: var(--green);
+      font-family: "DM Mono", monospace;
+      font-size: 42px;
+      box-shadow: 0 0 32px rgba(184,255,34,.14) inset;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Barlow Condensed", Impact, sans-serif;
+      font-size: clamp(74px, 10vw, 158px);
+      line-height: .8;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    h1 span { color: var(--green); }
+
+    .subtitle {
+      margin-top: 10px;
+      font-size: clamp(22px, 2.5vw, 36px);
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .subtitle span { color: var(--green); }
+
+    .steps {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      align-items: stretch;
+      margin-top: 24px;
+    }
+
+    .card {
+      min-height: 250px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(0,0,0,.55), 0 0 34px rgba(184,255,34,.08);
+    }
+
+    .card.amber { border-color: rgba(255,208,41,.55); }
+    .card.blue { border-color: rgba(79,195,255,.58); }
+
+    .card-head {
+      display: grid;
+      grid-template-columns: 78px 1fr;
+      align-items: center;
+      min-height: 62px;
+      background: var(--green);
+      color: #071007;
+      font-weight: 950;
+      font-size: clamp(28px, 3vw, 42px);
+    }
+
+    .amber .card-head { background: var(--amber); }
+    .blue .card-head { background: var(--blue); }
+
+    .num {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      color: var(--white);
+      background: #071007;
+      font-family: "DM Mono", monospace;
+      font-size: 44px;
+    }
+
+    .card-body {
+      padding: 24px 20px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      gap: 16px;
+      min-height: 188px;
+    }
+
+    .glyph {
+      font-size: 58px;
+      color: var(--green);
+      line-height: 1;
+    }
+
+    .amber .glyph { color: var(--amber); }
+    .blue .glyph { color: var(--blue); }
+
+    .tool {
+      border: 1px solid currentColor;
+      border-radius: 8px;
+      padding: 9px 18px;
+      font-weight: 900;
+      font-size: 22px;
+      color: var(--white);
+    }
+
+    .bodyline {
+      margin: 0;
+      color: var(--white);
+      font-size: 22px;
+      font-weight: 850;
+    }
+
+    .arrow {
+      color: var(--green);
+      font-weight: 950;
+      padding: 0 6px;
+    }
+
+    .flow {
+      position: relative;
+      z-index: 1;
+      margin: 22px 0 14px;
+      padding: 20px 26px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      color: var(--white);
+      background: rgba(7, 16, 11, .82);
+      font-size: clamp(25px, 3vw, 42px);
+      font-weight: 950;
+    }
+
+    .warning {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: center;
+      gap: 22px;
+      margin: 14px 0 22px;
+      padding: 18px 24px;
+      border: 1px solid rgba(255,208,41,.75);
+      border-radius: 12px;
+      background: linear-gradient(90deg, rgba(255,208,41,.16), rgba(255,208,41,.035));
+      font-size: clamp(28px, 3.2vw, 46px);
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .warning span:first-child { color: var(--amber); }
+
+    .modes {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .mode {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(8, 18, 16, .8);
+      padding: 22px;
+      min-height: 220px;
+    }
+
+    .mode.amber { border-color: rgba(255,208,41,.6); }
+    .mode.blue { border-color: rgba(79,195,255,.6); }
+
+    .mode h2 {
+      margin: 0 0 18px;
+      color: var(--green);
+      font-size: clamp(28px, 3vw, 42px);
+      line-height: .9;
+      text-transform: uppercase;
+    }
+
+    .mode.amber h2 { color: var(--amber); }
+    .mode.blue h2 { color: var(--blue); }
+
+    .mode-flow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: 850;
+      font-size: 18px;
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+
+    .mode-flow div {
+      display: grid;
+      justify-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .mode-flow b {
+      font-size: 34px;
+      color: currentColor;
+      line-height: 1;
+    }
+
+    .best {
+      border-top: 1px solid rgba(255,255,255,.12);
+      padding-top: 14px;
+      color: var(--white);
+      font-size: 20px;
+      font-weight: 780;
+    }
+
+    .best span {
+      color: var(--green);
+      font-weight: 950;
+    }
+
+    .amber .best span { color: var(--amber); }
+    .blue .best span { color: var(--blue); }
+
+    .test {
+      position: relative;
+      z-index: 1;
+      width: fit-content;
+      margin: 22px auto 0;
+      padding: 14px 28px;
+      border: 2px solid var(--green);
+      border-radius: 999px;
+      font-size: clamp(24px, 2.8vw, 36px);
+      font-weight: 950;
+      text-transform: uppercase;
+      background: rgba(7,16,11,.86);
+    }
+
+    .test span { color: var(--green); }
+
+    @media (max-width: 1050px) {
+      header { grid-template-columns: 1fr; }
+      .icon-box { display: none; }
+      .steps, .modes { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .poster { width: calc(100% - 14px); padding: 18px; }
+      h1 { font-size: 68px; }
+      .steps, .modes { grid-template-columns: 1fr; }
+      .warning { grid-template-columns: 1fr; }
+      .flow { justify-content: flex-start; font-size: 24px; }
+      .mode-flow { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="poster">
+    <header>
+      <div class="icon-box">▶</div>
+      <div>
+        <h1><span>AI</span> Video Stack</h1>
+        <div class="subtitle">Speak any language <span>without re-recording</span></div>
+      </div>
+      <div class="icon-box">◎</div>
+    </header>
+
+    <section class="steps" aria-label="Main AI video pipeline">
+      <article class="card">
+        <div class="card-head"><div class="num">1</div><div>Script</div></div>
+        <div class="card-body">
+          <div class="glyph">✎</div>
+          <p class="bodyline">Prompt <span class="arrow">→</span> Script</p>
+        </div>
+      </article>
+
+      <article class="card amber">
+        <div class="card-head"><div class="num">2</div><div>Voice</div></div>
+        <div class="card-body">
+          <div class="glyph">≋</div>
+          <div class="tool">ElevenLabs</div>
+          <p class="bodyline">Script <span class="arrow">→</span> Audio</p>
+        </div>
+      </article>
+
+      <article class="card blue">
+        <div class="card-head"><div class="num">3</div><div>Avatar</div></div>
+        <div class="card-body">
+          <div class="glyph">◉</div>
+          <div class="tool">Tavus / AKOOL</div>
+          <p class="bodyline">Audio <span class="arrow">→</span> Lip-sync</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-head"><div class="num">4</div><div>Edit/Post</div></div>
+        <div class="card-body">
+          <div class="glyph">▣</div>
+          <div class="tool">CapCut</div>
+          <p class="bodyline">B-roll <span class="arrow">→</span> Captions <span class="arrow">→</span> Post</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="flow" aria-label="Full production flow">
+      <span>Prompt</span><span class="arrow">→</span><span>Script</span><span class="arrow">→</span><span>Audio</span><span class="arrow">→</span><span>Lip-sync</span><span class="arrow">→</span><span>B-roll</span><span class="arrow">→</span><span>Captions</span><span class="arrow">→</span><span>Post</span>
+    </section>
+
+    <section class="warning">
+      <span>Latvian quality problem?</span>
+      <span>Separate voice from avatar.</span>
+    </section>
+
+    <section class="modes" aria-label="Production modes">
+      <article class="mode">
+        <h2>Personal Brand</h2>
+        <div class="mode-flow">
+          <div><b>☺</b><span>Your face</span></div><span class="arrow">→</span>
+          <div><b>≋</b><span>Your voice</span></div><span class="arrow">→</span>
+          <div><b>▣</b><span>Real B-roll</span></div><span class="arrow">→</span>
+          <div><b>⇧</b><span>Post</span></div>
+        </div>
+        <div class="best"><span>Best for:</span> trust · tutorials · updates</div>
+      </article>
+
+      <article class="mode amber">
+        <h2>UGC Ads</h2>
+        <div class="mode-flow">
+          <div><b>♙</b><span>Actor</span></div><span class="arrow">→</span>
+          <div><b>≋</b><span>AI voice</span></div><span class="arrow">→</span>
+          <div><b>▣</b><span>Product</span></div><span class="arrow">→</span>
+          <div><b>↗</b><span>Test</span></div>
+        </div>
+        <div class="best"><span>Best for:</span> hooks · offers · conversions</div>
+      </article>
+
+      <article class="mode blue">
+        <h2>Cinematic Video</h2>
+        <div class="mode-flow">
+          <div><b>▧</b><span>AI scenes</span></div><span class="arrow">→</span>
+          <div><b>≋</b><span>AI voice</span></div><span class="arrow">→</span>
+          <div><b>▶</b><span>Edit</span></div><span class="arrow">→</span>
+          <div><b>⇧</b><span>Post</span></div>
+        </div>
+        <div class="best"><span>Best for:</span> storytelling · trailers · reels</div>
+      </article>
+    </section>
+
+    <div class="test">Test <span>EN + LV</span> before choosing the stack</div>
+  </main>
+</body>
+</html>
