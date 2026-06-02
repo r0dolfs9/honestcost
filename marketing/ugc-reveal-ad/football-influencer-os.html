@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Automated Football Influencer OS</title>
+  <link rel="stylesheet" href="../../fonts.css">
+  <style>
+    :root {
+      --bg: #06100c;
+      --pitch: #11251a;
+      --panel: rgba(4, 14, 11, .86);
+      --green: #8cff1f;
+      --blue: #35b8ff;
+      --amber: #ffbd22;
+      --red: #ff5e4d;
+      --white: #fff8ec;
+      --muted: #b8c3ad;
+      --line: rgba(140, 255, 31, .36);
+      --blue-line: rgba(53, 184, 255, .42);
+      --amber-line: rgba(255, 189, 34, .46);
+      --shadow: 0 30px 90px rgba(0,0,0,.5);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--white);
+      font-family: "Inter Tight", "Segoe UI", sans-serif;
+      background:
+        linear-gradient(90deg, rgba(140,255,31,.04) 1px, transparent 1px) 0 0 / 54px 54px,
+        linear-gradient(rgba(140,255,31,.03) 1px, transparent 1px) 0 0 / 54px 54px,
+        radial-gradient(circle at 16% 12%, rgba(140,255,31,.18), transparent 28%),
+        radial-gradient(circle at 78% 14%, rgba(53,184,255,.16), transparent 26%),
+        var(--bg);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .page {
+      width: min(1500px, calc(100% - 28px));
+      margin: 14px auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero {
+      min-height: 520px;
+      display: grid;
+      grid-template-columns: minmax(0, .62fr) minmax(360px, .38fr);
+      gap: 26px;
+      padding: clamp(24px, 4vw, 54px);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      background:
+        linear-gradient(135deg, rgba(0,0,0,.35), transparent),
+        radial-gradient(circle at 82% 28%, rgba(140,255,31,.22), transparent 32%);
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Barlow Condensed", Impact, sans-serif;
+      font-size: clamp(74px, 11vw, 168px);
+      line-height: .8;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    h1 span { color: var(--green); }
+
+    .subtitle {
+      width: fit-content;
+      margin-top: 20px;
+      padding: 10px 18px;
+      border: 1px solid var(--green);
+      color: var(--green);
+      transform: skewX(-10deg);
+      font-size: clamp(26px, 3vw, 42px);
+      font-weight: 950;
+      text-transform: uppercase;
+      background: rgba(140,255,31,.08);
+    }
+
+    .hero-copy {
+      max-width: 720px;
+      margin: 24px 0 0;
+      color: #e9efdf;
+      font-size: 24px;
+      line-height: 1.18;
+      font-weight: 760;
+    }
+
+    .pitch {
+      min-height: 430px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg, transparent 49%, rgba(140,255,31,.45) 49% 51%, transparent 51%),
+        radial-gradient(circle at 50% 50%, transparent 0 62px, rgba(140,255,31,.42) 63px 65px, transparent 66px),
+        repeating-linear-gradient(90deg, rgba(140,255,31,.08) 0 1px, transparent 1px 72px),
+        linear-gradient(160deg, rgba(13,51,29,.92), rgba(3,14,9,.94));
+    }
+
+    .pitch::before,
+    .pitch::after {
+      content: "";
+      position: absolute;
+      left: 24px;
+      right: 24px;
+      height: 78px;
+      border: 2px solid rgba(140,255,31,.45);
+    }
+
+    .pitch::before { top: 22px; border-bottom: 0; }
+    .pitch::after { bottom: 22px; border-top: 0; }
+
+    .x {
+      position: absolute;
+      color: var(--green);
+      font-family: "DM Mono", monospace;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .x:nth-child(1) { left: 18%; top: 28%; }
+    .x:nth-child(2) { left: 32%; top: 52%; }
+    .x:nth-child(3) { right: 18%; top: 36%; }
+    .x:nth-child(4) { right: 30%; bottom: 24%; }
+    .x:nth-child(5) { left: 46%; bottom: 18%; }
+
+    .command {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      width: 190px;
+      border: 1px solid var(--blue-line);
+      border-radius: 10px;
+      background: rgba(3,10,12,.82);
+      padding: 14px;
+    }
+
+    .command h3 {
+      margin: 0 0 12px;
+      color: var(--blue);
+      font-size: 22px;
+      text-transform: uppercase;
+    }
+
+    .command div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 0;
+      color: var(--white);
+      font-weight: 750;
+    }
+
+    .command div::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .modules {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 18px;
+      padding: 28px;
+    }
+
+    .module {
+      min-height: 250px;
+      display: grid;
+      align-content: space-between;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      padding: 18px;
+      transition: transform .18s ease, border-color .18s ease;
+    }
+
+    .module:hover { transform: translateY(-5px); border-color: var(--green); }
+    .module.blue { border-color: var(--blue-line); }
+    .module.amber { border-color: var(--amber-line); }
+
+    .number {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      color: #06100c;
+      background: var(--green);
+      border-radius: 7px;
+      font-family: "DM Mono", monospace;
+      font-weight: 700;
+      font-size: 19px;
+    }
+
+    .blue .number { background: var(--blue); }
+    .amber .number { background: var(--amber); }
+
+    .module h2,
+    .workflow h2,
+    .stack h2,
+    .guardrails h2 {
+      margin: 18px 0 12px;
+      font-family: "Barlow Condensed", Impact, sans-serif;
+      font-size: clamp(38px, 4vw, 64px);
+      line-height: .88;
+      text-transform: uppercase;
+    }
+
+    .module ul,
+    .workflow ul,
+    .stack ul,
+    .guardrails ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+      color: #e7eedc;
+      font-size: 17px;
+      line-height: 1.25;
+      font-weight: 650;
+    }
+
+    li::before {
+      content: "›";
+      color: var(--green);
+      font-weight: 950;
+      padding-right: 8px;
+    }
+
+    .match-flow {
+      padding: 0 28px 28px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .workflow,
+    .stack,
+    .guardrails {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(3, 12, 10, .86);
+      padding: 24px;
+    }
+
+    .workflow.live { border-color: var(--blue-line); }
+    .workflow.post { border-color: var(--amber-line); }
+    .workflow.live h2 { color: var(--blue); }
+    .workflow.post h2 { color: var(--amber); }
+
+    .lower {
+      padding: 0 28px 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 18px;
+    }
+
+    .stack h2 { color: var(--blue); }
+
+    .guardrails {
+      margin: 0 28px 28px;
+      border-color: var(--amber-line);
+      background: linear-gradient(90deg, rgba(255,189,34,.12), rgba(3,12,10,.86));
+    }
+
+    .guard-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .guard {
+      min-height: 120px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border: 1px solid rgba(255,189,34,.34);
+      border-radius: 12px;
+      color: var(--white);
+      font-size: 22px;
+      font-weight: 950;
+    }
+
+    .repeat {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+      margin: 0 28px 28px;
+      padding: 22px;
+      border: 1px solid var(--blue-line);
+      border-radius: 14px;
+      color: var(--white);
+      font-size: clamp(28px, 3.4vw, 54px);
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .repeat span:last-child { color: var(--green); }
+
+    @media (max-width: 1100px) {
+      .hero, .match-flow, .lower { grid-template-columns: 1fr; }
+      .modules, .guard-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 650px) {
+      .page { width: calc(100% - 14px); margin: 7px auto; }
+      .modules, .guard-grid { grid-template-columns: 1fr; padding: 16px; }
+      .hero, .match-flow, .lower { padding: 16px; }
+      h1 { font-size: 72px; }
+      .pitch { min-height: 320px; }
+      .command { position: relative; width: auto; right: auto; top: auto; margin: 16px; }
+      .repeat { display: grid; margin: 0 16px 16px; font-size: 28px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div>
+        <h1>Automated Football <span>Influencer OS</span></h1>
+        <div class="subtitle">World Cup content sprint</div>
+        <p class="hero-copy">A starter workflow for an avatar-led football creator in the sports-betting niche: match analysis, sharp scripts, automated video, daily publishing, and compliance rules from day one.</p>
+      </div>
+      <div class="pitch" aria-label="Tactical pitch diagram">
+        <span class="x">×</span><span class="x">×</span><span class="x">×</span><span class="x">×</span><span class="x">×</span>
+        <div class="command">
+          <h3>Match Day Command</h3>
+          <div>Analyze</div>
+          <div>Create</div>
+          <div>Publish</div>
+          <div>Engage</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="modules" aria-label="Core workflow modules">
+      <article class="module">
+        <div class="number">01</div>
+        <div>
+          <h2>Identity</h2>
+          <ul>
+            <li>Avatar or persona</li>
+            <li>Voice style</li>
+            <li>Creator rules</li>
+          </ul>
+        </div>
+      </article>
+      <article class="module blue">
+        <div class="number">02</div>
+        <div>
+          <h2>Data</h2>
+          <ul>
+            <li>Fixtures and squads</li>
+            <li>Team form</li>
+            <li>Odds context</li>
+          </ul>
+        </div>
+      </article>
+      <article class="module amber">
+        <div class="number">03</div>
+        <div>
+          <h2>Script</h2>
+          <ul>
+            <li>Hook and angle</li>
+            <li>Key points</li>
+            <li>CTA and disclaimer</li>
+          </ul>
+        </div>
+      </article>
+      <article class="module blue">
+        <div class="number">04</div>
+        <div>
+          <h2>Video</h2>
+          <ul>
+            <li>Avatar delivery</li>
+            <li>B-roll and graphics</li>
+            <li>Captions</li>
+          </ul>
+        </div>
+      </article>
+      <article class="module">
+        <div class="number">05</div>
+        <div>
+          <h2>Publish</h2>
+          <ul>
+            <li>Timing by match</li>
+            <li>Titles and thumbnails</li>
+            <li>Engage and iterate</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+
+    <section class="match-flow" aria-label="Match-day content workflow">
+      <article class="workflow">
+        <h2>Pre-match</h2>
+        <ul>
+          <li>Tactical preview and storylines</li>
+          <li>Team news and key stats</li>
+          <li>Market movement explained</li>
+          <li>Prediction with context, not certainty</li>
+          <li>Short-form teaser content</li>
+        </ul>
+      </article>
+      <article class="workflow live">
+        <h2>Live</h2>
+        <ul>
+          <li>Fast takes on momentum shifts</li>
+          <li>In-game insights and substitutions</li>
+          <li>Short clips with live reactions</li>
+          <li>No impulsive betting pressure</li>
+          <li>Audience questions and polls</li>
+        </ul>
+      </article>
+      <article class="workflow post">
+        <h2>Post-match</h2>
+        <ul>
+          <li>Match recap and key stats</li>
+          <li>What the result means next</li>
+          <li>Grade the pre-match read</li>
+          <li>Lessons for future previews</li>
+          <li>Next match focus</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="lower" aria-label="Automation stack">
+      <article class="stack"><h2>Avatar Stack</h2><ul><li>Digital presenter</li><li>Expressions and gestures</li><li>Consistent on-brand look</li></ul></article>
+      <article class="stack"><h2>Voice Stack</h2><ul><li>Natural AI voice</li><li>English plus Latvian testing</li><li>Consistent energy</li></ul></article>
+      <article class="stack"><h2>Content Engine</h2><ul><li>Research summaries</li><li>Trend detection</li><li>Script automation</li></ul></article>
+      <article class="stack"><h2>Asset Library</h2><ul><li>Templates and overlays</li><li>Pitch diagrams</li><li>Music and SFX bank</li></ul></article>
+    </section>
+
+    <section class="guardrails">
+      <h2>Compliance and responsible content guardrails</h2>
+      <div class="guard-grid">
+        <div class="guard">18+</div>
+        <div class="guard">No guaranteed picks</div>
+        <div class="guard">Check jurisdiction</div>
+        <div class="guard">Responsible gambling</div>
+      </div>
+    </section>
+
+    <section class="repeat">
+      <span>Analyze. Create. Publish. Repeat.</span>
+      <span>Every match. Every day.</span>
+    </section>
+  </main>
+</body>
+</html>
