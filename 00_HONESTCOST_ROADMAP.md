@@ -142,3 +142,9 @@ Must research before decisions:
 - Created `WEEKEND_REVIEW_2026-05-28.md` from automated/local/deployment checks.
 - Mapped current CSP surface in `CSP_SURFACE_2026-05-28.md`; policy enforcement remains open until browser QA is available.
 - Fixed `faq.html` and `status.html` nav links to work from the GitHub Pages subpath.
+
+2026-05-29:
+
+- Started car database credibility audit in `CAR_DATA_AUDIT_2026-05-29.md`.
+- Found that `car-db.js` has broad/complete prototype coverage, but lacks row-level source URLs/dates and has current-price mismatches in spot checks.
+- Added `car-sources.js` plus `test-car-sources.js` so the first 11 audited rows have enforceable source metadata.

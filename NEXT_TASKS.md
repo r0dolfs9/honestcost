@@ -16,7 +16,7 @@ Updated 2026-05-28. Use `00_HONESTCOST_ROADMAP.md` as the first file to open; th
 
 ## Stage 1 - Production Trust Base
 
-- [ ] Do browser QA on deployed or staged site: car picker lazy-load, example comparison, saved scenarios, print/PDF, FAQ/status pages, OG image.
+- [ ] Do browser QA on deployed or staged site: car picker lazy-load, example comparison, saved scenarios, print/PDF, FAQ/status pages, OG image. Partial endpoint/static QA recorded in `BROWSER_QA_2026-06-02.md`; interactive browser/mobile pass still pending.
 - [ ] Start the larger mobile/responsive pass after browser QA.
 - [ ] Add a static `sikdatnes.html` cookie/tracking page after wording is approved.
 - [ ] Add a static `accessibility.html` statement after an actual audit result exists.
@@ -25,7 +25,11 @@ Updated 2026-05-28. Use `00_HONESTCOST_ROADMAP.md` as the first file to open; th
 - [ ] Add CSP meta policy after browser QA confirms the candidate policy does not break the app.
 - [ ] Add a proprietary `LICENSE` file once the copyright holder name is confirmed.
 - [ ] Add copyright headers once the holder/entity name is confirmed.
-- [ ] Start car data audit for top 30-50 Latvian-relevant models with source URLs and source dates.
+- [x] Start car data audit and record first findings in `CAR_DATA_AUDIT_2026-05-29.md`.
+- [x] Add first per-row source metadata layer in `car-sources.js`.
+- [x] Add `test-car-sources.js` and CI coverage for audited source metadata.
+- [ ] Expand `car-sources.js` from 11 rows to the first 30-50 Latvian-relevant model rows. Paused after the 2026-06-02 guarded batch; current metadata now covers the first audited rows plus Toyota C-HR/RAV4, Skoda Octavia diesel/RS, and VW ID.3/ID. Buzz candidates.
+- [ ] Update `car-db.js` values only after each row has source-backed price/trim/WLTP evidence. Paused after guarded updates to `toyota_chr_hyb`, `toyota_rav4_hyb`, `skoda_octavia_20tdi`, `skoda_octavia_rs`, `vw_id3_pro`, and `vw_idbuzz`; each has an audit note and tests.
 
 ## Stage 2 - Content And Display Ads Foundation
 
