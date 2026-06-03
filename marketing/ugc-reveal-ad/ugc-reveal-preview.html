@@ -36,10 +36,44 @@
       border: 1px solid rgba(255,255,255,.16);
     }
 
+    .controls {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      z-index: 10;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,.28);
+      border-radius: 999px;
+      background: rgba(8,8,8,.72);
+      color: #fff;
+      backdrop-filter: blur(10px);
+    }
+
+    .controls button {
+      min-width: 32px;
+      height: 32px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(255,255,255,.14);
+      color: inherit;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .controls button[aria-pressed="true"] {
+      background: var(--lime);
+      color: var(--ink);
+    }
+
     .scene {
       position: absolute;
       inset: 0;
-      padding: 28px;
+      padding: 28px 28px 92px;
       display: grid;
       align-content: space-between;
       opacity: 0;
@@ -57,6 +91,28 @@
       0%, 100% { opacity: 0; transform: scale(1.02); }
       2%, 22% { opacity: 1; transform: scale(1); }
       24% { opacity: 0; transform: scale(.995); }
+    }
+
+    .phone.is-paused .scene {
+      animation-play-state: paused;
+    }
+
+    .phone[data-frame="1"] .scene,
+    .phone[data-frame="2"] .scene,
+    .phone[data-frame="3"] .scene,
+    .phone[data-frame="4"] .scene,
+    .phone[data-frame="5"] .scene {
+      animation: none;
+      opacity: 0;
+      transform: scale(1);
+    }
+
+    .phone[data-frame="1"] .s1,
+    .phone[data-frame="2"] .s2,
+    .phone[data-frame="3"] .s3,
+    .phone[data-frame="4"] .s4,
+    .phone[data-frame="5"] .s5 {
+      opacity: 1;
     }
 
     .badge {
@@ -208,10 +264,11 @@
     }
 
     @media (max-width: 430px) {
-      .scene { padding: 22px; }
+      .scene { padding: 22px 22px 86px; }
       h1 { font-size: 40px; }
       .caption { font-size: 20px; }
       .total { font-size: 25px; }
+      .controls { left: 10px; right: 10px; bottom: 12px; gap: 5px; }
     }
   </style>
 </head>
@@ -248,7 +305,7 @@
           <span>Pilnā mēneša cena</span>
           <span>indikācija</span>
         </div>
-        <div class="total">Rezultāts <span class="cost">€ / mēn.</span></div>
+        <div class="total">Rezultāts <span class="cost">EUR / mēn.</span></div>
       </div>
       <div class="chips">
         <div class="chip hot">Degviela</div>
@@ -281,6 +338,28 @@
         </div>
       </div>
     </section>
+
+    <nav class="controls" aria-label="Preview scenes">
+      <button type="button" data-frame="0" aria-pressed="true">Play</button>
+      <button type="button" data-frame="1">1</button>
+      <button type="button" data-frame="2">2</button>
+      <button type="button" data-frame="3">3</button>
+      <button type="button" data-frame="4">4</button>
+      <button type="button" data-frame="5">5</button>
+    </nav>
   </main>
+  <script>
+    const phone = document.querySelector(".phone");
+    const buttons = document.querySelectorAll(".controls button");
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const frame = button.dataset.frame;
+        phone.dataset.frame = frame === "0" ? "" : frame;
+        phone.classList.toggle("is-paused", frame !== "0");
+        buttons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+      });
+    });
+  </script>
 </body>
 </html>
