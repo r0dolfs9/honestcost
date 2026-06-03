@@ -39,6 +39,14 @@ The creator should sound like a skeptical friend, not a presenter. Keep the firs
 - Let the creator sound genuinely skeptical; do not make it sound like a paid announcer.
 - If showing exact values, present them as an indicative comparison, not financial advice.
 
+## Editing Notes
+
+- Use native captions for every spoken line.
+- Keep the product UI visible before second 10.
+- Add a punch-in zoom on the monthly result at second 10.
+- Use a short bass hit or trailer pulse when "HONESTCOST" appears.
+- Avoid claims about live dealer partnerships, legal compliance, or verified data freshness.
+
 ## Guardrails
 
 - Do not claim dealer partnerships are live.

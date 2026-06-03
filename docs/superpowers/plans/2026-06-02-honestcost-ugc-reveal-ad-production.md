@@ -26,7 +26,7 @@ The final production files should use proper Latvian diacritics for captions and
 **Files:**
 - Create: `marketing/ugc-reveal-ad/production-script.md`
 
-- [ ] **Step 1: Create the production directory**
+- [x] **Step 1: Create the production directory**
 
 Run:
 
@@ -36,7 +36,7 @@ New-Item -ItemType Directory -Force -Path 'C:\Users\User\Desktop\HonestCost Desi
 
 Expected: Directory exists.
 
-- [ ] **Step 2: Add the final script**
+- [x] **Step 2: Add the final script**
 
 Create `marketing/ugc-reveal-ad/production-script.md` with:
 
@@ -72,7 +72,7 @@ The creator should sound like a skeptical friend, not a presenter. Keep the firs
 - Avoid claims about live dealer partnerships, legal compliance, or verified data freshness.
 ```
 
-- [ ] **Step 3: Verify the script file exists**
+- [x] **Step 3: Verify the script file exists**
 
 Run:
 
@@ -87,7 +87,7 @@ Expected: `True`
 **Files:**
 - Create: `marketing/ugc-reveal-ad/shot-list.md`
 
-- [ ] **Step 1: Add the shot list**
+- [x] **Step 1: Add the shot list**
 
 Create `marketing/ugc-reveal-ad/shot-list.md` with:
 
@@ -134,7 +134,7 @@ Create `marketing/ugc-reveal-ad/shot-list.md` with:
 - "DRIZUMA"
 ```
 
-- [ ] **Step 2: Verify the shot list file exists**
+- [x] **Step 2: Verify the shot list file exists**
 
 Run:
 
@@ -149,7 +149,7 @@ Expected: `True`
 **Files:**
 - Create: `marketing/ugc-reveal-ad/ugc-reveal-preview.html`
 
-- [ ] **Step 1: Create the standalone preview**
+- [x] **Step 1: Create the standalone preview**
 
 Create `marketing/ugc-reveal-ad/ugc-reveal-preview.html` as a standalone 9:16 preview. It must include:
 
@@ -371,7 +371,7 @@ Create `marketing/ugc-reveal-ad/ugc-reveal-preview.html` as a standalone 9:16 pr
 </html>
 ```
 
-- [ ] **Step 2: Smoke check the preview structure**
+- [x] **Step 2: Smoke check the preview structure**
 
 Run:
 
@@ -381,7 +381,7 @@ rg -n "aspect-ratio: 9 / 16|scene s1|scene s5|DRĪZUMĀ|Cena salonā" marketing\
 
 Expected: Output includes the 9:16 container, first scene, final scene, final "DRĪZUMĀ" text, and comparison caption.
 
-- [ ] **Step 3: Smoke check the preview file**
+- [x] **Step 3: Smoke check the preview file**
 
 Run:
 
@@ -396,7 +396,7 @@ Expected: `True`
 **Files:**
 - Modify: `C:\Users\User\progress.md`
 
-- [ ] **Step 1: Review git diff**
+- [x] **Step 1: Review git diff**
 
 Run:
 
@@ -406,7 +406,7 @@ git diff -- marketing/ugc-reveal-ad docs/superpowers/plans/2026-06-02-honestcost
 
 Expected: Diff includes only the UGC reveal ad package and this plan.
 
-- [ ] **Step 2: Stage and commit only ad files**
+- [x] **Step 2: Stage and commit only ad files**
 
 Run:
 
@@ -417,7 +417,7 @@ git commit -m "feat: add HonestCost UGC reveal ad package"
 
 Expected: Commit succeeds.
 
-- [ ] **Step 3: Append progress**
+- [x] **Step 3: Append progress**
 
 Append to `C:\Users\User\progress.md`:
 

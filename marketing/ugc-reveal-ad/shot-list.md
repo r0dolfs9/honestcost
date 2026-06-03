@@ -4,12 +4,12 @@
 
 - Selfie hook: creator reacts to the comparison idea with phone in hand.
 - Over-shoulder screen shot: laptop or phone showing HonestCost.
-- Reaction insert: quick eyebrow raise or "wait" moment after monthly result appears.
+- Reaction insert: quick eyebrow-raise or "wait" moment after monthly result appears.
 - Final still: clean HonestCost wordmark or screen with dark background.
 
 ## Screen Recordings
 
-- HonestCost app loaded.
+- HonestCost landing/app loaded.
 - Two-car comparison visible.
 - Car picker/prefill selection.
 - Monthly result highlighted.
