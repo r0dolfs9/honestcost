@@ -42,6 +42,7 @@ Required fields:
 
 - Task title
 - Project
+- Energy fit
 - Why this task now
 - Estimated time
 - First concrete step
@@ -55,6 +56,9 @@ Selection rules:
 3. User-waiting decision wins if it blocks multiple tasks.
 4. Project QA/trust work wins before polish or expansion.
 5. If several tasks are equal, choose the smallest task that unlocks the most follow-up work.
+6. If the selected energy mode is low energy, prefer cleanup, obvious decisions, review, or small mechanical fixes.
+7. If the selected energy mode is deep work, prefer the task with the highest progress-per-hour.
+8. Do not recommend website building, copywriting, or legal work in low-energy mode unless a hard deadline forces it.
 
 ### 3. Everything Status Overview
 
@@ -125,6 +129,8 @@ Fields:
 - `ai_doable`
 - `user_required`
 - `deadline_at`
+- `energy_fit`: low / normal / deep / admin / weekend
+- `avoid_when_tired`
 - `source_refs`
 - `confidence`
 
@@ -181,7 +187,83 @@ The dashboard should choose one task using this scoring order:
 3. Project importance: active/revenue/trust project.
 4. Momentum: follows directly from last done item.
 5. Time fit: can be started today.
-6. User distraction risk: avoid presenting many equal choices.
+6. Energy fit:
+   - Low energy: cleanup, obvious decision, review, small mechanical fix.
+   - Normal day: next best balanced task.
+   - Deep work: highest progress-per-hour task.
+   - Review/admin: decisions, planning, inbox, project status.
+   - Weekend catch-up: stale tasks, weekly review, light cleanup.
+7. Avoidance rules:
+   - Avoid website building when tired.
+   - Avoid copywriting when tired.
+   - Avoid legal work when tired.
+8. User distraction risk: avoid presenting many equal choices.
+
+## Energy Modes
+
+### Low Energy
+
+Use when the user is tired or wants a low-friction start.
+
+Recommend:
+
+- Cleanup
+- Sorting
+- One obvious decision
+- Review-only work
+- Small mechanical fixes
+
+Avoid:
+
+- Website building
+- Copywriting
+- Legal work
+- Broad ambiguous planning
+
+### Normal Day
+
+Use when there is no strong energy signal.
+
+Recommend:
+
+- The strongest practical next step
+- QA
+- Implementation
+- Research
+- Clear project progress
+
+### Deep Work
+
+Use when the user has 2-4 focused hours.
+
+Recommend:
+
+- Highest progress-per-hour task
+- Work that unlocks multiple next steps
+- Implementation or QA that changes project state materially
+- Research only if it removes a real decision blocker
+
+### Review/Admin
+
+Use when the user wants control and clarity more than production.
+
+Recommend:
+
+- Decision inbox
+- Project status cleanup
+- Automation health review
+- File/status cleanup
+
+### Weekend Catch-Up
+
+Use for lighter review and cleanup.
+
+Recommend:
+
+- Stale task review
+- Weekly summary
+- Small cleanup
+- Low-risk planning
 
 ## First Prototype Layout
 
@@ -197,7 +279,6 @@ This layout matches the user's Batch 1 answers: broad status is visible, but onl
 
 ## Items Still Requiring User Input
 
-- Energy-mode behavior.
 - Always-visible project list.
 - Visual style direction.
 - Notification rules.
