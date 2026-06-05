@@ -62,18 +62,34 @@ Selection rules:
 
 ### 3. Everything Status Overview
 
-This section summarizes all active projects without forcing the user to choose between many tasks.
+This section summarizes the persistent projects plus any urgent conditional projects without forcing the user to choose between many tasks.
 
 Each project gets one compact row or card:
 
 - Project name
-- Health: Ready / Blocked / Waiting / Stale / Active
+- Health: Ready / Needs review / On track / Stale / Ignore for now
 - Last done
 - Next up
 - Risk or blocker
 - Last checked
 
 The section should support scanning, not deep reading.
+
+Persistent projects:
+
+- Munalife
+- KPA
+- Inbox
+
+Conditional projects:
+
+- HonestCost
+- IronLog
+- Automations
+- Personal content
+- Other future projects
+
+Conditional projects appear when they are the most urgent, recently active, blocked, stale enough to matter, or tied to a meeting/deadline.
 
 ### 4. Last Done / Next Up Timeline
 
@@ -108,9 +124,11 @@ Fields:
 - `id`
 - `name`
 - `status`
+- `visibility`: persistent / conditional / hidden
 - `last_done`
 - `next_up`
 - `last_checked_at`
+- `last_meaningful_progress_at`
 - `health_reason`
 - `source_refs`
 
@@ -169,14 +187,35 @@ Fields:
 
 ## Status Vocabulary
 
-- `Active`: work is moving and has a clear next step.
-- `Ready`: no blocker; can be worked on.
-- `Blocked`: cannot proceed without a user/external action.
-- `Waiting on user`: needs a decision, review, credential, account action, or approval.
-- `Waiting on external`: depends on service, connector, deployment, legal/accounting, or third party.
-- `Stale`: not checked or progressed recently.
+- `Ready`: has a clear next step and can be worked on.
+- `Needs review`: needs user or AI review before progress continues confidently.
+- `On track`: progress is happening and the project is not too inactive.
+- `Stale`: too inactive, unclear, or repeatedly not moving.
+- `Ignore for now`: intentionally not part of today's focus unless an urgent item appears.
+
+System/internal labels can still exist, but should not dominate the UI:
+
 - `Failed source`: an automation or data source failed.
-- `Ignore for now`: intentionally hidden from daily focus unless urgent.
+- `Waiting on external`: depends on service, connector, deployment, legal/accounting, or third party.
+- `Blocked`: cannot proceed without a user/external action.
+
+## Project Health Model
+
+A healthy project is making progress and is not too inactive.
+
+Health should consider:
+
+- last meaningful progress date
+- whether the next step is clear
+- whether the project has become stale
+- whether a blocker is preventing movement
+- whether the project is persistent or only conditionally shown
+
+Inactivity rules should be project-specific later. For V1, use simple defaults:
+
+- Persistent projects should show a stale warning sooner.
+- Conditional projects should only surface if they become urgent, blocked, recently active, or stale enough to matter.
+- `Ignore for now` suppresses non-urgent project noise.
 
 ## Recommendation Model
 
@@ -198,6 +237,11 @@ The dashboard should choose one task using this scoring order:
    - Avoid copywriting when tired.
    - Avoid legal work when tired.
 8. User distraction risk: avoid presenting many equal choices.
+
+Persistent project weighting:
+
+- Munalife, KPA, and inbox are always visible in status overview.
+- Conditional projects should not override the main recommendation unless they are urgent, blocked, or clearly the highest-progress task.
 
 ## Energy Modes
 
@@ -279,7 +323,6 @@ This layout matches the user's Batch 1 answers: broad status is visible, but onl
 
 ## Items Still Requiring User Input
 
-- Always-visible project list.
 - Visual style direction.
 - Notification rules.
 - Weekly/monthly review priorities.

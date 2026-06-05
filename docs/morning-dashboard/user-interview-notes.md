@@ -23,7 +23,6 @@ Last updated: 2026-06-05
 
 ## Open Follow-Up Areas
 
-- Always-visible projects are not confirmed yet.
 - Visual style preference is not confirmed yet.
 - Notification behavior is not confirmed yet.
 
@@ -41,3 +40,18 @@ Last updated: 2026-06-05
 - Deep-work mode should choose the highest-leverage progress task, not necessarily the easiest task.
 - Website building, copywriting, and legal/admin-heavy drafting need an energy guardrail.
 - The dashboard should never make the user choose between many tasks just because modes exist; modes should influence the one recommended task.
+
+## Batch 3: Project Handling
+
+- Always-visible projects: Munalife, KPA, and inbox should always appear.
+- Conditional projects: Other projects should appear when they are the most urgent or have a relevant blocker/deadline. This includes projects such as HonestCost, IronLog, automations, personal content, and future projects.
+- Healthy project definition: A healthy project is making progress and is not too inactive.
+- Preferred status labels: Ready, Needs review, On track, Stale, Ignore for now.
+
+## Batch 3 Design Implications
+
+- The dashboard's "status of everything" should not literally show every possible project all the time.
+- Munalife, KPA, and inbox are persistent top-level rows.
+- Other projects enter the main dashboard when urgency, deadlines, blockers, or recent active work make them relevant.
+- Project health should be based heavily on momentum and inactivity, not only tests or technical correctness.
+- Status labels should be simple and low-friction; avoid too many operational labels unless needed for source/automation failures.

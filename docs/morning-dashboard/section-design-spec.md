@@ -14,6 +14,8 @@ Core principles:
 - Always show urgent tasks, meetings, and deadlines.
 - Use energy mode to change the one recommended task, not to create a distracting task menu.
 - Avoid website building, copywriting, and legal work when the user is tired.
+- Always show Munalife, KPA, and inbox.
+- Show other projects only when urgent, recently active, stale enough to matter, blocked, or tied to a deadline.
 
 ## First Screen Layout
 
@@ -135,6 +137,12 @@ Use Option A on desktop and Option B on mobile. Do not implement automatic mode 
 
 Purpose: Show every important project at a glance.
 
+Visibility rules:
+
+- Always visible: Munalife, KPA, inbox.
+- Conditional: HonestCost, IronLog, automations, personal content, and future projects.
+- Conditional projects appear when they are the most urgent from the rest, have a blocker/deadline, are recently active, or have become meaningfully stale.
+
 Each item should show:
 
 - Project name
@@ -165,6 +173,14 @@ Layout options:
 ### Recommendation
 
 Use compact project rows for V1. The dashboard needs to show "status of everything" without turning the page into a card buffet.
+
+Preferred status labels:
+
+- Ready
+- Needs review
+- On track
+- Stale
+- Ignore for now
 
 ## Section 5: Last Done / Next Up
 
@@ -339,7 +355,6 @@ Mobile:
 
 ## Open Design Decisions
 
-- Which projects should always be visible?
 - Should the visual style be command-center, calm briefing, project cockpit, or hybrid?
 - Should Telegram be optional, required, or failure-only?
 - Should weekly review be generated automatically every Monday?
