@@ -152,6 +152,22 @@ Fields:
 - `source_refs`
 - `confidence`
 
+### Decision
+
+Fields:
+
+- `id`
+- `project_id`
+- `title`
+- `recommended_option`
+- `alternative_options`
+- `recommendation_reason`
+- `impact_if_ignored`
+- `interrupts_daily_flow`
+- `decision_type`: money / legal / design_approval / project_direction / file_action / other
+- `source_refs`
+- `confidence`
+
 ### Urgent Item
 
 Fields:
@@ -163,6 +179,13 @@ Fields:
 - `impact`
 - `required_action`
 - `source_refs`
+
+Decision urgency rules:
+
+- Money decisions can become urgent override items.
+- Legal decisions can become urgent override items.
+- Design approval decisions can become urgent override items.
+- Other decisions should not interrupt daily flow unless they block the main recommended task or have a real deadline.
 
 ### Completion
 
@@ -242,6 +265,20 @@ Persistent project weighting:
 
 - Munalife, KPA, and inbox are always visible in status overview.
 - Conditional projects should not override the main recommendation unless they are urgent, blocked, or clearly the highest-progress task.
+
+## Decision Inbox Model
+
+The decision inbox exists to batch user decisions without overwhelming the daily view.
+
+Rules:
+
+- Show 3-5 decisions maximum in the main decision area.
+- Every decision should include one AI-recommended default option.
+- Every decision should include alternatives.
+- The default format is recommendation plus alternatives, not A/B cards or a large impact table.
+- Decisions beyond the 3-5 visible limit should move to a lower-priority backlog.
+- Money, legal, and design approval decisions can interrupt the main daily flow.
+- Project direction, file deletion, publishing, and other decisions should stay quiet unless they become urgent, deadline-bound, or block the main task.
 
 ## Energy Modes
 

@@ -241,7 +241,51 @@ Layout options:
 
 Use collapsed drawers or below-fold tables. Never let these queues compete visually with the main task.
 
-## Section 7: Automation Health
+## Section 7: Decision Inbox
+
+Purpose: Batch user decisions without overwhelming the daily recommendation.
+
+Rules:
+
+- Show 3-5 decisions maximum.
+- Every decision includes one recommended option.
+- Every decision includes alternatives.
+- Money, legal, and design approval decisions can interrupt daily flow.
+- Other decisions stay below the main task unless urgent or blocking.
+
+Required fields:
+
+- Decision title
+- Recommended option
+- Alternatives
+- Why this recommendation
+- Impact if ignored
+- Decision type
+
+Layout options:
+
+### Option A: Recommended Option + Alternatives
+
+- Top line: decision question.
+- Main block: recommended option.
+- Secondary line: alternatives.
+- Best match for user preference.
+
+### Option B: Short Question List
+
+- Compact list of decisions.
+- Easier to scan, but weaker for default recommendations.
+
+### Option C: Impact/Effort Table
+
+- Strong for serious planning.
+- Too heavy for the daily first screen.
+
+### Recommendation
+
+Use Option A. Cap the visible list at 3-5 decisions and place additional decisions in a quiet backlog.
+
+## Section 8: Automation Health
 
 Purpose: Show whether the sources feeding the dashboard are working.
 
@@ -274,7 +318,7 @@ Layout options:
 
 Use status lights on the main screen and a failure log below.
 
-## Section 8: Confidence And Sources
+## Section 9: Confidence And Sources
 
 Purpose: Keep the dashboard trustworthy without overwhelming the user.
 
@@ -299,7 +343,7 @@ Layout options:
 
 Use small badges plus optional evidence drawers.
 
-## Section 9: Weekly Review
+## Section 10: Weekly Review
 
 Purpose: Make the dashboard useful long-term.
 

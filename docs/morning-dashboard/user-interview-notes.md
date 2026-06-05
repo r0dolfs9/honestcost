@@ -55,3 +55,22 @@ Last updated: 2026-06-05
 - Other projects enter the main dashboard when urgency, deadlines, blockers, or recent active work make them relevant.
 - Project health should be based heavily on momentum and inactivity, not only tests or technical correctness.
 - Status labels should be simple and low-friction; avoid too many operational labels unless needed for source/automation failures.
+
+## Batch 4: Decisions And User Checkpoints
+
+- Decision count limit: 3-5 decisions maximum. More than that likely becomes annoying.
+- AI default recommendation: Yes, AI should recommend a default option for every decision.
+- Preferred decision format: Recommended option plus alternatives.
+- Decisions that should interrupt daily work: Money, legal, and design approval.
+
+## Batch 4 Design Implications
+
+- The dashboard should not show an unlimited decision backlog on the first screen.
+- The decision inbox should cap visible decisions at 3-5 and move the rest below the fold or into an archive/backlog.
+- Every visible decision should include:
+  - recommended option
+  - alternative option(s)
+  - short reason for recommendation
+  - impact if ignored
+- Money, legal, and design approval decisions can interrupt the daily flow.
+- Other decisions should appear in a quiet queue unless they become urgent or block the one main recommended task.
