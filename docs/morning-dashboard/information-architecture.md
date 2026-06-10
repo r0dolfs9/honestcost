@@ -361,5 +361,4 @@ This layout matches the user's Batch 1 answers: broad status is visible, but onl
 ## Items Still Requiring User Input
 
 - Visual style direction.
-- Notification rules.
-- Weekly/monthly review priorities.
+- Notifica

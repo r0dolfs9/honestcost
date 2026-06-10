@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Morning Dashboard - 2026-06-10</title>
+  <style>
+    :root {
+      --ink: #111827;
+      --muted: #64748b;
+      --paper: #f7f4ee;
+      --panel: rgba(255,255,255,.78);
+      --line: rgba(15,23,42,.12);
+      --blue: #123a6f;
+      --cyan: #00a7c8;
+      --green: #198754;
+      --amber: #c77700;
+      --red: #c2412d;
+      --violet: #6750a4;
+      --shadow: 0 24px 70px rgba(17,24,39,.16);
+      --mono: "DM Mono", Consolas, monospace;
+      --sans: "Barlow", "Segoe UI", sans-serif;
+      --display: "Barlow Condensed", Impact, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 6%, rgba(0,167,200,.22), transparent 28%),
+        radial-gradient(circle at 82% 12%, rgba(199,119,0,.18), transparent 30%),
+        linear-gradient(135deg, #fbfaf7 0%, #eef4f7 44%, #f7f4ee 100%);
+      font-family: var(--sans);
+    }
+    .noise {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .22;
+      background-image: linear-gradient(90deg, rgba(17,24,39,.04) 1px, transparent 1px),
+        linear-gradient(rgba(17,24,39,.035) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: linear-gradient(to bottom, black, transparent 78%);
+    }
+    main { width: min(1480px, calc(100% - 36px)); margin: 0 auto; padding: 28px 0 44px; position: relative; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.18fr .82fr;
+      gap: 18px;
+      min-height: 360px;
+    }
+    .hero-card, .panel {
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.7);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+    .hero-card {
+      border-radius: 8px;
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card:before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 7px;
+      background: linear-gradient(90deg, var(--blue), var(--cyan), var(--amber), var(--red));
+    }
+    .eyebrow { font: 700 13px var(--mono); letter-spacing: .08em; color: var(--blue); text-transform: uppercase; }
+    h1 {
+      margin: 16px 0 12px;
+      font-family: var(--display);
+      font-size: clamp(48px, 7vw, 112px);
+      line-height: .84;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+    .lead { max-width: 780px; color: #334155; font-size: 20px; line-height: 1.45; }
+    .hero-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 28px; }
+    .metric {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.58);
+      border-radius: 8px;
+      padding: 14px;
+      min-height: 96px;
+    }
+    .metric b { display: block; font: 800 30px var(--display); color: var(--blue); }
+    .metric span { color: var(--muted); font-size: 13px; }
+    .radar {
+      border-radius: 8px;
+      padding: 24px;
+      background: #0b1220;
+      color: #e5eefb;
+      overflow: hidden;
+      position: relative;
+      min-height: 360px;
+    }
+    .radar:before {
+      content: "";
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      right: -120px;
+      top: -80px;
+      border-radius: 50%;
+      background: conic-gradient(from 80deg, rgba(0,167,200,.75), rgba(25,135,84,.48), rgba(199,119,0,.72), rgba(103,80,164,.6), rgba(0,167,200,.75));
+      filter: blur(10px);
+      opacity: .52;
+      animation: spin 18s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .radar > * { position: relative; }
+    .score { display: grid; grid-template-columns: 140px 1fr; gap: 16px; align-items: center; margin-top: 26px; }
+    .ring {
+      width: 140px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--green) 0 74%, rgba(255,255,255,.12) 74% 100%);
+    }
+    .ring div { width: 102px; aspect-ratio: 1; border-radius: 50%; background: #0b1220; display:grid; place-items:center; font: 800 34px var(--display); }
+    .status-line { display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; }
+    .badge { border-radius: 999px; padding: 7px 10px; font: 700 12px var(--mono); text-transform: uppercase; }
+    .ok { background: rgba(25,135,84,.15); color: #0f6b42; }
+    .warn { background: rgba(199,119,0,.17); color: #8a4c00; }
+    .hot { background: rgba(194,65,45,.14); color: #9c2f1f; }
+    .blue { background: rgba(18,58,111,.14); color: var(--blue); }
+    .grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 18px; margin-top: 18px; }
+    .panel { border-radius: 8px; padding: 22px; }
+    .section-title { display:flex; align-items:end; justify-content:space-between; gap:12px; margin-bottom: 16px; }
+    h2 { margin:0; font: 800 30px var(--display); text-transform: uppercase; letter-spacing: 0; }
+    .small { color: var(--muted); font: 13px var(--mono); }
+    .task-list { display:grid; gap:12px; }
+    .task {
+      display:grid;
+      grid-template-columns: 88px 1fr 118px;
+      gap:14px;
+      align-items:center;
+      padding:14px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      background: rgba(255,255,255,.56);
+    }
+    .prio { font: 800 22px var(--display); color:#fff; background:var(--blue); border-radius:6px; padding:12px; text-align:center; }
+    .task h3 { margin:0 0 5px; font-size:18px; }
+    .task p { margin:0; color:#475569; line-height:1.35; }
+    .time { text-align:right; font: 800 22px var(--display); color:var(--blue); }
+    .bar-row { margin: 14px 0; }
+    .bar-head { display:flex; justify-content:space-between; font:700 13px var(--mono); margin-bottom:6px; }
+    .track { height: 12px; background: rgba(15,23,42,.09); border-radius:999px; overflow:hidden; }
+    .fill { height:100%; border-radius:999px; background: linear-gradient(90deg, var(--blue), var(--cyan)); }
+    .timeline { border-left:2px solid rgba(18,58,111,.18); padding-left:16px; display:grid; gap:15px; }
+    .event { position:relative; }
+    .event:before { content:""; position:absolute; left:-23px; top:3px; width:11px; height:11px; border-radius:50%; background:var(--cyan); box-shadow:0 0 0 5px rgba(0,167,200,.13); }
+    .event b { display:block; margin-bottom:3px; }
+    .event span { color:#475569; line-height:1.4; }
+    .risk-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; }
+    .risk { border:1px solid var(--line); border-left:5px solid var(--amber); border-radius:8px; background:rgba(255,255,255,.58); padding:14px; }
+    .risk.critical { border-left-color:var(--red); }
+    .risk.good { border-left-color:var(--green); }
+    .risk b { display:block; margin-bottom:6px; }
+    .actions { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; }
+    .action { padding:16px; border-radius:8px; border:1px solid var(--line); background:#fff; }
+    .action .num { font:800 38px var(--display); color:var(--amber); }
+    .split { display:grid; grid-template-columns: 1fr 1fr; gap:18px; margin-top:18px; }
+    footer { margin-top:20px; color:#64748b; font-size:13px; display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+    @media (max-width: 980px) {
+      .hero, .grid, .split { grid-template-columns: 1fr; }
+      .hero-meta, .actions, .risk-grid { grid-template-columns: 1fr 1fr; }
+      .task { grid-template-columns: 70px 1fr; }
+      .time { grid-column:2; text-align:left; }
+    }
+    @media (max-width: 620px) {
+      main { width: min(100% - 22px, 1480px); padding-top:14px; }
+      .hero-meta, .actions, .risk-grid { grid-template-columns: 1fr; }
+      .hero-card, .panel, .radar { padding:18px; }
+      .score { grid-template-columns:1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) { .radar:before { animation: none; } }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+  <main>
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Morning Visual Task Dashboard / Wednesday, June 10, 2026</div>
+        <h1>Verify before building more.</h1>
+        <p class="lead">The strongest morning signal is Morning OS Phase 7 acceptance: Phase 6 implementation appears present, but status docs disagree. Today's best move is to run the app, test the dashboard payload and frontend, fix only acceptance failures, then reconcile the docs.</p>
+        <div class="hero-meta">
+          <div class="metric"><b>P0</b><span>Morning OS acceptance pass</span></div>
+          <div class="metric"><b>2-3h</b><span>Expected focused time to clear first gate</span></div>
+          <div class="metric"><b>74%</b><span>Confidence from local files and progress log</span></div>
+          <div class="metric"><b>0 EUR</b><span>External API cost required today</span></div>
+        </div>
+      </div>
+      <aside class="radar">
+        <div class="eyebrow" style="color:#9ee8ff">Operational Readiness</div>
+        <div class="score">
+          <div class="ring"><div>74%</div></div>
+          <div>
+            <h2 style="color:#fff">Acceptance gate, not feature work</h2>
+            <p style="color:#b8c7db; line-height:1.45">Backend phases 0-5 are documented as tested. Phase 6 files exist for dashboard service, React components, launch drawer, source health, and animation work. The risk is validation drift: docs and completion plan still contain older "Phase 6 next" language.</p>
+          </div>
+        </div>
+        <div class="status-line">
+          <span class="badge ok">Phase 0-5 tested</span>
+          <span class="badge blue">Phase 6 code present</span>
+          <span class="badge warn">Docs conflict</span>
+          <span class="badge hot">Large dirty repo</span>
+          <span class="badge warn">Telegram missing</span>
+        </div>
+      </aside>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="section-title"><h2>Today's Priority Tasks</h2><span class="small">Do in order</span></div>
+        <div class="task-list">
+          <article class="task">
+            <div class="prio">P0</div>
+            <div><h3>Run Morning OS Phase 7 acceptance</h3><p>In C:\Users\User\Desktop\Morning Dashboard: build frontend, start backend, verify /api/health and /api/dashboard, open the app, and follow COMPLETION_PLAN.md.</p></div>
+            <div class="time">2-3h</div>
+          </article>
+          <article class="task">
+            <div class="prio" style="background:var(--amber)">P1</div>
+            <div><h3>Reconcile stale status docs</h3><p>After verification, update BUILD_STATUS.md and docs/CURRENT_CONTEXT.md so Phase 7 state is consistent and future sessions do not restart Phase 6.</p></div>
+            <div class="time">30m</div>
+          </article>
+          <article class="task">
+            <div class="prio" style="background:var(--violet)">P2</div>
+            <div><h3>Decide PC organisation Batch 12</h3><p>Latest progress asks for approval before removing original Desktop !Review_Delete files. This is a decision only, not a morning build task.</p></div>
+            <div class="time">15m</div>
+          </article>
+          <article class="task">
+            <div class="prio" style="background:var(--cyan)">P3</div>
+            <div><h3>Continue MUNALIFE visual/Wix work</h3><p>Place Visual Journey shell, align native Wix text, then test mobile readability for FSS cohort v9.</p></div>
+            <div class="time">60-90m</div>
+          </article>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-title"><h2>Progress By Project</h2><span class="small">Evidence weighted</span></div>
+        <div class="bar-row"><div class="bar-head"><span>Morning OS core build</span><span>82%</span></div><div class="track"><div class="fill" style="width:82%"></div></div></div>
+        <div class="bar-row"><div class="bar-head"><span>Morning OS acceptance + docs</span><span>38%</span></div><div class="track"><div class="fill" style="width:38%; background:linear-gradient(90deg,var(--amber),var(--red))"></div></div></div>
+        <div class="bar-row"><div class="bar-head"><span>PC organisation audit/copy batches</span><span>76%</span></div><div class="track"><div class="fill" style="width:76%; background:linear-gradient(90deg,var(--green),var(--cyan))"></div></div></div>
+        <div class="bar-row"><div class="bar-head"><span>MUNALIFE FSS Wix assets</span><span>58%</span></div><div class="track"><div class="fill" style="width:58%; background:linear-gradient(90deg,var(--violet),var(--cyan))"></div></div></div>
+        <div class="bar-row"><div class="bar-head"><span>HonestCost production trust base</span><span>34%</span></div><div class="track"><div class="fill" style="width:34%; background:linear-gradient(90deg,var(--blue),var(--amber))"></div></div></div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="section-title"><h2>Fixes Needed</h2><span class="small">Acceptance blockers first</span></div>
+        <div class="risk-grid">
+          <div class="risk critical"><b>Uncommitted Morning OS batch</b><span>Many modified and untracked files exist. Treat as in-progress user work. Verify before any cleanup or commit.</span></div>
+          <div class="risk critical"><b>Status contradiction</b><span>BUILD_STATUS says Phase 7 in progress, while docs/CURRENT_CONTEXT and COMPLETION_PLAN still say Phase 6 starts next.</span></div>
+          <div class="risk"><b>Frontend build unverified today</b><span>Run npm install and npm run build before trusting the React shell.</span></div>
+          <div class="risk"><b>Telegram unavailable</b><span>No Telegram/TG/BOT_TOKEN/CHAT_ID environment configuration was found in this run.</span></div>
+          <div class="risk"><b>HonestCost browser QA pending</b><span>Interactive deployed/staged QA, mobile pass, and CSP validation remain queued.</span></div>
+          <div class="risk good"><b>PC organisation is controlled</b><span>Recent batches are manifest-driven and non-destructive; the next step is an approval decision.</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="section-title"><h2>Recent Completion Timeline</h2><span class="small">From progress.md</span></div>
+        <div class="timeline">
+          <div class="event"><b>2026-06-10: PC organisation Batches 06-12</b><span>Empty-folder cleanup executed, review/quarantine manifests prepared, copy-only quarantine completed, source-removal proposal prepared.</span></div>
+          <div class="event"><b>2026-06-09: FSS v9 and Visual Journey assets</b><span>MUNALIFE v9 guide/code created and four Visual Journey SVG assets prepared for Wix/native placement.</span></div>
+          <div class="event"><b>2026-06-09: Morning dashboard generated</b><span>Previous automation moved main recommendation to Morning OS Phase 7 acceptance and flagged stale docs.</span></div>
+          <div class="event"><b>2026-06-08: Settings import/export fixed</b><span>Settings gained dedicated import/export access and first-run DB guards.</span></div>
+          <div class="event"><b>2026-06-05: Morning OS Phases 0-5</b><span>Backend foundation, source ingestion, project/task management, recommendation engine, and prompt launcher documented as tested.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="split">
+      <div class="panel">
+        <div class="section-title"><h2>Next Actions</h2><span class="small">Concrete sequence</span></div>
+        <div class="actions">
+          <div class="action"><div class="num">1</div><b>Build</b><p>Run frontend npm install/build in Morning Dashboard.</p></div>
+          <div class="action"><div class="num">2</div><b>Serve</b><p>Run python -m app.main and verify health/dashboard endpoints.</p></div>
+          <div class="action"><div class="num">3</div><b>Inspect</b><p>Open http://127.0.0.1:8765 and run the acceptance checklist.</p></div>
+          <div class="action"><div class="num">4</div><b>Fix</b><p>Patch only failing acceptance items, no opportunistic redesign.</p></div>
+          <div class="action"><div class="num">5</div><b>Reconcile</b><p>Update status docs so the repo records Phase 7 truth.</p></div>
+          <div class="action"><div class="num">6</div><b>Decide</b><p>Approve or defer PC organisation Batch 12 removal.</p></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="section-title"><h2>Confidence And Assumptions</h2><span class="small">Trust notes</span></div>
+        <div class="risk-grid">
+          <div class="risk good"><b>High confidence</b><span>C:\Users\User\progress.md and automation memory agree that Morning OS acceptance is the primary next step.</span></div>
+          <div class="risk"><b>Medium confidence</b><span>Phase 6 appears implemented from files and BUILD_STATUS, but it needs a fresh build/run pass today.</span></div>
+          <div class="risk"><b>Assumption</b><span>The pinned Codex chat named "my automation" was not found as an exact session-index name. Automation memory/config were used as the available proxy.</span></div>
+          <div class="risk"><b>Question</b><span>Should Telegram pings be configured for this automation, and if yes, where should the token/chat ID live?</span></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span>Generated locally from automation memory, C:\Users\User\progress.md, HonestCost files, and C:\Users\User\Desktop\Morning Dashboard status files.</span>
+      <span>Report target: C:\Users\User\Desktop\morning-dashboard.html</span>
+    </footer>
+  </main>
+</body>
+</html>

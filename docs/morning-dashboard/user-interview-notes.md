@@ -73,4 +73,4 @@ Last updated: 2026-06-05
   - short reason for recommendation
   - impact if ignored
 - Money, legal, and design approval decisions can interrupt the daily flow.
-- Other decisions should appear in a quiet queue unless they become urgent or block the one main recommended task.
+- Other decisions should appear in a quiet queue unless they become urgent or block the on

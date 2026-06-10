@@ -116,6 +116,213 @@ window.CAR_SOURCES = {
     sourceUrls: ['https://www.dacia.lv/lv/cars/spring/home.html'],
     notes: 'Dacia Latvia Spring page shows from EUR 17,390 on 2026-06-10. DB row is Spring Electric 65; trim/battery mapping needed before changing DB price.'
   },
+  kia_ev2_42: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 32490,
+    currentPrice: 32490,
+    currentListPrice: 32490,
+    currentCampaignPrice: 30490,
+    currentPriceBasis: 'list',
+    currentTrimName: 'Kia EV2 42.2 kWh EX 2WD (123.8 kW)',
+    sourceUrls: ['https://www.kia.lv/models/qv'],
+    notes: 'Row created 2026-06-10 from the kia.lv model price table (list price per pricing policy; campaign price recorded separately). Battery, kW, consumption and range read from the same table.'
+  },
+  kia_ev3_58: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 39990,
+    currentPrice: 39990,
+    currentListPrice: 39990,
+    currentCampaignPrice: 36990,
+    currentPriceBasis: 'list',
+    currentTrimName: 'Kia EV3 58.3 kWh EX 2WD (150 kW)',
+    sourceUrls: ['https://www.kia.lv/models/sv'],
+    notes: 'Row created 2026-06-10 from the kia.lv model price table (list price per pricing policy; campaign price recorded separately). Battery, kW, consumption and range read from the same table.'
+  },
+  kia_ev3_81: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 43990,
+    currentPrice: 43990,
+    currentListPrice: 43990,
+    currentCampaignPrice: 40990,
+    currentPriceBasis: 'list',
+    currentTrimName: 'Kia EV3 81.4 kWh EX 2WD (150 kW)',
+    sourceUrls: ['https://www.kia.lv/models/sv'],
+    notes: 'Row created 2026-06-10 from the kia.lv model price table (list price per pricing policy; campaign price recorded separately). Battery, kW, consumption and range read from the same table.'
+  },
+  kia_ev4_58: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 42190,
+    currentPrice: 42190,
+    currentListPrice: 42190,
+    currentCampaignPrice: 38190,
+    currentPriceBasis: 'list',
+    currentTrimName: 'Kia EV4 58.3 kWh EX 2WD (150 kW)',
+    sourceUrls: ['https://www.kia.lv/models/sz1'],
+    notes: 'Row created 2026-06-10 from the kia.lv model price table (list price per pricing policy; campaign price recorded separately). Battery, kW, consumption and range read from the same table.'
+  },
+  kia_ev4_81: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 46190,
+    currentPrice: 46190,
+    currentListPrice: 46190,
+    currentCampaignPrice: 42190,
+    currentPriceBasis: 'list',
+    currentTrimName: 'Kia EV4 81.4 kWh EX 2WD (150 kW)',
+    sourceUrls: ['https://www.kia.lv/models/sz1'],
+    notes: 'Row created 2026-06-10 from the kia.lv model price table (list price per pricing policy; campaign price recorded separately). Battery, kW, consumption and range read from the same table.'
+  },
+  kia_ev5_81: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 52990,
+    currentPrice: 52990,
+    currentListPrice: 52990,
+    currentCampaignPrice: 47990,
+    currentPriceBasis: 'list',
+    currentTrimName: 'Kia EV5 81.4 kWh EX Plus 2WD (160 kW)',
+    sourceUrls: ['https://www.kia.lv/models/ov'],
+    notes: 'Row created 2026-06-10 from the kia.lv model price table (list price per pricing policy; campaign price recorded separately). Battery, kW, consumption and range read from the same table.'
+  },
+  kia_k4_10: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 26990,
+    currentPrice: 26990,
+    currentListPrice: 26990,
+    currentCampaignPrice: 24490,
+    currentPriceBasis: 'list',
+    currentTrimName: 'Kia K4 1.0 T-GDI LX Plus MT (115 ZS)',
+    sourceUrls: ['https://www.kia.lv/models/cl4'],
+    notes: 'Row created 2026-06-10 from the kia.lv model price table (list price per pricing policy; campaign price recorded separately). Battery, kW, consumption and range read from the same table. CO2 129 g/km, 5.4 l/100km from table.'
+  },
+  kia_k4_16: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 32490,
+    currentPrice: 32490,
+    currentListPrice: 32490,
+    currentCampaignPrice: 29490,
+    currentPriceBasis: 'list',
+    currentTrimName: 'Kia K4 1.6 T-GDI EX 7DCT (150 ZS)',
+    sourceUrls: ['https://www.kia.lv/models/cl4'],
+    notes: 'Row created 2026-06-10 from the kia.lv model price table (list price per pricing policy; campaign price recorded separately). Battery, kW, consumption and range read from the same table. CO2 146 g/km from table; consumption range 6.3-6.9 recorded as 6.6.'
+  },
+  byd_atto2: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 36990,
+    currentPrice: 36990,
+    currentTrimName: 'BYD Atto 2 (EV) entry price',
+    sourceUrls: ['https://www.byd.lv/'],
+    notes: 'byd.lv lists Atto 2 EV from EUR 36,990 on 2026-06-10. Price verified; consumption and kW are authored estimates pending spec capture.'
+  },
+  byd_atto2_dmi: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 28990,
+    currentPrice: 28990,
+    currentTrimName: 'BYD Atto 2 DM-i (PHEV) entry price',
+    sourceUrls: ['https://www.byd.lv/'],
+    notes: 'byd.lv lists Atto 2 DM-i from EUR 28,990 on 2026-06-10. Price verified; PHEV consumption, CO2 and kW are authored estimates pending spec capture.'
+  },
+  byd_seal_u_ev: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 42930,
+    currentPrice: 42930,
+    currentTrimName: 'BYD Seal U (EV) entry price',
+    sourceUrls: ['https://www.byd.lv/'],
+    notes: 'byd.lv lists Seal U from EUR 42,930 on 2026-06-10. Price verified; consumption and kW authored pending spec capture.'
+  },
+  byd_seal_u_dmi: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 38050,
+    currentPrice: 38050,
+    currentTrimName: 'BYD Seal U DM-i (PHEV) entry price',
+    sourceUrls: ['https://www.byd.lv/'],
+    notes: 'byd.lv lists Seal U DM-i from EUR 38,050 on 2026-06-10. Price verified; PHEV consumption, CO2 and kW authored pending spec capture.'
+  },
+  byd_seal6_dmi: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 36990,
+    currentPrice: 36990,
+    currentTrimName: 'BYD Seal 6 DM-i entry price',
+    sourceUrls: ['https://www.byd.lv/'],
+    notes: 'byd.lv lists Seal 6 DM-i from EUR 36,990 on 2026-06-10. Price verified; specs authored pending capture.'
+  },
+  byd_seal6_dmi_tour: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 37990,
+    currentPrice: 37990,
+    currentTrimName: 'BYD Seal 6 DM-i Touring entry price',
+    sourceUrls: ['https://www.byd.lv/'],
+    notes: 'byd.lv lists Seal 6 DM-i Touring from EUR 37,990 on 2026-06-10. Price verified; specs authored pending capture.'
+  },
+  byd_dolphin_surf: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 24990,
+    currentPrice: 24990,
+    currentTrimName: 'BYD Dolphin Surf entry price',
+    sourceUrls: ['https://www.byd.lv/'],
+    notes: 'byd.lv lists Dolphin Surf from EUR 24,990 on 2026-06-10. Price verified; specs authored pending capture.'
+  },
+  byd_atto3: {
+    checkedAt: '2026-06-10',
+    status: 'mismatch',
+    resolved: true,
+    dbUpdatedAt: '2026-06-10',
+    dbUpdateAudit: 'CAR_DB_UPDATE_AUDIT_2026-06-10_BYD_KIA_ORA.md',
+    dbPrice: 38500,
+    currentPrice: 40990,
+    currentTrimName: 'BYD Atto 3 EVO entry price',
+    sourceUrls: ['https://www.byd.lv/'],
+    notes: 'byd.lv lists the facelifted Atto 3 EVO from EUR 40,990 on 2026-06-10; old DB row was pre-facelift Atto 3 Design at EUR 38,500. Name and price updated; other specs unchanged pending capture.'
+  },
+  byd_seal: {
+    checkedAt: '2026-06-10',
+    status: 'needs_mapping',
+    dbPrice: 47500,
+    currentPrice: 47830,
+    currentTrimName: 'BYD Seal entry price (trim unspecified)',
+    sourceUrls: ['https://www.byd.lv/'],
+    notes: 'byd.lv lists Seal from EUR 47,830 on 2026-06-10, but the DB row is the Design AWD trim. Trim-level mapping needed before changing DB values.'
+  },
+  byd_sealu: {
+    checkedAt: '2026-06-10',
+    status: 'needs_mapping',
+    dbPrice: 47900,
+    currentPrice: 47810,
+    currentTrimName: 'BYD Sealion 7 entry price',
+    sourceUrls: ['https://www.byd.lv/'],
+    notes: 'byd.lv lists Sealion 7 from EUR 47,810 on 2026-06-10; DB row is Sealion 7 Comfort at EUR 47,900. Close but trim mapping needed. Legacy note: this row id is byd_sealu although the car is the Sealion 7.'
+  },
+  ora_03: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 29995,
+    currentPrice: 29995,
+    currentTrimName: 'GWM ORA 03 (48 kWh, 310 km WLTP)',
+    sourceUrls: ['https://gwmcars.lv/ora'],
+    notes: 'gwmcars.lv lists ORA 03 at EUR 29,995 with 48 kWh battery and 310 km range on 2026-06-10 (limited availability). Price/battery/range verified; kW and consumption authored.'
+  },
+  ora_03_plus: {
+    checkedAt: '2026-06-10',
+    status: 'verified',
+    dbPrice: 37995,
+    currentPrice: 37995,
+    currentTrimName: 'GWM ORA 03+ (63 kWh, 420 km WLTP)',
+    sourceUrls: ['https://gwmcars.lv/ora'],
+    notes: 'gwmcars.lv lists ORA 03+ at EUR 37,995 with 63 kWh battery and 420 km range on 2026-06-10 (limited availability). Price/battery/range verified; kW and consumption authored.'
+  },
   toyota_chr_hyb: {
     checkedAt: '2026-06-01',
     status: 'mismatch',

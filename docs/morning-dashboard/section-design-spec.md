@@ -400,5 +400,4 @@ Mobile:
 ## Open Design Decisions
 
 - Should the visual style be command-center, calm briefing, project cockpit, or hybrid?
-- Should Telegram be optional, required, or failure-only?
-- Should weekly review be generated automatically every Monday?
+- Should Telegram be optional, required, or failure-only?

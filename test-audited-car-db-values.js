@@ -88,6 +88,28 @@ const auditedRows = [
     expectedCo2: 100,
     expectedKw: 72,
   },
+  {
+    id: 'byd_atto3',
+    expectedNameIncludes: ['BYD Atto 3', 'EVO'],
+    expectedFuel: 'ev',
+    expectedPrice: 40990,
+    // cons/kW not asserted: carried over from pre-facelift row, unverified.
+  },
+  {
+    id: 'kia_ev3_58',
+    expectedNameIncludes: ['Kia EV3', '58.3', 'EX'],
+    expectedFuel: 'ev',
+    expectedPrice: 39990,
+    expectedCons: 14.9,
+    expectedKw: 150,
+  },
+  {
+    id: 'ora_03',
+    expectedNameIncludes: ['Ora 03', '48 kWh'],
+    expectedFuel: 'ev',
+    expectedPrice: 29995,
+    // kW/cons not asserted: authored pending spec capture.
+  },
 ];
 
 for (const row of auditedRows) {
@@ -95,7 +117,10 @@ for (const row of auditedRows) {
   const source = sources[row.id];
   assert.ok(car, `${row.id} exists in CAR_DB`);
   assert.ok(source, `${row.id} exists in CAR_SOURCES`);
-  assert.equal(source.status, 'mismatch', `${row.id} source status documents the stale DB mismatch`);
+  assert.ok(
+    ['mismatch', 'verified'].includes(source.status),
+    `${row.id} source status is mismatch (resolved stale row) or verified (row created from source)`,
+  );
   assert.equal(car.price, row.expectedPrice, `${row.id} price matches audited source`);
   assert.equal(car.price, source.currentPrice, `${row.id} price matches CAR_SOURCES currentPrice`);
   assert.equal(car.fuel, row.expectedFuel, `${row.id} fuel class stays compatible with existing calculator categories`);

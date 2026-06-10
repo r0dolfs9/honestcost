@@ -35,6 +35,27 @@ const requiredIds = [
   'vw_id3_pro',
   'vw_id3_pro_s',
   'vw_idbuzz',
+  // 2026-06-10 batch
+  'kia_ev2_42',
+  'kia_ev3_58',
+  'kia_ev3_81',
+  'kia_ev4_58',
+  'kia_ev4_81',
+  'kia_ev5_81',
+  'kia_k4_10',
+  'kia_k4_16',
+  'byd_atto2',
+  'byd_atto2_dmi',
+  'byd_seal_u_ev',
+  'byd_seal_u_dmi',
+  'byd_seal6_dmi',
+  'byd_seal6_dmi_tour',
+  'byd_dolphin_surf',
+  'byd_atto3',
+  'byd_seal',
+  'byd_sealu',
+  'ora_03',
+  'ora_03_plus',
 ];
 
 assert.ok(Array.isArray(cars), 'CAR_DB should be loaded');
@@ -74,6 +95,7 @@ const resolvedRows = {
   skoda_octavia_rs: 'CAR_DB_UPDATE_AUDIT_2026-06-02_SKODA.md',
   vw_id3_pro: 'CAR_DB_UPDATE_AUDIT_2026-06-02_VW.md',
   vw_idbuzz: 'CAR_DB_UPDATE_AUDIT_2026-06-02_VW.md',
+  byd_atto3: 'CAR_DB_UPDATE_AUDIT_2026-06-10_BYD_KIA_ORA.md',
 };
 
 for (const [id, auditFile] of Object.entries(resolvedRows)) {
