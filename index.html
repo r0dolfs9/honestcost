@@ -462,6 +462,12 @@ select { cursor: pointer; appearance: none; -webkit-appearance: none;
 .car-body-suv .car-shape, .car-body-crossover .car-shape { height: 54px; border-radius: 22px 34px 18px 18px; }
 .car-body-wagon .car-shape { width: min(78%, 280px); }
 .car-body-sedan .car-shape { border-radius: 40px 48px 18px 18px; }
+/* Parametric SVG silhouettes (car-visuals.js) override the CSS blob entirely. */
+.car-shape-svg, .car-body-suv .car-shape-svg, .car-body-crossover .car-shape-svg, .car-body-sedan .car-shape-svg, .car-body-wagon .car-shape-svg {
+  width: min(92%, 320px); height: auto; background: none; border-radius: 0; box-shadow: none;
+}
+.car-shape-svg::before, .car-shape-svg::after { content: none; }
+.car-visual:has(.car-shape-svg)::before { display: none; }
 .car-visual-name {
   position: relative; z-index: 1;
   font-family: var(--ff-mono); font-size: 10px; line-height: 1.25;
@@ -1645,6 +1651,7 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
 
 </div><!-- page-wrapper -->
 
+<script src="car-visuals.js"></script>
 <script>
 // ─── THEME TOGGLE ──────────────────────────────────────────
 (function () {
@@ -1926,7 +1933,7 @@ function carVisualMarkup(car, side, frameClass){
   return `<div class="${frameClass||'car-media'} car-media" style="--visual-color:${color}">
     ${img}
     <div class="car-visual car-visual-${side} car-body-${body}">
-      <div class="car-shape" aria-hidden="true"></div>
+      ${(typeof window!=='undefined'&&window.CAR_VISUALS)?window.CAR_VISUALS.svg(car):'<div class="car-shape" aria-hidden="true"></div>'}
       <div class="car-visual-name">${title}</div>
     </div>
   </div>`;
