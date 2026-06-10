@@ -1,12 +1,14 @@
 # HonestCost Project Status
 
-Last updated: 2026-05-28
+Last updated: 2026-06-10
 
 ## Product
 
 - Main app file: `index.html`
 - Car database: `car-db.js`, lazy-loaded when the picker is first opened.
 - Static pages: `faq.html` and `status.html`.
+- Content section: `content/` with a hub page and 6 Latvian articles (engine-computed numbers), in sitemap and navs as of 2026-06-10.
+- Calc engine 2026-06-10: OCTA estimate is kW-based when power is known, service has a 24-month time floor, DEP tables extend to 8 years, `?flags=` feature flags exist.
 - Social preview asset: `og-image.png`.
 - Current local app status: main branch is clean after push.
 - Current GitHub status: commit `a122c6a feat: add saved scenarios and static pages` was pushed to `origin/main`.
@@ -17,7 +19,8 @@ Last updated: 2026-05-28
 - `test-calc.js` exists and tests the production calc engine extracted from `index.html`.
 - `test_scenarios.js` exists and covers seven scenario comparisons.
 - `test-ui-helpers.js` exists and covers UI helper behavior for images, debug mode, and saved scenarios.
-- `test-static-pages.js` exists and checks FAQ/status/sitemap/OG metadata smoke cases.
+- `test-static-pages.js` exists and checks FAQ/status/sitemap/OG metadata smoke cases plus the content section.
+- `test-car-sources.js` and `test-audited-car-db-values.js` enforce source metadata; 25 rows tracked, 9 resolved with guarded DB updates (audit docs dated 2026-06-02 and 2026-06-10).
 - GitHub Actions workflow exists at `.github/workflows/ci.yml`.
 
 ## Legal / company

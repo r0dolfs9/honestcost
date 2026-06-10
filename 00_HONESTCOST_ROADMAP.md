@@ -148,3 +148,12 @@ Must research before decisions:
 - Started car database credibility audit in `CAR_DATA_AUDIT_2026-05-29.md`.
 - Found that `car-db.js` has broad/complete prototype coverage, but lacks row-level source URLs/dates and has current-price mismatches in spot checks.
 - Added `car-sources.js` plus `test-car-sources.js` so the first 11 audited rows have enforceable source metadata.
+
+2026-06-10:
+
+- Fixed calc-engine gaps from AUDIT.md: OCTA estimate now rates by kW when known (cc fallback for manual entry), service costs gained a 24-month time floor for low-mileage drivers, and DEP depreciation tables were extended to an 8-year tapering tail.
+- Added URL-param feature flags (`?flags=a,b` via `parseFlags`/`hasFlag`) and ARIA labels on all 18 tooltip buttons.
+- Second guarded car-db.js batch: `toyota_yaris_hyb`, `toyota_yaris_cross_hyb`, `toyota_corolla_hyb` updated from live WESS price tables; audit trail in `CAR_DB_UPDATE_AUDIT_2026-06-10_TOYOTA_DACIA.md`.
+- Expanded `car-sources.js` from 20 to 25 rows (3 Toyota refreshed/resolved, 4 Dacia entry-price rows added as needs_mapping).
+- Built the Stage 2 content section: `content/index.html` hub plus 6 Latvian articles with numbers computed from the production calc engine; added to `sitemap.xml`, linked from app/FAQ/status navs, covered by `test-static-pages.js`.
+- CI now also runs `test-audited-car-db-values.js`. Full local suite (6 files) passes.

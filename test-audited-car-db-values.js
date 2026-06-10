@@ -63,6 +63,31 @@ const auditedRows = [
     expectedCons: 20.8,
     expectedKw: 210,
   },
+  {
+    id: 'toyota_yaris_hyb',
+    expectedNameIncludes: ['Toyota Yaris', 'Hybrid 130', 'Style'],
+    expectedFuel: 'mild_hybrid',
+    expectedPrice: 26700,
+    expectedCo2: 95,
+    // kW deliberately not asserted: source pages conflict (68 vs 96 kW for Hybrid 130).
+  },
+  {
+    id: 'toyota_yaris_cross_hyb',
+    expectedNameIncludes: ['Toyota Yaris Cross', 'Hybrid 130', 'AWD-i', 'Style'],
+    expectedFuel: 'mild_hybrid',
+    expectedPrice: 30000,
+    expectedKw: 96,
+    // cons/co2 not asserted: price table has no CO2/consumption columns.
+  },
+  {
+    id: 'toyota_corolla_hyb',
+    expectedNameIncludes: ['Toyota Corolla', '1.8 Hybrid', 'Active', 'Sedan'],
+    expectedFuel: 'mild_hybrid',
+    expectedPrice: 28400,
+    expectedCons: 4.4,
+    expectedCo2: 100,
+    expectedKw: 72,
+  },
 ];
 
 for (const row of auditedRows) {
@@ -74,8 +99,15 @@ for (const row of auditedRows) {
   assert.equal(car.price, row.expectedPrice, `${row.id} price matches audited source`);
   assert.equal(car.price, source.currentPrice, `${row.id} price matches CAR_SOURCES currentPrice`);
   assert.equal(car.fuel, row.expectedFuel, `${row.id} fuel class stays compatible with existing calculator categories`);
-  assert.equal(car.cons, row.expectedCons, `${row.id} consumption matches audited source`);
-  assert.equal(car.kw, row.expectedKw, `${row.id} kW matches audited source`);
+  if (row.expectedCons !== undefined) {
+    assert.equal(car.cons, row.expectedCons, `${row.id} consumption matches audited source`);
+  }
+  if (row.expectedCo2 !== undefined) {
+    assert.equal(car.co2, row.expectedCo2, `${row.id} CO2 matches audited source`);
+  }
+  if (row.expectedKw !== undefined) {
+    assert.equal(car.kw, row.expectedKw, `${row.id} kW matches audited source`);
+  }
   for (const namePart of row.expectedNameIncludes) {
     assert.match(car.name, new RegExp(namePart.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), `${row.id} name includes ${namePart}`);
   }

@@ -42,21 +42,79 @@ window.CAR_SOURCES = {
     notes: 'Official Latvia configurator is the right source, but current price must be captured from the dynamic configurator before changing DB price.'
   },
   toyota_yaris_hyb: {
-    checkedAt: '2026-06-01',
+    checkedAt: '2026-06-10',
     status: 'mismatch',
+    resolved: true,
+    dbUpdatedAt: '2026-06-10',
+    dbUpdateAudit: 'CAR_DB_UPDATE_AUDIT_2026-06-10_TOYOTA_DACIA.md',
     dbPrice: 23900,
     currentPrice: 26700,
     currentTrimName: 'Toyota Yaris Style 1.5 Hybrid 130 e-CVT',
     sourceUrls: ['https://toyota.wess.lv/vehicles/yaris/prices'],
-    notes: 'DB row says Hybrid 116 Style at EUR 23,900; current WESS Yaris page lists Style Hybrid 130 e-CVT at EUR 26,700. Powertrain naming also needs hybrid vs mild-hybrid cleanup.'
+    notes: 'Re-verified 2026-06-10 in live WESS price table: Style Hybrid 130 e-CVT EUR 26,700, CO2 95 g/km. kW NOT updated: page prints (68 kW) for Hybrid 130, which conflicts with the 96 kW shown for the same powertrain on the Yaris Cross page; DB keeps 85 kW until clarified.'
   },
   toyota_yaris_cross_hyb: {
-    checkedAt: '2026-06-01',
-    status: 'needs_mapping',
+    checkedAt: '2026-06-10',
+    status: 'mismatch',
+    resolved: true,
+    dbUpdatedAt: '2026-06-10',
+    dbUpdateAudit: 'CAR_DB_UPDATE_AUDIT_2026-06-10_TOYOTA_DACIA.md',
     dbPrice: 30500,
-    currentTrimName: 'Toyota Yaris Cross Hybrid AWD-i',
+    currentPrice: 30000,
+    currentTrimName: 'Toyota Yaris Cross Style 1.5 Hybrid 130 e-CVT AWD-i (96 kW)',
     sourceUrls: ['https://toyota.wess.lv/vehicles/yaris-cross/prices'],
-    notes: 'Official WESS Yaris Cross price page should be used for this row; AWD-i trim, price, WLTP consumption, and CO2 need row-level capture before changing DB values.'
+    notes: 'Live WESS price table 2026-06-10: Style Hybrid 130 AWD-i (Pilnpiedziņa) EUR 30,000, 96 kW. CO2/consumption columns are not shown on this page, so DB cons 4.4 and co2 102 remain unverified.'
+  },
+  toyota_corolla_hyb: {
+    checkedAt: '2026-06-10',
+    status: 'mismatch',
+    resolved: true,
+    dbUpdatedAt: '2026-06-10',
+    dbUpdateAudit: 'CAR_DB_UPDATE_AUDIT_2026-06-10_TOYOTA_DACIA.md',
+    dbPrice: 28500,
+    currentPrice: 28400,
+    currentListPrice: 28400,
+    currentCampaignPrice: 24300,
+    currentPriceBasis: 'list',
+    currentTrimName: 'Toyota Corolla Sedan Active 1.8 Hybrid e-CVT (72 kW)',
+    sourceUrls: ['https://toyota.wess.lv/vehicles/corolla/prices'],
+    notes: 'Live WESS price table 2026-06-10: Corolla sedan Active 1.8 Hybrid EUR 28,400 list / EUR 24,300 campaign, CO2 100 g/km, 4.4 l/100km, 72 kW. Per pricing policy DB uses list price. Old DB row used stale Style trim naming and hatch body.'
+  },
+  dacia_sandero: {
+    checkedAt: '2026-06-10',
+    status: 'needs_mapping',
+    dbPrice: 14500,
+    currentPrice: 14490,
+    currentTrimName: 'Dacia Sandero entry price (cena no)',
+    sourceUrls: ['https://www.dacia.lv/lv/cars/sandero/home.html'],
+    notes: 'Dacia Latvia model page shows Sandero from EUR 14,490 on 2026-06-10. Entry price only; Essential trim mapping, engine, WLTP and CO2 must be captured from the configurator/price list before changing DB values.'
+  },
+  dacia_sandero_step: {
+    checkedAt: '2026-06-10',
+    status: 'needs_mapping',
+    dbPrice: 16900,
+    currentPrice: 15690,
+    currentTrimName: 'Dacia Sandero Stepway entry price (cena no)',
+    sourceUrls: ['https://www.dacia.lv/'],
+    notes: 'Dacia Latvia homepage banner shows new Sandero Stepway from EUR 15,690 on 2026-06-10. DB row is the TCe 100 LPG trim; exact trim price must be mapped before any DB change.'
+  },
+  dacia_duster: {
+    checkedAt: '2026-06-10',
+    status: 'needs_mapping',
+    dbPrice: 22900,
+    currentPrice: 17690,
+    currentTrimName: 'Dacia Duster entry price (cena no)',
+    sourceUrls: ['https://www.dacia.lv/lv/cars/duster-suv/home.html'],
+    notes: 'Dacia Latvia Duster page shows from EUR 17,690 on 2026-06-10 (base trim; a 21,800 special edition was also advertised). DB row is the higher 1.2 TCe 130 4x2 trim, so the entry price is not a direct mismatch; trim-level capture needed.'
+  },
+  dacia_spring: {
+    checkedAt: '2026-06-10',
+    status: 'needs_mapping',
+    dbPrice: 17900,
+    currentPrice: 17390,
+    currentTrimName: 'Dacia Spring entry price (cena no)',
+    sourceUrls: ['https://www.dacia.lv/lv/cars/spring/home.html'],
+    notes: 'Dacia Latvia Spring page shows from EUR 17,390 on 2026-06-10. DB row is Spring Electric 65; trim/battery mapping needed before changing DB price.'
   },
   toyota_chr_hyb: {
     checkedAt: '2026-06-01',

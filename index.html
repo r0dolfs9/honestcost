@@ -903,6 +903,8 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
     <div class="site-tagline">Salīdzini divu jaunu automobiļu pilnās izmaksas — ne tikai cenu</div>
   </div>
   <div class="nav-right">
+    <a class="lang-pill" href="content/index.html" style="text-decoration:none;">Raksti</a>
+    <a class="lang-pill" href="faq.html" style="text-decoration:none;">Metodoloģija</a>
     <span class="lang-pill">LV</span>
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Mainīt tēmu">
       <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -965,19 +967,19 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
   <div class="leasing-fields open" id="leasingFields">
     <div class="field-group" style="min-width:110px;flex:1;">
       <div class="field-label">Pirmā iemaksa %
-        <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Procentuālā daļa no cenas, ko maksājat uzreiz.</span></span>
+        <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Procentuālā daļa no cenas, ko maksājat uzreiz.</span></span>
       </div>
       <input type="number" id="gDownPct" value="20" min="0" max="50">
     </div>
     <div class="field-group" style="min-width:100px;flex:1;">
       <div class="field-label">APR %
-        <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Gada procentu likme. Latvijā tipiskā 3–6%.</span></span>
+        <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Gada procentu likme. Latvijā tipiskā 3–6%.</span></span>
       </div>
       <input type="number" id="gApr" value="4.5" min="1" max="20" step="0.1">
     </div>
     <div class="slider-field" style="min-width:170px;flex:1.5;">
       <div class="field-label">Termiņš
-        <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Līguma ilgums. Biežāk 48 vai 60 mēneši.</span></span>
+        <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Līguma ilgums. Biežāk 48 vai 60 mēneši.</span></span>
       </div>
       <div class="slider-row">
         <span class="range-hint">12m</span>
@@ -988,7 +990,7 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
     </div>
     <div class="field-group" style="min-width:100px;flex:1;">
       <div class="field-label">Atlikušā %
-        <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Balona maksājums beigās. Latvijā 0–20%.</span></span>
+        <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Balona maksājums beigās. Latvijā 0–20%.</span></span>
       </div>
       <input type="number" id="gResidual" value="0" min="0" max="40">
     </div>
@@ -1058,13 +1060,13 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
       <div class="field-row">
         <div class="field-group">
           <div class="field-label">Cena (€) *
-            <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Pilna cena ar opcijām, bez finansēšanas.</span></span>
+            <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Pilna cena ar opcijām, bez finansēšanas.</span></span>
           </div>
           <input type="number" id="priceA" placeholder="38500" min="5000" max="500000">
         </div>
         <div class="field-group">
           <div class="field-label">Nolietojums *
-            <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Cik ātri auto zaudē vērtību. Premium zīmoli zaudē vairāk, hibrīdi mazāk.</span></span>
+            <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Cik ātri auto zaudē vērtību. Premium zīmoli zaudē vairāk, hibrīdi mazāk.</span></span>
           </div>
           <select id="depCatA">
             <option value="economy">Ekonom klase</option>
@@ -1094,22 +1096,22 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
       <div class="field-row">
         <div class="field-group">
           <div class="field-label" id="consLblA">Patēriņš (L/100km) *
-            <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">WLTP vidējais patēriņš.</span></span>
+            <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">WLTP vidējais patēriņš.</span></span>
           </div>
           <input type="number" id="consA" placeholder="6.2" min="0.5" max="30" step="0.1">
         </div>
         <div class="field-group">
           <div class="field-label">CO₂ (g/km) *
-            <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Atrodams auto dokumentos. Nosaka transportlīdzekļa nodokli.</span></span>
+            <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Atrodams auto dokumentos. Nosaka transportlīdzekļa nodokli.</span></span>
           </div>
           <input type="number" id="co2A" placeholder="142" min="0" max="400">
         </div>
       </div>
       <div class="field-group">
         <div class="field-label">Tilpums (cc) *
-          <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">OCTA aprēķinam. EV — ievadiet 0.</span></span>
+          <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">OCTA aprēķinam. EV — ievadiet 0.</span></span>
         </div>
-        <input type="number" id="ccA" placeholder="1499" min="0" max="8000" oninput="autoOCTA('A')">
+        <input type="number" id="ccA" placeholder="1499" min="0" max="8000" oninput="S.kwA=0;autoOCTA('A')">
       </div>
 
       <div class="phev-f" id="phevA">
@@ -1142,14 +1144,14 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
       <div class="sec-title"><i data-lucide="badge-check" style="width:11px;height:11px;"></i> Garantija</div>
       <div class="field-group">
         <div class="field-label">Ražotāja (gadi) *
-          <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Šajā periodā remonta rezerve = €0.</span></span>
+          <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Šajā periodā remonta rezerve = €0.</span></span>
         </div>
         <input type="number" id="wA" value="3" min="1" max="7">
       </div>
       <label class="check-row">
         <input type="checkbox" id="ewTogA" onchange="toggleEW('A')">
         <span>Papildu garantija</span>
-        <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Maksas papildu garantija — pagarina segumu pēc standarta perioda.</span></span>
+        <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Maksas papildu garantija — pagarina segumu pēc standarta perioda.</span></span>
       </label>
       <div class="ext-w-f" id="ewA">
         <div class="field-row">
@@ -1170,13 +1172,13 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
       <div class="field-row">
         <div class="field-group">
           <div class="field-label">Intervāls (km) *
-            <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Parasti 15 000–20 000 km.</span></span>
+            <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Parasti 15 000–20 000 km.</span></span>
           </div>
           <input type="number" id="svcIntA" value="15000" min="5000" max="60000" step="1000">
         </div>
         <div class="field-group">
           <div class="field-label">Cena (€/reizi) *
-            <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Pilnvarota dīlera cena: eļļa, filtri, pārbaude.</span></span>
+            <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Pilnvarota dīlera cena: eļļa, filtri, pārbaude.</span></span>
           </div>
           <input type="number" id="svcCostA" placeholder="280" min="50" max="3000">
         </div>
@@ -1187,13 +1189,13 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
       <div class="sec-title"><i data-lucide="shield" style="width:11px;height:11px;"></i> Apdrošināšana</div>
       <div class="field-group">
         <div class="field-label">OCTA (€/gadā) *
-          <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Aizpildās automātiski pēc tilpuma — precizējiet.</span></span>
+          <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Aizpildās automātiski pēc tilpuma — precizējiet.</span></span>
         </div>
         <input type="number" id="octaA" placeholder="Auto" min="50" max="2000">
       </div>
       <div class="field-group">
         <div class="field-label">KASKO līmenis
-          <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Aprēķina kā % no pašreizējās vērtības — katru gadu samazinās.</span></span>
+          <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Aprēķina kā % no pašreizējās vērtības — katru gadu samazinās.</span></span>
         </div>
         <div class="tier-group" id="kaskoA">
           <button class="tier-btn" onclick="setTier('kaskoA','1.8',this)">Pamata 1.8%</button>
@@ -1207,7 +1209,7 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
       <div class="sec-title"><i data-lucide="circle" style="width:11px;height:11px;"></i> Riepas</div>
       <div class="field-group">
         <div class="field-label">Kategorija *
-          <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Gada riepu izmaksas (komplekts + maiņa).</span></span>
+          <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Gada riepu izmaksas (komplekts + maiņa).</span></span>
         </div>
         <div class="tier-group" id="tyreA">
           <button class="tier-btn" onclick="setTier('tyreA','small',this)">≤16″ · 325€/g</button>
@@ -1222,7 +1224,7 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
       <div class="sec-title"><i data-lucide="alert-triangle" style="width:11px;height:11px;"></i> Remonta rezerve</div>
       <div class="field-group">
         <div class="field-label">Riska līmenis *
-          <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Budžets neparedzētiem remontiem PĒC garantijas.</span></span>
+          <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Budžets neparedzētiem remontiem PĒC garantijas.</span></span>
         </div>
         <div class="tier-group" id="repairA">
           <button class="tier-btn" onclick="setTier('repairA','low',this)">Zems</button>
@@ -1250,7 +1252,7 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
         </div>
         <div class="field-group">
           <div class="field-label">Degvielas cena (€/L vai €/kWh)
-            <span class="tip"><button class="tip-icon" tabindex="0">?</button><span class="tip-box">Tukšs → Latvijas vidējais (benzīns €1.75, dīzelis €1.70, el. €0.13).</span></span>
+            <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Tukšs → Latvijas vidējais (benzīns €1.75, dīzelis €1.70, el. €0.13).</span></span>
           </div>
           <input type="number" id="fuelPrA" placeholder="Auto" min="0.05" max="5" step="0.01">
         </div>
@@ -1347,7 +1349,7 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
       </div>
       <div class="field-group">
         <div class="field-label">Tilpums (cc) *</div>
-        <input type="number" id="ccB" placeholder="1998" min="0" max="8000" oninput="autoOCTA('B')">
+        <input type="number" id="ccB" placeholder="1998" min="0" max="8000" oninput="S.kwB=0;autoOCTA('B')">
       </div>
       <div class="phev-f" id="phevB">
         <div class="field-row">
@@ -1659,14 +1661,16 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
 })();
 
 // ── CONSTANTS ──────────────────────────────────────────────
+// Years 6-8 added 2026-06-10: tapering tail instead of repeating the year-5 rate
+// forever (older cars depreciate slower in % terms). Year 9+ clamps to the last entry.
 const DEP={
-  economy:    [.20,.12,.10,.09,.08],
-  mid:        [.22,.13,.11,.10,.09],
-  premium:    [.25,.15,.13,.11,.10],
-  suv_mid:    [.18,.12,.10,.09,.08],
-  premium_suv:[.23,.14,.12,.11,.10],
-  ev:         [.25,.16,.14,.12,.12],
-  phev:       [.22,.14,.12,.11,.10],
+  economy:    [.20,.12,.10,.09,.08,.07,.07,.06],
+  mid:        [.22,.13,.11,.10,.09,.08,.07,.07],
+  premium:    [.25,.15,.13,.11,.10,.09,.08,.07],
+  suv_mid:    [.18,.12,.10,.09,.08,.07,.07,.06],
+  premium_suv:[.23,.14,.12,.11,.10,.09,.08,.07],
+  ev:         [.25,.16,.14,.12,.12,.10,.09,.08],
+  phev:       [.22,.14,.12,.11,.10,.09,.08,.07],
 };
 const TYRE={small:325,mid:390,large:503,suv:675};
 const RBUF={
@@ -1694,6 +1698,22 @@ function ten(co2){
   if(co2<=50)return 0; if(co2<=95)return 30; if(co2<=115)return 50;
   if(co2<=130)return 80; if(co2<=155)return 120; if(co2<=175)return 180;
   if(co2<=200)return 260; if(co2<=250)return 380; return 520;
+}
+function octaEstimate(cc,kw,ftype){
+  // Latvian OCTA tariffs (LTAB) rate by engine power in kW, not displacement.
+  // kW brackets are used whenever power is known (every CAR_DB pick supplies it);
+  // cc brackets remain only as a fallback for manual entry. EVs keep the flat estimate.
+  if(ftype==='ev'||(cc===0&&!(kw>0)))return OCTA_EST.ev;
+  if(kw>0){
+    if(kw<=66)return OCTA_EST.s;
+    if(kw<=88)return OCTA_EST.m;
+    if(kw<=125)return OCTA_EST.l;
+    return OCTA_EST.xl;
+  }
+  if(cc<=1600)return OCTA_EST.s;
+  if(cc<=2000)return OCTA_EST.m;
+  if(cc<=3000)return OCTA_EST.l;
+  return OCTA_EST.xl;
 }
 function leasing(price,downPct,apr,months,resPct){
   // FINANCIAL LEASING (finanšu līzings): PMT with balloon residual.
@@ -1731,8 +1751,11 @@ function kasko(price,rate,cat,yr){
   return residual(price,cat,yr-1)*(rate/100);
 }
 function service(km,yr,interval,cost){
-  const s=km*(yr-1), e=km*yr;
-  return (Math.floor(e/interval)-Math.floor(s/interval))*cost;
+  // Mileage-based visits with a time floor: manufacturers mandate a service at
+  // least every 24 months even at low mileage, so cumulative visits can never
+  // fall below floor(years/2). Fixes understated costs for <15,000 km/yr users.
+  const cum=y=>Math.max(Math.floor(km*y/interval),Math.floor(y/2));
+  return (cum(yr)-cum(yr-1))*cost;
 }
 function repairBuf(level,warTotal,cat,yr){
   if(yr<=warTotal)return 0;
@@ -1912,6 +1935,17 @@ function isDebugMode(search){
   const s=search ?? (typeof window!=='undefined' ? window.location.search : '');
   return /(?:^|[?&])debug=(1|true)(?:&|$)/i.test(s);
 }
+// URL-param feature flags for local/staging testing: ?flags=foo,bar
+// Usage: if(hasFlag('foo')){...}. No flags are shipped enabled by default.
+function parseFlags(search){
+  const s=search ?? (typeof window!=='undefined' ? window.location.search : '');
+  const m=/(?:^|[?&])flags=([^&]*)/i.exec(s||'');
+  if(!m)return [];
+  return decodeURIComponent(m[1]).split(',').map(f=>f.trim().toLowerCase()).filter(Boolean);
+}
+function hasFlag(name,search){
+  return parseFlags(search).indexOf(String(name).toLowerCase())!==-1;
+}
 function debugRows(res){
   const last=res.res?.[res.res.length-1];
   const rows=[
@@ -2079,16 +2113,10 @@ function toggleMore(x){
   ch.classList.toggle('up',m.classList.contains('open'));
 }
 function autoOCTA(x){
-  const cc=fv('cc'+x);
   const el=document.getElementById('octa'+x);
   if(el.value)return;
-  let est;
-  if(cc===0)est=OCTA_EST.ev;
-  else if(cc<=1600)est=OCTA_EST.s;
-  else if(cc<=2000)est=OCTA_EST.m;
-  else if(cc<=3000)est=OCTA_EST.l;
-  else est=OCTA_EST.xl;
-  el.value=est;
+  // S['kw'+x] is set by applyCar() on a CAR_DB pick and cleared on manual cc edits.
+  el.value=octaEstimate(fv('cc'+x),S['kw'+x]||0,ft('ft'+x));
 }
 function previewCarFromFields(x){
   return {
@@ -2349,6 +2377,7 @@ function applyCar(x, car){
   set('w'+x,        car.warranty);
   set('svcInt'+x,   car.svcInt);
   set('svcCost'+x,  car.svcCost);
+  S['kw'+x] = car.kw || 0;
   document.getElementById('octa'+x).value = '';
   autoOCTA(x);
 
@@ -2517,57 +2546,4 @@ lucide.createIcons();
       });
     }catch(e){}
   }
-  function watch(id, selector){
-    var box = document.getElementById(id);
-    if(!box || reduce || !('MutationObserver' in window)) return;
-    new MutationObserver(function(){ countUpIn(box, selector); }).observe(box, { childList:true });
-  }
-  watch('resGrid', '.hero-num');   // monthly figure on each result card
-  watch('compBar', '.cv');         // headline savings figure in the verdict bar
-
-  // ── 6. Scroll progress indicator ──────────────────────────────────────
-  var prog = document.createElement('div');
-  prog.className = 'scroll-progress'; prog.setAttribute('aria-hidden','true');
-  document.body.appendChild(prog);
-  function onProg(){
-    var h = document.documentElement;
-    var max = h.scrollHeight - h.clientHeight;
-    prog.style.transform = 'scaleX(' + (max>0 ? Math.min(h.scrollTop/max,1) : 0) + ')';
-  }
-  window.addEventListener('scroll', onProg, { passive:true });
-  window.addEventListener('resize', onProg, { passive:true });
-  onProg();
-
-  // ── 7. Hero parallax orbs (transform-only, rAF-throttled) ─────────────
-  var hero = document.querySelector('.hero');
-  if(hero && !reduce){
-    ['orb orb-1','orb orb-2'].forEach(function(c){
-      var d = document.createElement('span'); d.className = c; d.setAttribute('aria-hidden','true'); hero.appendChild(d);
-    });
-    var orbs = hero.querySelectorAll('.orb'), ticking = false;
-    window.addEventListener('scroll', function(){
-      if(ticking) return; ticking = true;
-      requestAnimationFrame(function(){
-        var y = window.scrollY;
-        orbs.forEach(function(o,i){ o.style.transform = 'translateY(' + (y * (i ? 0.14 : -0.09)) + 'px)'; });
-        ticking = false;
-      });
-    }, { passive:true });
-  }
-
-  // ── 8. Verdict bar as a scroll-revealed scene ─────────────────────────
-  var comp = document.getElementById('compBar');
-  if(comp){
-    comp.classList.add('scene');
-    if(reduce || !('IntersectionObserver' in window)){
-      comp.classList.add('in');
-    } else {
-      new IntersectionObserver(function(entries){
-        entries.forEach(function(e){ comp.classList.toggle('in', e.isIntersecting); });
-      }, { threshold: 0.22 }).observe(comp);
-    }
-  }
-})();
-</script>
-</body>
-</html>
+  funct

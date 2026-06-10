@@ -23,6 +23,8 @@ globalThis.__calc = {
   repairBuf,
   fuelAnnual,
   calcAll,
+  octaEstimate,
+  DEP,
 };
 `, context);
 
@@ -35,6 +37,8 @@ const {
   repairBuf,
   fuelAnnual,
   calcAll,
+  octaEstimate,
+  DEP,
 } = context.__calc;
 
 function approx(actual, expected, tolerance, label) {
@@ -114,7 +118,30 @@ assert.ok(op.mp < fin.mp, 'operational leasing monthly should be lower than fina
 assert.equal(op.ownsAtEnd, false, 'operational leasing should not own the car at term end');
 
 assert.ok(residual(30000, 'premium', 5) < residual(30000, 'premium', 1), 'residual should decrease over time');
-assert.equal(service(5000, 1, 15000, 300), 0, 'current production service model is mileage-only');
+assert.ok(residual(30000, 'premium', 8) < residual(30000, 'premium', 6), 'extended DEP tail should keep depreciating in years 6-8');
+Object.entries(DEP).forEach(([cat, rates]) => {
+  assert.equal(rates.length, 8, `DEP.${cat} should carry an 8-year rate tail`);
+});
+
+// Service: mileage-based with a 24-month time floor.
+assert.equal(service(5000, 1, 15000, 300), 0, 'low-mileage year 1 has no mandated visit yet');
+assert.equal(service(5000, 2, 15000, 300), 300, 'time floor forces at least 1 visit per 2 years at low mileage');
+assert.equal(service(5000, 3, 15000, 300), 0, 'cumulative km visit (15000km at y3) already covered by the y2 floor visit');
+assert.equal(service(15000, 1, 15000, 300), 300, '15000 km/yr keeps 1 visit per year');
+assert.equal(
+  [1, 2, 3, 4, 5].reduce((sum, y) => sum + service(5000, y, 15000, 300), 0),
+  600,
+  '5 years at 5000 km/yr should total 2 floor visits',
+);
+
+// OCTA estimate: kW-rated when power is known, cc fallback otherwise, EV flat.
+assert.equal(octaEstimate(0, 0, 'ev'), 90, 'EV flat OCTA estimate');
+assert.equal(octaEstimate(0, 208, 'ev'), 90, 'EV stays flat even with high kW');
+assert.equal(octaEstimate(1499, 85, 'petrol'), 145, 'kW bracket should win over cc when known');
+assert.equal(octaEstimate(1998, 140, 'petrol'), 300, 'high-kW car should hit the top bracket despite 2.0L cc');
+assert.equal(octaEstimate(1499, 0, 'petrol'), 110, 'cc fallback for manual entry without kW');
+assert.equal(octaEstimate(2500, 0, 'diesel'), 200, 'cc fallback large bracket');
+
 assert.equal(repairBuf('med', 3, 'premium', 3), 0, 'repair buffer should be zero during warranty');
 assert.ok(repairBuf('med', 3, 'premium', 4) > 0, 'repair buffer should start after warranty');
 

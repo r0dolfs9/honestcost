@@ -28,4 +28,28 @@ assert.doesNotMatch(faq, /href="\/(?:status\.html)?"/, 'FAQ links should work fr
 assert.match(sitemap, /https:\/\/honestcost\.lv\/status\.html/);
 assert.match(sitemap, /https:\/\/honestcost\.lv\/faq\.html/);
 
+// Content section smoke checks (added 2026-06-10).
+const contentPages = [
+  'index.html',
+  'elektroauto-vai-dizelis.html',
+  'golf-vs-octavia.html',
+  'chr-vs-rav4.html',
+  'yaris-vs-sandero.html',
+  'auto-vertibas-zudums.html',
+  'lizings-vai-skaidra-nauda.html',
+];
+for (const page of contentPages) {
+  const html = fs.readFileSync(path.join(root, 'content', page), 'utf8');
+  assert.match(html, /<html lang="lv">/, `content/${page} declares Latvian lang`);
+  assert.match(html, /<meta name="description"/, `content/${page} has a meta description`);
+  assert.match(html, /\.\.\/index\.html/, `content/${page} links back to the calculator`);
+  assert.doesNotMatch(html, /garantējam|sertificēts|auditēts ārēji/i, `content/${page} avoids unproven claims`);
+  if (page !== 'index.html') {
+    assert.match(html, /indikatīv|izglītojošs/i, `content/${page} carries an indicative disclaimer`);
+    assert.match(html, /Pieņēmumi|Metode/, `content/${page} states its assumptions`);
+  }
+  assert.match(sitemap, new RegExp('https://honestcost\\.lv/content/' + page.replace('.', '\\.')), `sitemap covers content/${page}`);
+}
+assert.match(index, /content\/index\.html/, 'calculator links to the content section');
+
 console.log('test-static-pages.js: all assertions passed');

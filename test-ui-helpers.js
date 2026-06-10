@@ -43,6 +43,8 @@ globalThis.__helpers = {
   carModelFamily,
   carVisualMarkup,
   isDebugMode,
+  parseFlags,
+  hasFlag,
   debugRows,
   savedScenarioTitle,
   buildSavedScenario,
@@ -56,6 +58,8 @@ const {
   carModelFamily,
   carVisualMarkup,
   isDebugMode,
+  parseFlags,
+  hasFlag,
   debugRows,
   savedScenarioTitle,
   buildSavedScenario,
@@ -98,6 +102,12 @@ assert.doesNotMatch(fallback, /data-lucide="image"/);
 assert.equal(isDebugMode('?debug=1'), true);
 assert.equal(isDebugMode('?debug=true'), true);
 assert.equal(isDebugMode('?foo=1'), false);
+
+assert.equal(parseFlags('?flags=alpha,Beta%20,').join('|'), 'alpha|beta', 'flags parse, trim, and lowercase');
+assert.equal(parseFlags('?foo=1').length, 0, 'no flags param means no flags');
+assert.equal(hasFlag('beta', '?flags=alpha,beta'), true);
+assert.equal(hasFlag('gamma', '?flags=alpha,beta'), false);
+assert.equal(hasFlag('alpha', '?debug=1'), false);
 
 const rows = debugRows({
   total: 54000,

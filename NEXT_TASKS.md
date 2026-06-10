@@ -20,7 +20,7 @@ Updated 2026-05-28. Use `00_HONESTCOST_ROADMAP.md` as the first file to open; th
 - [ ] Start the larger mobile/responsive pass after browser QA.
 - [ ] Add a static `sikdatnes.html` cookie/tracking page after wording is approved.
 - [ ] Add a static `accessibility.html` statement after an actual audit result exists.
-- [ ] Add URL-param feature flags for local/staging testing.
+- [x] Add URL-param feature flags for local/staging testing (`?flags=a,b`, `parseFlags`/`hasFlag`, tested in test-ui-helpers.js).
 - [x] Map current inline/external script, style, image, and connect surface for CSP in `CSP_SURFACE_2026-05-28.md`.
 - [ ] Add CSP meta policy after browser QA confirms the candidate policy does not break the app.
 - [ ] Add a proprietary `LICENSE` file once the copyright holder name is confirmed.
@@ -28,13 +28,13 @@ Updated 2026-05-28. Use `00_HONESTCOST_ROADMAP.md` as the first file to open; th
 - [x] Start car data audit and record first findings in `CAR_DATA_AUDIT_2026-05-29.md`.
 - [x] Add first per-row source metadata layer in `car-sources.js`.
 - [x] Add `test-car-sources.js` and CI coverage for audited source metadata.
-- [ ] Expand `car-sources.js` from 11 rows to the first 30-50 Latvian-relevant model rows. Paused after the 2026-06-02 guarded batch; current metadata now covers the first audited rows plus Toyota C-HR/RAV4, Skoda Octavia diesel/RS, and VW ID.3/ID. Buzz candidates.
+- [ ] Expand `car-sources.js` from 25 rows to the first 30-50 Latvian-relevant model rows. 2026-06-10 batch added Toyota Yaris/Yaris Cross/Corolla (resolved from live WESS price tables) and 4 Dacia entry-price rows (needs_mapping).
 - [ ] Update `car-db.js` values only after each row has source-backed price/trim/WLTP evidence. Paused after guarded updates to `toyota_chr_hyb`, `toyota_rav4_hyb`, `skoda_octavia_20tdi`, `skoda_octavia_rs`, `vw_id3_pro`, and `vw_idbuzz`; each has an audit note and tests.
 
 ## Stage 2 - Content And Display Ads Foundation
 
-- [ ] Add a simple content/static comparison page structure.
-- [ ] Draft first 6-10 useful Latvian content pages with original calculations.
+- [x] Add a simple content/static comparison page structure (`content/` with shared `_article.css`, hub page, nav links, sitemap entries, smoke tests).
+- [x] Draft first 6 Latvian content pages with original calculations (4 comparisons + 2 explainers, all numbers computed with the production calc engine; assumptions and data-status disclaimers on every page). Remaining: grow toward 10 after analytics show demand.
 - [ ] Keep display ad placements out of the calculator input/result flow.
 - [ ] Apply for AdSense only after enough original content, contact/about, privacy/cookie basics, and policy review are ready.
 - [ ] Log AdSense approval or rejection reasons.
