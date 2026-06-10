@@ -50,6 +50,8 @@ globalThis.__helpers = {
   buildSavedScenario,
   normalizeSavedScenarios,
   upsertSavedScenario,
+  encodeShareState,
+  decodeShareState,
 };
 `, context);
 
@@ -65,6 +67,8 @@ const {
   buildSavedScenario,
   normalizeSavedScenarios,
   upsertSavedScenario,
+  encodeShareState,
+  decodeShareState,
 } = context.__helpers;
 
 const lazyContext = {};
@@ -139,5 +143,21 @@ const merged = upsertSavedScenario(
 assert.equal(merged[0], saved);
 assert.equal(merged.length, 20);
 assert.equal(merged.some(item => item.id === '19'), false);
+
+// Share-state round trip
+const shareA = { name: 'VW ID.3 Pro', price: 46050, ft: 'ev', dep: 'ev', cons: 15.8, tyre: 'suv', repair: 'med', kasko: 2.5 };
+const shareB = { name: 'Skoda Octavia 2.0 TDI', price: 32620, ft: 'diesel', dep: 'mid', cons: 4.7, tyre: 'mid', repair: 'med', kasko: 2.5 };
+const shareG = { yrs: 5, km: 15000, fin: 'leasing', downPct: 20, apr: 4.5, months: 60, resPct: 10 };
+const hash = encodeShareState(shareA, shareB, shareG);
+assert.match(hash, /^#s=/, 'share hash uses the #s= prefix');
+const decoded = decodeShareState(hash);
+assert.ok(decoded, 'share hash decodes');
+assert.equal(decoded.A.name, 'VW ID.3 Pro');
+assert.equal(decoded.B.price, 32620);
+assert.equal(decoded.G.km, 15000);
+assert.equal(decodeShareState(''), null, 'empty hash returns null');
+assert.equal(decodeShareState('#foo'), null, 'unknown hash format returns null');
+assert.equal(decodeShareState('#s=%7Bbroken'), null, 'malformed JSON returns null');
+assert.equal(decodeShareState('#s=' + encodeURIComponent('{"v":1,"A":{}}')), null, 'missing B/G returns null');
 
 console.log('test-ui-helpers.js: all assertions passed');

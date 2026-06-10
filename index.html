@@ -467,6 +467,13 @@ select { cursor: pointer; appearance: none; -webkit-appearance: none;
   width: min(92%, 320px); height: auto; background: none; border-radius: 0; box-shadow: none;
 }
 .car-shape-svg::before, .car-shape-svg::after { content: none; }
+.example-row { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; margin: 20px auto 0; max-width: 900px; }
+.example-label { font-family: var(--ff-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.example-chip { border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); border-radius: 999px; padding: 9px 16px; font-size: 13px; cursor: pointer; min-height: 38px; transition: border-color .15s, color .15s; }
+.example-chip:hover { border-color: var(--accent); color: var(--accent); }
+/* Tablet-width safety: stop residual horizontal overflow (BROWSER_QA_2026-06-10 issue 2). */
+body { overflow-x: clip; }
+@media (max-width: 1140px) { .leasing-fields { flex-wrap: wrap; } .hero h1 { overflow-wrap: break-word; } }
 .car-visual:has(.car-shape-svg)::before { display: none; }
 .car-visual-name {
   position: relative; z-index: 1;
@@ -1017,6 +1024,14 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
   </button>
 </div>
 
+<!-- EXAMPLES: one tap from empty page to a full result -->
+<div class="example-row reveal">
+  <span class="example-label">Izmēģini ar piemēru:</span>
+  <button class="example-chip" type="button" onclick="loadExample('bmw_118i','bmw_x1_xd20i')">BMW 118i pret X1</button>
+  <button class="example-chip" type="button" onclick="loadExample('vw_id3_pro','skoda_octavia_20tdi')">ID.3 pret Octavia TDI</button>
+  <button class="example-chip" type="button" onclick="loadExample('toyota_yaris_hyb','dacia_sandero')">Yaris pret Sandero</button>
+</div>
+
 <!-- TWO CARS -->
 <div class="two-col reveal" style="margin-top:28px;">
 
@@ -1511,6 +1526,10 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
     </button>
     <div class="logo-mark">Honest<span class="logo-dot"></span>Cost</div>
     <div class="res-actions">
+      <button class="btn-ghost" type="button" id="copyLinkBtn" onclick="copyShareLink()">
+        <i data-lucide="link" style="width:14px;height:14px;"></i>
+        Kopēt saiti
+      </button>
       <button class="btn-ghost" type="button" onclick="saveCurrentScenario()">
         <i data-lucide="save" style="width:14px;height:14px;"></i>
         Saglabāt
@@ -1996,6 +2015,20 @@ function upsertSavedScenario(list,scenario){
   return [scenario,...normalizeSavedScenarios(list).filter(item=>item.id!==scenario.id)].slice(0,20);
 }
 
+// Shareable comparison URL: full state in the hash, restored on load.
+// Plain JSON + encodeURIComponent: long but robust, environment-free, testable.
+function encodeShareState(A,B,G){
+  try{return '#s='+encodeURIComponent(JSON.stringify({v:1,A:A,B:B,G:G}));}catch(e){return '';}
+}
+function decodeShareState(hash){
+  try{
+    const m=/^#s=(.+)$/.exec(hash||'');
+    if(!m)return null;
+    const data=JSON.parse(decodeURIComponent(m[1]));
+    if(!data||typeof data!=='object'||!data.A||!data.B||!data.G)return null;
+    return data;
+  }catch(e){return null;}
+}
 function renderResults(cA,cB,g){
   const rA=calcAll(cA,g), rB=calcAll(cB,g);
   const N=g.yrs;
@@ -2255,6 +2288,7 @@ function doAnalyse(){
   document.getElementById('adjOwn').value=lastG.yrs;
   updAdjDisp();
   renderResults(lastA,lastB,lastG);
+  try{history.replaceState(null,'',location.pathname+location.search+encodeShareState(lastA,lastB,lastG));}catch(e){}
   document.getElementById('screen1').style.display='none';
   document.getElementById('screen2').style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
@@ -2271,6 +2305,16 @@ function doAnalyse(){
   // Update the configurator affiliate link to the winning car's brand search.
   const conf = document.getElementById('affConfig');
   if (conf) conf.href = 'https://www.google.com/search?q=' + encodeURIComponent((lastA.name||'') + ' konfigurators lv');
+}
+function copyShareLink(){
+  if(!lastA||!lastB||!lastG)return;
+  const url=location.origin+location.pathname+location.search+encodeShareState(lastA,lastB,lastG);
+  const btn=document.getElementById('copyLinkBtn');
+  const done=()=>{if(btn){const t=btn.innerHTML;btn.innerHTML='✓ Nokopēts';setTimeout(()=>{btn.innerHTML=t;if(window.lucide)lucide.createIcons();},1600);}};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(done).catch(()=>{window.prompt('Kopējiet saiti:',url);});
+  }else{window.prompt('Kopējiet saiti:',url);}
+  if(window.plausible)plausible('share_link_copied');
 }
 function goBack(){
   document.getElementById('screen2').style.display='none';
@@ -2407,6 +2451,31 @@ document.addEventListener('click', e => {
 initCarPicker('A');
 initCarPicker('B');
 
+// Example chips: fill both cars from CAR_DB and run the analysis in one tap.
+function loadExample(idA,idB){
+  loadCarDb().then(db=>{
+    const a=db.find(c=>c.id===idA), b=db.find(c=>c.id===idB);
+    if(!a||!b)return;
+    applyCar('A',a); applyCar('B',b);
+    doAnalyse();
+    if(window.plausible)plausible('example_loaded',{props:{pair:idA+'_vs_'+idB}});
+  }).catch(()=>{});
+}
+window.loadExample=loadExample;
+
+// Shared-link restore: if the URL carries a comparison, rebuild and show it.
+(function restoreFromShareHash(){
+  const data=decodeShareState(location.hash);
+  if(!data)return;
+  try{
+    applySavedGlobal(data.G);
+    applySavedCar('A',data.A);
+    applySavedCar('B',data.B);
+    doAnalyse();
+    if(window.plausible)plausible('share_link_opened');
+  }catch(e){}
+})();
+
 // ═══════════════════════════════════════════════════════════════
 // EMAIL CAPTURE · EmailJS-powered "send me my comparison"
 // Set these three constants after creating an EmailJS account.
@@ -2425,7 +2494,7 @@ function sendCap(e){
   const status = document.getElementById('emailCapStatus');
   const email  = document.getElementById('capEmail').value;
   if (!lastA || !lastB || !lastG){ status.textContent = 'Vispirms veic salīdzinājumu.'; return; }
-  const share   = location.origin + location.pathname + location.hash;
+  const share   = location.origin + location.pathname + location.search + encodeShareState(lastA, lastB, lastG);
   const summary = `${lastA.name} pret ${lastB.name}, ${lastG.yrs} g., ${lastG.km.toLocaleString('lv-LV')} km/g.`;
   status.textContent = 'Sūta…';
 
