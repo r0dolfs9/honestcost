@@ -2622,4 +2622,57 @@ lucide.createIcons();
       });
     }catch(e){}
   }
-  funct
+  function watch(id, selector){
+    var box = document.getElementById(id);
+    if(!box || reduce || !('MutationObserver' in window)) return;
+    new MutationObserver(function(){ countUpIn(box, selector); }).observe(box, { childList:true });
+  }
+  watch('resGrid', '.hero-num');   // monthly figure on each result card
+  watch('compBar', '.cv');         // headline savings figure in the verdict bar
+
+  // ── 6. Scroll progress indicator ──────────────────────────────────────
+  var prog = document.createElement('div');
+  prog.className = 'scroll-progress'; prog.setAttribute('aria-hidden','true');
+  document.body.appendChild(prog);
+  function onProg(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    prog.style.transform = 'scaleX(' + (max>0 ? Math.min(h.scrollTop/max,1) : 0) + ')';
+  }
+  window.addEventListener('scroll', onProg, { passive:true });
+  window.addEventListener('resize', onProg, { passive:true });
+  onProg();
+
+  // ── 7. Hero parallax orbs (transform-only, rAF-throttled) ─────────────
+  var hero = document.querySelector('.hero');
+  if(hero && !reduce){
+    ['orb orb-1','orb orb-2'].forEach(function(c){
+      var d = document.createElement('span'); d.className = c; d.setAttribute('aria-hidden','true'); hero.appendChild(d);
+    });
+    var orbs = hero.querySelectorAll('.orb'), ticking = false;
+    window.addEventListener('scroll', function(){
+      if(ticking) return; ticking = true;
+      requestAnimationFrame(function(){
+        var y = window.scrollY;
+        orbs.forEach(function(o,i){ o.style.transform = 'translateY(' + (y * (i ? 0.14 : -0.09)) + 'px)'; });
+        ticking = false;
+      });
+    }, { passive:true });
+  }
+
+  // ── 8. Verdict bar as a scroll-revealed scene ─────────────────────────
+  var comp = document.getElementById('compBar');
+  if(comp){
+    comp.classList.add('scene');
+    if(reduce || !('IntersectionObserver' in window)){
+      comp.classList.add('in');
+    } else {
+      new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ comp.classList.toggle('in', e.isIntersecting); });
+      }, { threshold: 0.22 }).observe(comp);
+    }
+  }
+})();
+</script>
+</body>
+</html>

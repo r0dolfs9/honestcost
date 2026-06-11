@@ -12,6 +12,10 @@ const index = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const og = fs.statSync(path.join(root, 'og-image.png'));
 
 assert.match(index, /og:image" content="https:\/\/honestcost\.lv\/og-image\.png/);
+// Truncation guard (2026-06-10 incident): a sync glitch once cut the file mid-write
+// and the unterminated <script> made the deployed page render blank.
+assert.ok(index.trimEnd().endsWith('</html>'), 'index.html must end with </html> (truncation guard)');
+assert.equal((index.match(/<script/g) || []).length, (index.match(/<\/script>/g) || []).length, 'index.html script tags must be balanced');
 assert.ok(og.size > 50000, 'og-image.png should be a real generated PNG asset');
 
 assert.match(status, /<title>HonestCost status<\/title>/);
