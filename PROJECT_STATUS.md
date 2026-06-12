@@ -1,6 +1,6 @@
 # HonestCost Project Status
 
-Last updated: 2026-06-10
+Last updated: 2026-06-12
 
 ## Product
 
@@ -14,6 +14,15 @@ Last updated: 2026-06-10
 - Current GitHub status: commit `a122c6a feat: add saved scenarios and static pages` was pushed to `origin/main`.
 - Current deployment status: GitHub Pages subpath `https://r0dolfs9.github.io/honestcost/` returns `200 OK`; `honestcost.lv` and `www.honestcost.lv` do not resolve as of 2026-05-28.
 
+## FABLE5 redesign status
+
+- Current branch: `codex/fable5-honestcost-redesign`.
+- Current choice: **Decision Ledger default + Assumption Inspector next**. The app should keep the fast two-car decision flow, then expose an assumption/proof layer for users who want to inspect or edit the numbers.
+- What was found: the product's calculation depth is already valuable, but source confidence and assumption provenance were not visible enough in the result. Mobile/tablet overflow also existed because hidden tooltip panels and hero decoration still affected page width.
+- What was done: added production source-confidence badges, corrected stale OCTA/TEN trust copy, fixed mobile/tablet overflow, created FABLE5 audit/design/decision/QA docs, and locked the BMW 740d xDrive vs Porsche 911 Carrera regression.
+- 2026-06-12: the Assumption Inspector shipped as a result-screen drill-down. Every cost line expands to show the formula in plain language, a provenance chip (user/DB value, default assumption, model estimate, statutory rule), and where to edit it. Verified at 7 viewports (incl. 360x800, 430x932, 1024x768) with the BMW/Porsche regression unchanged; all 7 test suites pass. Evidence: `qa/fable5/browser-smoke-after2.json`.
+- Next move: inline assumption editing inside the inspector (currently editing routes back to the input screen), and expanding source metadata coverage so fewer rows display as estimates.
+
 ## Verification
 
 - `test-calc.js` exists and tests the production calc engine extracted from `index.html`.
@@ -21,6 +30,8 @@ Last updated: 2026-06-10
 - `test-ui-helpers.js` exists and covers UI helper behavior for images, debug mode, and saved scenarios.
 - `test-static-pages.js` exists and checks FAQ/status/sitemap/OG metadata smoke cases plus the content section.
 - `test-car-sources.js` and `test-audited-car-db-values.js` enforce source metadata; 25 rows tracked, 9 resolved with guarded DB updates (audit docs dated 2026-06-02 and 2026-06-10).
+- `test-fable5-regression.js` locks the required BMW 740d xDrive vs Porsche 911 Carrera values after the source-confidence and trust-copy pass.
+- `fable5-browser-smoke.js` covers browser smoke checks for responsive overflow and the BMW/Porsche visible-result scenario.
 - GitHub Actions workflow exists at `.github/workflows/ci.yml`.
 
 ## Legal / company

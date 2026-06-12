@@ -1,0 +1,258 @@
+{
+  "url": "http://localhost:8123/",
+  "generatedAt": "2026-06-11T09:09:48.945Z",
+  "browser": "playwright-chromium",
+  "console": [
+    {
+      "type": "warning",
+      "text": "%c[DEPRECATION]%c The SDK version you are using is deprecated and unsecure. Please upgrade to SDK v4 or later. For more information, visit https://www.emailjs.com/docs/sdk/installation/ color: red; font-weight: bold; color: inherit;"
+    },
+    {
+      "type": "warning",
+      "text": "Ignoring Event: localhost"
+    },
+    {
+      "type": "warning",
+      "text": "Ignoring Event: localhost"
+    },
+    {
+      "type": "warning",
+      "text": "Ignoring Event: localhost"
+    },
+    {
+      "type": "warning",
+      "text": "Ignoring Event: localhost"
+    },
+    {
+      "type": "warning",
+      "text": "Ignoring Event: localhost"
+    },
+    {
+      "type": "warning",
+      "text": "Ignoring Event: localhost"
+    },
+    {
+      "type": "warning",
+      "text": "Ignoring Event: localhost"
+    },
+    {
+      "type": "warning",
+      "text": "%c[DEPRECATION]%c The SDK version you are using is deprecated and unsecure. Please upgrade to SDK v4 or later. For more information, visit https://www.emailjs.com/docs/sdk/installation/ color: red; font-weight: bold; color: inherit;"
+    },
+    {
+      "type": "warning",
+      "text": "Ignoring Event: localhost"
+    },
+    {
+      "type": "warning",
+      "text": "%c[DEPRECATION]%c The SDK version you are using is deprecated and unsecure. Please upgrade to SDK v4 or later. For more information, visit https://www.emailjs.com/docs/sdk/installation/ color: red; font-weight: bold; color: inherit;"
+    },
+    {
+      "type": "warning",
+      "text": "Ignoring Event: localhost"
+    },
+    {
+      "type": "warning",
+      "text": "%c[DEPRECATION]%c The SDK version you are using is deprecated and unsecure. Please upgrade to SDK v4 or later. For more information, visit https://www.emailjs.com/docs/sdk/installation/ color: red; font-weight: bold; color: inherit;"
+    },
+    {
+      "type": "warning",
+      "text": "Ignoring Event: localhost"
+    },
+    {
+      "type": "warning",
+      "text": "%c[DEPRECATION]%c The SDK version you are using is deprecated and unsecure. Please upgrade to SDK v4 or later. For more information, visit https://www.emailjs.com/docs/sdk/installation/ color: red; font-weight: bold; color: inherit;"
+    },
+    {
+      "type": "warning",
+      "text": "Ignoring Event: localhost"
+    }
+  ],
+  "viewports": [
+    {
+      "name": "desktop-1440x900",
+      "width": 1440,
+      "height": 900,
+      "innerWidth": 1440,
+      "scrollWidth": 1440,
+      "bodyScrollWidth": 1440,
+      "hasHorizontalOverflow": false,
+      "overflowCandidates": []
+    },
+    {
+      "name": "laptop-1280x800",
+      "width": 1280,
+      "height": 800,
+      "innerWidth": 1280,
+      "scrollWidth": 1280,
+      "bodyScrollWidth": 1280,
+      "hasHorizontalOverflow": false,
+      "overflowCandidates": []
+    },
+    {
+      "name": "tablet-768x1024",
+      "width": 768,
+      "height": 1024,
+      "innerWidth": 768,
+      "scrollWidth": 768,
+      "bodyScrollWidth": 768,
+      "hasHorizontalOverflow": false,
+      "overflowCandidates": [
+        {
+          "tag": "span",
+          "id": "",
+          "className": "orb orb-2",
+          "left": 500,
+          "right": 820,
+          "width": 320,
+          "text": ""
+        },
+        {
+          "tag": "span",
+          "id": "",
+          "className": "orb orb-1",
+          "left": -32,
+          "right": 248,
+          "width": 280,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "name": "mobile-390x844",
+      "width": 390,
+      "height": 844,
+      "innerWidth": 390,
+      "scrollWidth": 390,
+      "bodyScrollWidth": 390,
+      "hasHorizontalOverflow": false,
+      "overflowCandidates": [
+        {
+          "tag": "span",
+          "id": "",
+          "className": "orb orb-2",
+          "left": 122,
+          "right": 442,
+          "width": 320,
+          "text": ""
+        },
+        {
+          "tag": "path",
+          "id": "",
+          "className": "",
+          "left": 245,
+          "right": 433,
+          "width": 188,
+          "text": ""
+        },
+        {
+          "tag": "path",
+          "id": "",
+          "className": "",
+          "left": 245,
+          "right": 433,
+          "width": 188,
+          "text": ""
+        },
+        {
+          "tag": "rect",
+          "id": "",
+          "className": "",
+          "left": 425,
+          "right": 431,
+          "width": 6,
+          "text": ""
+        },
+        {
+          "tag": "rect",
+          "id": "",
+          "className": "",
+          "left": 425,
+          "right": 431,
+          "width": 6,
+          "text": ""
+        },
+        {
+          "tag": "ellipse",
+          "id": "",
+          "className": "",
+          "left": 248,
+          "right": 430,
+          "width": 182,
+          "text": ""
+        },
+        {
+          "tag": "ellipse",
+          "id": "",
+          "className": "",
+          "left": 248,
+          "right": 430,
+          "width": 182,
+          "text": ""
+        },
+        {
+          "tag": "rect",
+          "id": "",
+          "className": "",
+          "left": 250,
+          "right": 428,
+          "width": 178,
+          "text": ""
+        },
+        {
+          "tag": "rect",
+          "id": "",
+          "className": "",
+          "left": 250,
+          "right": 428,
+          "width": 178,
+          "text": ""
+        },
+        {
+          "tag": "circle",
+          "id": "",
+          "className": "",
+          "left": 382,
+          "right": 408,
+          "width": 26,
+          "text": ""
+        },
+        {
+          "tag": "circle",
+          "id": "",
+          "className": "",
+          "left": 382,
+          "right": 408,
+          "width": 26,
+          "text": ""
+        },
+        {
+          "tag": "path",
+          "id": "",
+          "className": "",
+          "left": 356,
+          "right": 403,
+          "width": 48,
+          "text": ""
+        }
+      ]
+    }
+  ],
+  "journey": {
+    "title": "HonestCost — Pilnās automobiļa izmaksas",
+    "initialHero": "Reālā mēneša cena — nevis bukleta.",
+    "carDbInitiallyLoaded": false,
+    "themeAfterToggle": "dark",
+    "carDbAfterPicker": 416,
+    "searchResultA": "BMW 740d xDrive\n€124 500",
+    "searchResultB": "Porsche 911 Carrera\n€138 500",
+    "resultUrlHasHash": true,
+    "resultCards": 2,
+    "verdictText": "LĒTĀKAIS\nBMW 740d xDrive\nIETAUPĪJUMS 5 GADOS\n€13 493\n€289/mēn starpība\nMAZĀK VĒRTĪBU ZAUDĒ\nBMW 740d xDrive\nStarpība: €7780",
+    "resultText": "BMW 740D\nBMW 740d xDrive\n€124 500 · Dīzelis · 2g garantija · CO₂ 178g/km · Augsts risks\nVIDĒJĀS MĒNEŠA IZMAKSAS\n€1590/mēn\n5 gados — €119 035\nIZMAKSU KATEGORIJA\tMĒNESĪ\t5 GADOS\nLīzings\t€1437/mēn\t€86 246\nDegviela / Enerģija\t€145/mēn\t€8670\nApkope\t€17/mēn\t€1020\nRiepas\t€56/mēn\t€3375\nOCTA\t€25/mēn\t€1500\nKASKO\t€178/mēn\t€10 694\nTransporta nodoklis\t€22/mēn\t€1300\nPapildu garantija\t€0/mēn\t€0\nRemonta rezerve\t€83/mēn\t€4950\nStāvvieta + mazgāšana\t€20/mēn\t€1200\nKOPĀ\t€1984/mēn\t€119 035\nTIRGUS VĒRTĪBA — NOLIETOJUMS\nSākums\n€124 500\n1. gads\n€93 375\n−€31 125\n2. gads\n€79 369\n−€45 131\n3. gads\n€69 051\n−€55 449\n4. gads\n€61 455\n−€63 045\n5. gads\n€55 310\n−€69 190\nPORSCHE CARRERA\nPorsche 911 Carrera\n€138 500 · Benzīns · 2g garantija · CO₂ 243g/km · Augsts risks\nVIDĒJĀS MĒNEŠA IZMAKSAS\n€1822/mēn\n5 gados — €136 370\nIZMAKSU KATEGORIJA\tMĒNESĪ\t5 GADOS\nLīzings\t€1599/mēn\t€95 945\nDegviela / Enerģija\t€234/mēn\t€14 044\nApkope\t€39/mēn\t€2340\nRiepas\t€42/mēn\t€2515\nOCTA\t€25/mēn\t€1500\nKASKO\t€198/mēn\t€11 896\nTransporta nodoklis\t€32/mēn\t€1900\nPapildu garantija\t€0/mēn\t€0\nRemonta rezerve\t€83/mēn\t€4950\nStāvvieta + mazgāšana\t€20/mēn\t€1200\nKOPĀ\t€2273/mēn\t€136 370\nTIRGUS VĒRTĪBA — NOLIETOJUMS\nSākums\n€138 500\n1. gads\n€103 875\n−€34 625\n2. gads\n€88 294\n−€50 206\n3. gads\n€76 816\n−€61 684\n4. gads\n€68 366\n−€70 134\n5. gads\n€61 529\n−€76 971",
+    "screen2Visible": true,
+    "copyButtonText": "Kopēt saiti",
+    "savedScenarioCount": 1,
+    "returnedToEdit": true
+  }
+}

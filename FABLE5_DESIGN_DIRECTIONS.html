@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="lv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HonestCost FABLE5 Design Directions</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+:root{
+  --ink:#15171c;--muted:#626773;--line:#e5e0d4;--paper:#f4f1e8;--card:#fffdf8;
+  --blue:#3042e8;--violet:#8564ff;--amber:#e8a22e;--green:#0e9d5c;--red:#c94b4b;
+  --mono:'DM Mono',ui-monospace,monospace;--display:'Barlow Condensed','Inter Tight',sans-serif;--ui:'Inter Tight',system-ui,sans-serif;
+}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--ui);line-height:1.45}
+button{font:inherit}.shell{max-width:1440px;margin:auto;padding:24px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}
+.brand{font-family:var(--display);font-size:30px;font-weight:700}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber);margin:0 2px 6px}
+.switcher{display:flex;gap:8px;flex-wrap:wrap}.switcher button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:10px 14px;color:var(--muted);cursor:pointer}
+.switcher button.active{background:var(--ink);color:#fff;border-color:var(--ink)}.direction{display:none}.direction.active{display:block}
+.meta{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-bottom:18px}.brief,.score{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px}
+h1,h2,h3,p{margin:0}.brief h1{font-size:34px;letter-spacing:-.03em}.brief p{margin-top:8px;color:var(--muted);max-width:780px}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.tag{font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-radius:999px;padding:6px 9px;color:var(--muted)}
+.score dl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}.score dt{font-family:var(--mono);font-size:10px;color:var(--muted);text-transform:uppercase}.score dd{margin:0 0 8px;font-weight:700}
+.stage{display:grid;grid-template-columns:minmax(0,1.4fr) 390px;gap:18px;align-items:start}.desktop,.mobile{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:0 18px 50px -32px rgba(20,22,28,.35)}
+.frame-title{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase}
+.screen{min-height:680px;padding:24px}.mobile .screen{min-height:760px;padding:16px}.mini-row{display:flex;gap:8px;flex-wrap:wrap}.pill{border:1px solid var(--line);border-radius:999px;padding:8px 11px;background:#fff;font-size:13px}.err{border-color:var(--red);background:#fff1f1;color:#8f2525}.source{border-color:#9bd9bb;background:#eaf8f0;color:#087346}.estimate{border-color:#e9d7ad;background:#fff7e4;color:#8a5a00}
+.cars{display:grid;grid-template-columns:1fr 1fr;gap:14px}.car{border:1px solid var(--line);border-radius:8px;background:#fff;padding:16px}.label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.name{font-size:28px;font-weight:750;letter-spacing:-.03em;margin-top:6px}.money{font-family:var(--display);font-size:52px;font-weight:700;letter-spacing:-.03em}.bar{height:12px;background:#eee;border-radius:999px;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--amber))}
+.result-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:14px}.table{display:grid;gap:8px}.row{display:grid;grid-template-columns:1fr auto;gap:12px;border-bottom:1px solid var(--line);padding:8px 0}.small{font-size:13px;color:var(--muted)}
+
+/* Direction A */
+.ledger .screen{background:#f7f5ee}.ledger .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:end;margin-bottom:20px}
+.ledger h2{font-size:58px;line-height:.96;letter-spacing:-.045em}.ledger .rail{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0}.ledger .rail .pill{border-radius:8px;background:#fffdf8}
+.ledger .car{box-shadow:0 14px 40px -28px rgba(20,22,28,.35)}.ledger .verdict{background:#17191f;color:#fff;border-radius:8px;padding:22px}.ledger .verdict .money{color:#ffc45d}
+
+/* Direction B */
+.briefing .screen{background:#101216;color:#f4f1e8}.briefing .frame-title{background:#101216;color:#b8b1a2;border-color:#30333b}
+.briefing .panel{border:1px solid #30333b;background:#171a21;border-radius:8px;padding:16px}.briefing .hero{display:grid;grid-template-columns:280px 1fr;gap:16px;margin-bottom:14px}
+.briefing h2{font-size:44px;letter-spacing:-.035em}.briefing .step{border-left:3px solid #e8a22e;padding:10px 0 10px 12px;color:#c9c3b6}.briefing .car,.briefing .pill{background:#171a21;border-color:#30333b;color:#f4f1e8}.briefing .row{border-color:#30333b}.briefing .money{color:#ffc45d}
+
+/* Direction C */
+.sheet .screen{background:#fbfbf9}.sheet .gridline{background-image:linear-gradient(#ece9df 1px,transparent 1px),linear-gradient(90deg,#ece9df 1px,transparent 1px);background-size:28px 28px}
+.sheet h2{font-size:48px;letter-spacing:-.04em}.sheet .canvas{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:18px 0}.sheet .cell{background:#fff;border:1px solid #d9d6cb;border-radius:6px;padding:12px;min-height:96px}.sheet .winner{outline:3px solid #0e9d5c}.sheet .formula{font-family:var(--mono);font-size:11px;color:#626773;background:#f2efe7;border-radius:6px;padding:10px;margin-top:8px}
+
+.mobile .cars,.mobile .result-grid,.mobile .hero,.mobile .canvas{display:block}.mobile .car,.mobile .panel,.mobile .cell{margin-bottom:10px}.mobile h2{font-size:36px}.mobile .money{font-size:42px}
+@media(max-width:980px){.meta,.stage{grid-template-columns:1fr}.mobile{max-width:430px}.cars,.result-grid{grid-template-columns:1fr}.ledger .hero,.briefing .hero{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <div class="top">
+    <div class="brand">Honest<span class="dot"></span>Cost FABLE5</div>
+    <div class="switcher" role="tablist">
+      <button class="active" data-dir="ledger">Decision Ledger</button>
+      <button data-dir="briefing">Advisor Briefing</button>
+      <button data-dir="sheet">Assumption Sheet</button>
+    </div>
+  </div>
+
+  <section class="direction ledger active" id="ledger">
+    <div class="meta">
+      <div class="brief"><h1>Decision Ledger</h1><p>A calm purchase-decision product. The default path is quick: choose examples or search two cars, then receive a verdict, the main cost drivers, and visible source confidence.</p><div class="tags"><span class="tag">Start: example/search hybrid</span><span class="tag">Inputs: progressive sections</span><span class="tag">Mobile: step cards</span><span class="tag">Trust: source badges</span></div></div>
+      <div class="score"><dl><dt>Main strength</dt><dd>Best overall comprehension</dd><dt>Main risk</dt><dd>Less visually dramatic</dd><dt>Complexity</dt><dd>Medium</dd><dt>Expected impact</dt><dd>Fast result, high trust</dd></dl></div>
+    </div>
+    <div class="stage">
+      <div class="desktop"><div class="frame-title"><span>Desktop input and result</span><span>1440</span></div><div class="screen">
+        <div class="hero"><div><h2>Two cars in. One understandable decision out.</h2><p class="small">HonestCost compares monthly cost, ownership total, depreciation and estimate confidence for Latvian buyers.</p></div><div class="rail"><span class="pill source">Avots pārbaudīts</span><span class="pill estimate">Aplēses dati</span><span class="pill err">Cena jāprecizē</span></div></div>
+        <div class="cars"><div class="car"><div class="label">Auto A</div><div class="name">BMW 740d xDrive</div><div class="mini-row"><span class="pill">€124 500</span><span class="pill">Dīzelis</span><span class="pill estimate">Vajag kartēšanu</span></div><div class="bar" style="margin-top:18px"><span style="width:72%"></span></div></div><div class="car"><div class="label">Auto B</div><div class="name">Porsche 911 Carrera</div><div class="mini-row"><span class="pill">€138 500</span><span class="pill">Benzīns</span><span class="pill estimate">Aplēse</span></div><div class="bar" style="margin-top:18px"><span style="width:86%"></span></div></div></div>
+        <div class="result-grid" style="margin-top:16px"><div class="verdict"><div class="label">Spriedums</div><h3>BMW ir lētāks</h3><div class="money">€289/mēn</div><p class="small">Galvenais iemesls: zemāka cena, degviela un nodoklis, lai gan amortizācija ir līdzīga.</p></div><div class="car"><div class="table"><div class="row"><span>Līzings</span><strong>€1 437/mēn</strong></div><div class="row"><span>Degviela</span><strong>€145/mēn</strong></div><div class="row"><span>KASKO</span><strong>€178/mēn</strong></div><div class="row"><span>Remonta rezerve</span><strong>€83/mēn</strong></div></div></div></div>
+      </div></div>
+      <div class="mobile"><div class="frame-title"><span>Mobile flow</span><span>390</span></div><div class="screen"><h2>Salīdzini pa soļiem</h2><div class="car"><div class="label">1 no 3</div><div class="name">Izvēlies Auto A</div><span class="pill">Meklēt datubāzē</span></div><div class="car"><div class="label">Rezultāts</div><div class="money">€1 984</div><p class="small">BMW mēnesī, ar avotu statusu redzamu virs nosaukuma.</p></div><span class="pill source">Avots pārbaudīts</span> <span class="pill estimate">Aplēse</span></div></div>
+    </div>
+  </section>
+
+  <section class="direction briefing" id="briefing">
+    <div class="meta"><div class="brief"><h1>Advisor Briefing</h1><p>A darker, guided expert mode. The product behaves like a financial advisor preparing a short purchase memo.</p><div class="tags"><span class="tag">Start: guided questions</span><span class="tag">Inputs: wizard</span><span class="tag">Results: memo</span><span class="tag">Trust: assumptions panel</span></div></div><div class="score"><dl><dt>Main strength</dt><dd>Premium and focused</dd><dt>Main risk</dt><dd>Slower first result</dd><dt>Complexity</dt><dd>High</dd><dt>Expected impact</dt><dd>Higher confidence for complex purchases</dd></dl></div></div>
+    <div class="stage"><div class="desktop"><div class="frame-title"><span>Desktop briefing</span><span>1440</span></div><div class="screen"><div class="hero"><div class="panel"><div class="step">1. Budžets</div><div class="step">2. Divi auto</div><div class="step">3. Finansēšana</div><div class="step">4. Spriedums</div></div><div><h2>Pirkuma memorands, nevis kalkulatora režģis.</h2><p class="small">Katrs solis atklāj tikai vajadzīgos laukus. Rezultāts tiek rakstīts kā īss finanšu skaidrojums.</p></div></div><div class="panel"><div class="label">Memo</div><div class="money">BMW: €13 495 lētāks</div><p>Augstākā Porsche degvielas un līzinga slodze pārsniedz tā līdzīgo atlikušās vērtības profilu.</p></div><div class="cars" style="margin-top:14px"><div class="car">Source-backed value<span class="pill source">checked 2026-06-10</span></div><div class="car">Validation state<span class="pill err">APR nevar būt tukšs</span></div></div></div></div><div class="mobile"><div class="frame-title"><span>Mobile memo</span><span>390</span></div><div class="screen"><div class="panel"><div class="label">Solis 2</div><h2>Kurš auto?</h2><p class="small">Auto A un B pārslēdzas kā lapas, nevis saspiestas kolonnas.</p></div><div class="panel"><div class="money">€289</div><p>mēneša starpība</p></div></div></div></div>
+  </section>
+
+  <section class="direction sheet" id="sheet">
+    <div class="meta"><div class="brief"><h1>Assumption Sheet</h1><p>A power-user product. It looks like a controlled financial sheet with transparent formulas, strong keyboard flow, and dense comparisons.</p><div class="tags"><span class="tag">Start: table-first</span><span class="tag">Inputs: inline cells</span><span class="tag">Results: formula grid</span><span class="tag">Trust: row provenance</span></div></div><div class="score"><dl><dt>Main strength</dt><dd>Maximum inspectability</dd><dt>Main risk</dt><dd>Too intimidating</dd><dt>Complexity</dt><dd>Medium-high</dd><dt>Expected impact</dt><dd>Great for advanced users</dd></dl></div></div>
+    <div class="stage"><div class="desktop"><div class="frame-title"><span>Desktop sheet</span><span>1440</span></div><div class="screen gridline"><h2>Every assumption is editable.</h2><div class="canvas"><div class="cell winner"><div class="label">BMW 740d</div><div class="money">€1 984</div><span class="pill">winner</span></div><div class="cell"><div class="label">Porsche 911</div><div class="money">€2 273</div><span class="pill">+€289/mēn</span></div><div class="cell"><div class="label">Confidence</div><span class="pill estimate">manual estimate</span><div class="formula">leasing = PMT + residual</div></div></div><div class="car"><div class="row"><span>APR</span><strong>4.5%</strong></div><div class="row"><span>Termiņš</span><strong>48 mēn.</strong></div><div class="row"><span>Residual</span><strong>20%</strong></div><div class="row"><span>Validation</span><strong class="err pill">Cena nav ievadīta</strong></div></div></div></div><div class="mobile"><div class="frame-title"><span>Mobile sheet</span><span>390</span></div><div class="screen gridline"><h2>Sheet becomes cards.</h2><div class="cell winner"><div class="label">BMW</div><div class="money">€1 984</div></div><div class="cell"><div class="label">Kāpēc?</div><div class="formula">Mazāks līzings + mazāks fuel + mazāks TEN</div></div></div></div></div>
+  </section>
+</main>
+<script>
+document.querySelectorAll('.switcher button').forEach(button=>{
+  button.addEventListener('click',()=>{
+    document.querySelectorAll('.switcher button').forEach(item=>item.classList.remove('active'));
+    document.querySelectorAll('.direction').forEach(item=>item.classList.remove('active'));
+    button.classList.add('active');
+    document.getElementById(button.dataset.dir).classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

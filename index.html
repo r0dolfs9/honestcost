@@ -352,7 +352,7 @@ select { cursor: pointer; appearance: none; -webkit-appearance: none;
 .tip-icon:hover { background: var(--accent); color: #fff; }
 .tip-icon:focus { box-shadow: 0 0 0 2px var(--accent); }
 .tip-box {
-  visibility: hidden; opacity: 0; transform: translateY(4px);
+  display: none; visibility: hidden; opacity: 0; transform: translateY(4px);
   width: 240px; background: var(--ink); color: var(--bg);
   font-size: 12px; font-family: var(--ff-ui); line-height: 1.5; font-weight: 500;
   padding: 12px 14px; border-radius: 12px;
@@ -360,7 +360,10 @@ select { cursor: pointer; appearance: none; -webkit-appearance: none;
   z-index: 300; pointer-events: none; transition: opacity .2s var(--ease), transform .2s var(--ease);
   box-shadow: var(--shadow-2);
 }
-.tip:hover .tip-box, .tip-icon:focus + .tip-box { visibility: visible; opacity: 1; transform: translateY(0); }
+.tip:hover .tip-box, .tip-icon:focus + .tip-box { display: block; visibility: visible; opacity: 1; transform: translateY(0); }
+@media (max-width: 720px) {
+  .tip-box { left: auto; right: 0; max-width: min(240px, calc(100vw - 32px)); }
+}
 
 /* ─── TWO-COL ─── */
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
@@ -600,6 +603,21 @@ body { overflow-x: clip; }
   border: 1px solid rgba(255,255,255,.16); position: relative; overflow: hidden;
 }
 .res-head .car-media .res-photo { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; z-index: 2; }
+.source-badge {
+  margin: 0 0 10px;
+  display: inline-flex; align-items: baseline; gap: 7px; max-width: 100%;
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px;
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  font-family: var(--ff-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-2);
+}
+.source-badge small {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 10px; letter-spacing: 0; text-transform: none; color: var(--ink-3);
+}
+.source-badge.verified { border-color: color-mix(in srgb, var(--win) 38%, var(--line)); color: var(--win); background: var(--win-soft); }
+.source-badge.warning { border-color: color-mix(in srgb, var(--warn) 42%, var(--line)); color: var(--warn); background: var(--warn-soft); }
+.source-badge.estimate { border-color: var(--line); color: var(--ink-2); background: var(--surface-alt); }
 .res-name { font-family: var(--ff-display); font-weight: 600; font-size: 26px; letter-spacing: -0.01em; color: var(--ink); }
 .res-meta { font-size: 12px; color: var(--ink-2); margin-top: 6px; }
 
@@ -635,6 +653,27 @@ body { overflow-x: clip; }
 .cost-tbl td:not(:first-child) { font-family: var(--ff-mono); font-weight: 500; font-size: 12px; text-align: right; color: var(--ink); }
 .cost-tbl tr.zero td { opacity: 0.35; }
 .cost-tbl tfoot td { font-family: var(--ff-mono); font-weight: 600; font-size: 13px; border-top: 2px solid var(--ink); padding-top: 12px; color: var(--ink); }
+/* Assumption inspector: per cost line provenance + formula detail */
+.insp-btn {
+  background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+  font: inherit; color: inherit; display: inline-flex; align-items: center; gap: 6px;
+  text-align: left; min-height: 28px;
+}
+.insp-btn:hover { color: var(--accent); }
+.insp-caret { font-size: 10px; color: var(--ink-3); transition: transform .15s; display: inline-block; }
+.insp-btn.open .insp-caret { transform: rotate(90deg); }
+.insp-row td { background: var(--surface-alt, var(--accent-soft)); border-top: 1px dashed var(--line-2); }
+.insp-detail { display: grid; gap: 6px; padding: 2px 0 4px; }
+.insp-detail p { margin: 0; font-family: var(--ff, inherit); font-weight: 400; font-size: 12px; line-height: 1.5; color: var(--ink-2); text-align: left; }
+.insp-detail .insp-edit { color: var(--ink-3); font-size: 11.5px; }
+.insp-chip {
+  justify-self: start; font-size: 10.5px; font-weight: 700; letter-spacing: .04em;
+  padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line-2); color: var(--ink-2);
+}
+.insp-chip.k-user { border-color: var(--accent); color: var(--accent); }
+.insp-chip.k-statutory { border-color: var(--ink-2); color: var(--ink); }
+.insp-chip.k-estimate, .insp-chip.k-default { background: var(--accent-soft); }
+@media (prefers-reduced-motion: reduce) { .insp-caret { transition: none; } }
 .cost-tbl tfoot td:first-child { font-family: var(--ff-ui); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
 
 /* DEP */
@@ -848,7 +887,7 @@ body { overflow-x: clip; }
 }
 
 /* Hero parallax orbs */
-.hero { position: relative; isolation: isolate; }
+.hero { position: relative; isolation: isolate; overflow: clip; }
 .hero .orb { position: absolute; border-radius: 50%; filter: blur(46px); opacity: .55; pointer-events: none; z-index: -1; will-change: transform; }
 .hero .orb-1 { width: 280px; height: 280px; left: -50px; top: -60px; background: radial-gradient(circle, var(--car-a-glow), transparent 70%); }
 .hero .orb-2 { width: 320px; height: 320px; right: -70px; top: -10px; background: radial-gradient(circle, var(--car-b-glow), transparent 70%); }
@@ -1210,7 +1249,7 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
       <div class="sec-title"><i data-lucide="shield" style="width:11px;height:11px;"></i> Apdrošināšana</div>
       <div class="field-group">
         <div class="field-label">OCTA (€/gadā) *
-          <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">Aizpildās automātiski pēc tilpuma — precizējiet.</span></span>
+          <span class="tip"><button class="tip-icon" type="button" tabindex="0" aria-label="Paskaidrojums">?</button><span class="tip-box">No datubāzes auto aizpildās pēc jaudas; manuālai ievadei bez kW izmanto tilpuma aplēsi.</span></span>
         </div>
         <input type="number" id="octaA" placeholder="Auto" min="50" max="2000">
       </div>
@@ -1625,7 +1664,7 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
         </div>
         <div class="trust-item">
           <h5>OCTA</h5>
-          <p>Aplēse pēc dzinēja tilpuma. <em>Pieredzējušam Rīgas vadītājam</em> (5+ gadi bez avārijām). Jauniem vadītājiem ievērojami augstāka.</p>
+          <p>Aplēse pēc dzinēja jaudas, kad auto datubāzē ir kW dati; manuālai ievadei bez kW tiek izmantota tilpuma rezerves aplēse. Jauniem vadītājiem OCTA var būt ievērojami augstāka.</p>
           <div class="src">Avots: octa24.lv, LTAB tarifi · 2026</div>
         </div>
         <div class="trust-item">
@@ -1650,7 +1689,7 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
         </div>
         <div class="trust-item">
           <h5>TEN — Transporta nodoklis</h5>
-          <p>9 brackets pēc WLTP CO₂. EV = €0. Tabula no 01.01.2025 likuma.</p>
+          <p>CO₂ robežu tabula pēc WLTP izmešiem. EV ar 0 g/km rezultātā saņem €0 TEN.</p>
           <div class="src">Avots: <a href="https://likumi.lv/ta/id/281333" target="_blank" rel="noopener">likumi.lv · TLEN</a> · 2025-01-01</div>
         </div>
         <div class="trust-item">
@@ -1671,6 +1710,7 @@ html.still body::before, html.still body::after { opacity: var(--grain-keep, .04
 </div><!-- page-wrapper -->
 
 <script src="car-visuals.js"></script>
+<script src="car-sources.js"></script>
 <script>
 // ─── THEME TOGGLE ──────────────────────────────────────────
 (function () {
@@ -1848,7 +1888,7 @@ function fc(id){return document.getElementById(id)?.checked||false;}
 
 function readCar(x){
   return{
-    name:ft('name'+x), photoUrl:ft('photoUrl'+x),
+    id:S['id'+x]||'', name:ft('name'+x), photoUrl:ft('photoUrl'+x),
     brand:S['brand'+x]||ft('name'+x).split(' ')[0]||'', body:S['body'+x]||'',
     price:fv('price'+x), dep:ft('depCat'+x)||'mid', ft:ft('ft'+x)||'petrol',
     cons:fv('cons'+x), co2:fv('co2'+x), cc:fv('cc'+x),
@@ -1926,6 +1966,27 @@ function carModelFamily(car){
    (template matches the imagin.studio URL shape). With no key, zero network
    calls are made and every car uses the premium illustrated fallback below.
    A broken/missing render auto-falls back via the <img> onerror handler. */
+function sourceLookup(car){
+  if(typeof window==='undefined')return null;
+  const sources=window.CAR_SOURCES||{};
+  if(car?.id && sources[car.id])return sources[car.id];
+  if(window.CAR_DB){
+    const byName=window.CAR_DB.find(row=>row.name===car?.name);
+    if(byName&&sources[byName.id])return sources[byName.id];
+  }
+  return null;
+}
+function carSourceStatus(car){
+  const src=sourceLookup(car);
+  if(!src)return {tone:'estimate',label:'Aplēses dati',detail:'lietotājs vai DB noklusējums'};
+  if(src.status==='verified')return {tone:'verified',label:'Avots pārbaudīts',detail:src.checkedAt||'datums nav norādīts'};
+  if(src.status==='mismatch')return {tone:'warning',label:'Avots atšķiras',detail:src.checkedAt||'jāpārbauda'};
+  return {tone:'estimate',label:'Vajag kartēšanu',detail:src.checkedAt||'aplēse'};
+}
+function sourceBadgeMarkup(car){
+  const s=carSourceStatus(car);
+  return `<span class="source-badge ${s.tone}" title="${esc(s.label+' · '+s.detail)}"><span>${esc(s.label)}</span><small>${esc(s.detail)}</small></span>`;
+}
 const CAR_IMAGE_API = {
   enabled: false,
   customer: '',
@@ -2029,6 +2090,83 @@ function decodeShareState(hash){
     return data;
   }catch(e){return null;}
 }
+// ── ASSUMPTION INSPECTOR ────────────────────────────────────
+// Pure helpers: per cost line, explain the formula, the provenance of the
+// inputs (user/DB value, default assumption, model estimate, statutory rule)
+// and where it can be edited. No calculation logic lives here.
+function assumptionKindLabel(kind){
+  return {
+    user:'Lietotāja / DB vērtība',
+    default:'Noklusējuma pieņēmums',
+    estimate:'Modeļa aplēse',
+    statutory:'Likumā noteikts',
+  }[kind]||'Aplēse';
+}
+function assumptionInfo(key,car,g){
+  const c=car||{}, gg=g||{};
+  const map={
+    leasing:{
+      kind:'user',
+      formula:'Anuitātes maksājums no cenas '+eur(c.price||0)+': pirmā iemaksa '+(gg.downPct??20)+'%, likme '+(gg.apr??4.5)+'% gadā, termiņš '+(gg.months??48)+' mēn, atlikusī vērtība '+(gg.resPct??0)+'%.',
+      edit:'Maina finansējuma lauki ievades ekrānā. Reālie piedāvājumi var atšķirties.',
+    },
+    fuel:{
+      kind:c.fuelPr?'user':'default',
+      formula:'Patēriņš '+(c.cons||0)+' uz 100 km × nobraukums '+((gg.km||15000).toLocaleString('lv-LV'))+' km/g × '+(c.fuelPr?'lietotāja norādītā cena':'tirgus noklusējuma cena')+'.',
+      edit:'Maina patēriņa un degvielas/enerģijas cenas lauki ievades ekrānā.',
+    },
+    service:{
+      kind:'user',
+      formula:'Apkopes cena × apkopju skaits gadā (intervāls '+((c.svcInt||15000).toLocaleString('lv-LV'))+' km, vismaz 1 reize gadā).',
+      edit:'Maina apkopes intervāla un cenas lauki ievades ekrānā.',
+    },
+    tyres:{
+      kind:'default',
+      formula:'Fiksēta gada summa pēc izvēlētās riepu klases ('+(c.tyre||'mid')+'); ietver sezonas maiņu un nolietojumu.',
+      edit:'Maina riepu klases izvēle ievades ekrānā.',
+    },
+    octa:{
+      kind:'user',
+      formula:'Gada OCTA polise '+eur(c.octa||0)+'/gadā. Ja lauks netika aizpildīts, vērtība ir automātiska aplēse pēc jaudas vai tilpuma.',
+      edit:'Maina OCTA lauks ievades ekrānā. Reālās prēmijas atšķiras pēc vadītāja vēstures.',
+    },
+    kasko:{
+      kind:'default',
+      formula:'Gada likme '+(c.kasko??2.5)+'% no auto dilstošās tirgus vērtības katrā gadā.',
+      edit:'Maina KASKO līmeņa izvēle ievades ekrānā. Reālie piedāvājumi atšķiras.',
+    },
+    ten:{
+      kind:'statutory',
+      formula:'Transportlīdzekļa ekspluatācijas nodoklis pēc CO₂ '+(c.co2||0)+' g/km likmju tabulas.',
+      edit:'Mainās tikai, ja maina CO₂ vērtību ievades ekrānā.',
+    },
+    ew:{
+      kind:'user',
+      formula:'Vienreizēja papildu garantijas cena '+eur(c.ewPrice||0)+' visam periodam.',
+      edit:'Maina papildu garantijas lauki ievades ekrānā.',
+    },
+    repair:{
+      kind:'estimate',
+      formula:'Modeļa rezerve pēc remonta riska līmeņa ('+(c.repair||'med')+'), garantijas seguma un auto vecuma. Tā nav garantēta izmaksa.',
+      edit:'Maina remonta riska izvēle ievades ekrānā.',
+    },
+    park:{
+      kind:'user',
+      formula:'(Stāvvieta '+eur(c.park||0)+' + mazgāšana '+eur(c.wash??20)+') mēnesī × 12 × periods. Mazgāšanai bez ievades tiek lietots noklusējums.',
+      edit:'Maina stāvvietas un mazgāšanas lauki ievades ekrānā.',
+    },
+  };
+  return map[key]||null;
+}
+function assumptionDetailMarkup(key,car,g){
+  const info=assumptionInfo(key,car,g);
+  if(!info)return '';
+  return `<div class="insp-detail">
+    <span class="insp-chip k-${esc(info.kind)}">${esc(assumptionKindLabel(info.kind))}</span>
+    <p class="insp-formula">${esc(info.formula)}</p>
+    <p class="insp-edit">${esc(info.edit)}</p>
+  </div>`;
+}
 function renderResults(cA,cB,g){
   const rA=calcAll(cA,g), rB=calcAll(cB,g);
   const N=g.yrs;
@@ -2041,21 +2179,22 @@ function renderResults(cA,cB,g){
     const heroClass=wins?'win':'lose';
 
     const rows=[
-      ['Līzings',res.bd.leasing,g.fin==='cash'],
-      ['Degviela / Enerģija',res.bd.fuel,false],
-      ['Apkope',res.bd.service,false],
-      ['Riepas',res.bd.tyres,false],
-      ['OCTA',res.bd.octa,false],
-      ['KASKO',res.bd.kasko,false],
-      ['Transporta nodoklis',res.bd.ten,false],
-      ['Papildu garantija',res.bd.ew,false],
-      ['Remonta rezerve',res.bd.repair,false],
-      ['Stāvvieta + mazgāšana',res.bd.park,false],
+      ['leasing','Līzings',res.bd.leasing,g.fin==='cash'],
+      ['fuel','Degviela / Enerģija',res.bd.fuel,false],
+      ['service','Apkope',res.bd.service,false],
+      ['tyres','Riepas',res.bd.tyres,false],
+      ['octa','OCTA',res.bd.octa,false],
+      ['kasko','KASKO',res.bd.kasko,false],
+      ['ten','Transporta nodoklis',res.bd.ten,false],
+      ['ew','Papildu garantija',res.bd.ew,false],
+      ['repair','Remonta rezerve',res.bd.repair,false],
+      ['park','Stāvvieta + mazgāšana',res.bd.park,false],
     ];
-    const trs=rows.map(([lbl,tot,skip])=>{
+    const trs=rows.map(([key,lbl,tot,skip])=>{
       if(skip)return`<tr class="zero"><td>${lbl}</td><td>—</td><td>—</td></tr>`;
       const mo=tot/(N*12);
-      return`<tr><td>${lbl}</td><td>${eur(mo)}/mēn</td><td>${eur(tot)}</td></tr>`;
+      return`<tr class="insp-line"><td><button type="button" class="insp-btn" aria-expanded="false" onclick="toggleInspector(this)">${lbl}<span class="insp-caret" aria-hidden="true">▸</span></button></td><td>${eur(mo)}/mēn</td><td>${eur(tot)}</td></tr>
+      <tr class="insp-row" hidden><td colspan="3">${assumptionDetailMarkup(key,car,g)}</td></tr>`;
     }).join('');
 
     let wNote='';
@@ -2078,6 +2217,7 @@ function renderResults(cA,cB,g){
     return`<div class="res-card">
       <div class="res-head ${hc}">
         ${ph}
+        ${sourceBadgeMarkup(car)}
         <div class="res-name">${esc(car.name)}</div>
         <div class="res-meta">${eur(car.price)} · ${ftLbl(car.ft)} · ${car.w}g garantija · CO₂ ${car.co2}g/km · ${repLvl(car.repair)} risks</div>
       </div>
@@ -2125,6 +2265,15 @@ function renderResults(cA,cB,g){
 }
 
 // ── UI HANDLERS ────────────────────────────────────────────
+function toggleInspector(btn){
+  const line=btn.closest('tr');
+  const detail=line&&line.nextElementSibling;
+  if(!detail||!detail.classList.contains('insp-row'))return;
+  const open=detail.hasAttribute('hidden');
+  if(open)detail.removeAttribute('hidden');else detail.setAttribute('hidden','');
+  btn.setAttribute('aria-expanded',String(open));
+  btn.classList.toggle('open',open);
+}
 function setTier(groupId,val,btn){
   document.querySelectorAll('#'+groupId+' .tier-btn').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
@@ -2207,7 +2356,7 @@ function applySavedGlobal(g){
 function applySavedCar(x,car){
   const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=(v===undefined||v===null)?'':v;};
   set('name'+x,car.name);set('photoUrl'+x,car.photoUrl||'');set('price'+x,car.price);
-  S['brand'+x]=car.brand||'';S['body'+x]=car.body||'';
+  S['id'+x]=car.id||'';S['brand'+x]=car.brand||'';S['body'+x]=car.body||'';
   document.getElementById('depCat'+x).value=car.dep||'mid';
   document.getElementById('ft'+x).value=car.ft||'petrol';onFuelChange(x);
   set('cons'+x,car.cons);set('co2'+x,car.co2);set('cc'+x,car.cc);set('w'+x,car.w);
@@ -2414,6 +2563,7 @@ function initCarPicker(side){
 function applyCar(x, car){
   if (!car) return;
   const set = (id, v) => { const e = document.getElementById(id); if (e) e.value = v; };
+  S['id'+x] = car.id || '';
   set('name'+x,     car.name);
   set('photoUrl'+x, car.photoUrl || car.imageUrl || '');
   set('price'+x,    car.price);

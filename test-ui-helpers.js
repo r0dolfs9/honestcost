@@ -15,6 +15,13 @@ assert.ok(pickerMatch, 'Could not find lazy car DB helper block in index.html');
 assert.equal(/<script\s+src=["']car-db\.js["']/.test(html), false, 'car-db.js should not be loaded eagerly in the head');
 
 const context = {
+  window: {
+    CAR_SOURCES: {
+      toyota_yaris_hyb: { status: 'verified', checkedAt: '2026-06-10' },
+      tesla_m3_rwd: { status: 'mismatch', checkedAt: '2026-06-01' },
+      dacia_duster: { status: 'needs_mapping', checkedAt: '2026-06-10' },
+    },
+  },
   document: {
     createElement() {
       return {
@@ -52,6 +59,11 @@ globalThis.__helpers = {
   upsertSavedScenario,
   encodeShareState,
   decodeShareState,
+  carSourceStatus,
+  sourceBadgeMarkup,
+  assumptionKindLabel,
+  assumptionInfo,
+  assumptionDetailMarkup,
 };
 `, context);
 
@@ -69,6 +81,11 @@ const {
   upsertSavedScenario,
   encodeShareState,
   decodeShareState,
+  carSourceStatus,
+  sourceBadgeMarkup,
+  assumptionKindLabel,
+  assumptionInfo,
+  assumptionDetailMarkup,
 } = context.__helpers;
 
 const lazyContext = {};
@@ -160,4 +177,57 @@ assert.equal(decodeShareState('#foo'), null, 'unknown hash format returns null')
 assert.equal(decodeShareState('#s=%7Bbroken'), null, 'malformed JSON returns null');
 assert.equal(decodeShareState('#s=' + encodeURIComponent('{"v":1,"A":{}}')), null, 'missing B/G returns null');
 
+assert.equal(
+  JSON.stringify(carSourceStatus({ id: 'toyota_yaris_hyb', name: 'Toyota Yaris Hybrid' })),
+  JSON.stringify({ tone: 'verified', label: 'Avots pārbaudīts', detail: '2026-06-10' }),
+  'verified source metadata should produce a verified badge model',
+);
+assert.equal(
+  carSourceStatus({ id: 'tesla_m3_rwd', name: 'Tesla Model 3' }).tone,
+  'warning',
+  'mismatch source metadata should produce a warning badge model',
+);
+assert.equal(
+  carSourceStatus({ name: 'Manual entry' }).tone,
+  'estimate',
+  'manual cars without row metadata should be labelled as estimates',
+);
+assert.match(
+  sourceBadgeMarkup({ id: 'toyota_yaris_hyb', name: 'Toyota Yaris Hybrid' }),
+  /source-badge verified/,
+  'source badge markup should expose the verified class',
+);
+
+// Assumption inspector helpers
+const inspCar = { price: 124500, cons: 6.8, co2: 178, octa: 300, kasko: 2.5, tyre: 'large', repair: 'med', svcInt: 25000, park: 0, wash: 20, fuelPr: null, ewPrice: 0 };
+const inspG = { yrs: 5, km: 15000, fin: 'leasing', downPct: 20, apr: 4.5, months: 48, resPct: 20 };
+
+assert.equal(assumptionKindLabel('statutory'), 'Likumā noteikts');
+assert.equal(assumptionKindLabel('unknown-kind'), 'Aplēse', 'unknown kinds fall back to a safe label');
+
+const allKeys = ['leasing', 'fuel', 'service', 'tyres', 'octa', 'kasko', 'ten', 'ew', 'repair', 'park'];
+for (const key of allKeys) {
+  const info = assumptionInfo(key, inspCar, inspG);
+  assert.ok(info && info.formula && info.kind && info.edit, `assumptionInfo covers '${key}'`);
+}
+assert.equal(assumptionInfo('nope', inspCar, inspG), null, 'unknown cost keys return null');
+
+assert.equal(assumptionInfo('ten', inspCar, inspG).kind, 'statutory', 'TEN is a statutory rule');
+assert.equal(assumptionInfo('repair', inspCar, inspG).kind, 'estimate', 'repair reserve is a model estimate');
+assert.equal(assumptionInfo('kasko', inspCar, inspG).kind, 'default', 'KASKO tier is a default assumption');
+assert.equal(assumptionInfo('fuel', inspCar, inspG).kind, 'default', 'fuel price without user input is a default');
+assert.equal(assumptionInfo('fuel', { ...inspCar, fuelPr: 1.72 }, inspG).kind, 'user', 'user fuel price flips provenance to user');
+assert.match(assumptionInfo('leasing', inspCar, inspG).formula, /4\.5% gadā/, 'leasing formula reflects the APR input');
+assert.match(assumptionInfo('ten', inspCar, inspG).formula, /178 g\/km/, 'TEN formula reflects the CO2 input');
+
+const inspMarkup = assumptionDetailMarkup('repair', inspCar, inspG);
+assert.match(inspMarkup, /insp-chip k-estimate/, 'detail markup exposes the provenance chip');
+assert.match(inspMarkup, /Modeļa aplēse/, 'detail markup uses honest estimate language');
+assert.equal(assumptionDetailMarkup('nope', inspCar, inspG), '', 'unknown keys render nothing');
+
+// The shipped result table must wire the inspector toggle.
+assert.match(html, /toggleInspector\(this\)/, 'cost rows expose the inspector toggle');
+assert.match(html, /aria-expanded="false"/, 'inspector toggles start collapsed with an accessible state');
+
 console.log('test-ui-helpers.js: all assertions passed');
+
